@@ -14,41 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef LED_LEVEL_H
+#define LED_LEVEL_H
 
-/** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN */
-class CapacitiveSensor {
-  public:
-    CapacitiveSensor();
-    void setup();
-    void start();
-    void stop();
-        
-  private:
-    const static uint8_t PWM_OUT_PIN = 3;
+#include "Arduino.h"
+#include "ArdLog.h"
 
-    // 10 = 1.45 MHz
-    // 9  = 1.60 MHz
-    // 8  = 1.78 MHz
-    // 7  = 2.00 MHz 
-    const static uint8_t PWM_PERIOD = 9; 
+class LEDLevel {
+public:
+  LEDLevel();
+
+  void setup();
+
+  /** #level is between 1 and 6 */
+  void show(uint8_t level);
+
+private:
+  void ledOff(uint8_t ixd);
+  void ledOn(uint8_t ixd);
+  boolean supportsPWM(uint8_t pin);
+
+  // LEDs are connected to Digital PWM out in order to controll brightness
+  static const uint8_t LED_OUT_6 = 12;
+  static const uint8_t LED_OUT_5 = 11;
+  static const uint8_t LED_OUT_4 = 10;
+  static const uint8_t LED_OUT_3 = 9;
+  static const uint8_t LED_OUT_2 = 6;
+  static const uint8_t LED_OUT_1 = 5;
+  static uint8_t LED_MAP[6];
 };
 
-void CapacitiveSensor::setup(){
-  pinMode(PWM_OUT_PIN, OUTPUT);
-  TCCR2B = 0;
-  TCNT2  = 0; 
-  TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
-  TCCR2B = _BV(WGM22); 
-  OCR2A = PWM_PERIOD;
-  OCR2B = PWM_PERIOD/2;
-}
 
-void CapacitiveSensor::start() {
-  TCCR2B |= _BV(CS20);  
-}
-
-void CapacitiveSensor::stop() {
-  TCCR2B &= ~_BV(CS20);
-  TCNT2 = 0;
-}
-
+#endif  // LED_LEVEL_H

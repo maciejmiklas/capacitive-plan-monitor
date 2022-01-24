@@ -14,16 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-static uint32_t cycleMs;
+#ifndef UTIL_H
+#define UTIL_H
 
-void util_setup() {
-	util_cycle();
-}
+#include "Arduino.h"
+ 
+void util_setup();
+void util_cycle();
+uint32_t util_ms(); 
 
-void util_cycle() {
-	cycleMs = millis();
-}
-
-uint32_t util_ms() {
-	return cycleMs;
-}
+#endif // UTIL_H

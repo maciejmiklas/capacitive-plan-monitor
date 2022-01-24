@@ -14,15 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class MoistureSensor: public Initializable {
+#ifndef EVENTBUS_H_
+#define EVENTBUS_H_
 
-  public: MoistureSensor();
-}
+#include "Arduino.h"
+#include "ArdLog.h"
 
-MoistureSensor::MoistureSensor() {
+enum class BusEvent {
 
-}
+  /** Parameters: none */
+  CYCLE = 0,
+};
 
-void MoistureSensor::init() {
 
-}
+class BusListener {
+public:
+  virtual void onEvent(BusEvent event, va_list ap) = 0;
+  virtual uint8_t listenerId() = 0;
+
+protected:
+  virtual ~BusListener();
+  BusListener();
+};
+
+void eb_register(BusListener* listener);
+void eb_fire(BusEvent event, ...);
+
+#endif /* EVENTBUS_H_ */

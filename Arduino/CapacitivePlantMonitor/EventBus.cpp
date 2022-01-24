@@ -45,9 +45,9 @@ void eb_fire(BusEvent event, ...) {
   for (uint8_t idx = 0; idx < listenersAmount; idx++) {
     va_list ap;
     va_start(ap, event);
-    #if TRACE
-      log(F("EB LT: %d"), listeners[idx]->listenerId());
-    #endif
+#if TRACE
+    log(F("EB LT: %d"), listeners[idx]->listenerId());
+#endif
     listeners[idx]->onEvent(event, ap);
     va_end(ap);
   }

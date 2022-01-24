@@ -14,33 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef EVENTBUS_H_
-#define EVENTBUS_H_
+#ifndef CAPACITIVE_SENSOR_H
+#define CAPACITIVE_SENSOR_H
 
 #include "Arduino.h"
-#include "ArdLog.h"
 
-enum class BusEvent {
-
-  /** Parameters: none */
-  CYCLE_QUICK = 0,
-
-    /** Parameters: none */
-  CYCLE_LONG = 0,
-};
-
-
-class BusListener {
+/** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN */
+class CapacitiveSensor {
 public:
-  virtual void onEvent(BusEvent event, va_list ap) = 0;
-  virtual uint8_t listenerId() = 0;
+  CapacitiveSensor();
+  void setup();
+  void start();
+  void stop();
 
-protected:
-  virtual ~BusListener();
-  BusListener();
+private:
+  const static uint8_t PWM_OUT_PIN = 3;
+
+  // 10 = 1.45 MHz
+  // 9  = 1.60 MHz
+  // 8  = 1.78 MHz
+  // 7  = 2.00 MHz
+  const static uint8_t PWM_PERIOD = 9;
 };
 
-void eb_register(BusListener* listener);
-void eb_fire(BusEvent event, ...);
-
-#endif /* EVENTBUS_H_ */
+#endif  // CAPACITIVE_SENSOR_H

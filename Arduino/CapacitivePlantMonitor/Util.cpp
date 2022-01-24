@@ -14,46 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "ArdLog.h"
 #include "Util.h"
-#include "CapacitiveSensor.h"
-#include <Arduino.h>
-#include "EventBus.h"
-#include "LEDLevel.h"
 
-CapacitiveSensor* cs = new CapacitiveSensor();
-LEDLevel* ll = new LEDLevel();
+static uint32_t cycleMs;
 
-void setup() {
-  util_setup();
-
-#if ENABLE_LOGGER
-  log_setup();
-#endif
-
-  cs->setup();
-  cs->start();
-  ll->setup();
+void util_setup() {
+	util_cycle();
 }
 
-uint16_t loopIdex = 1;
-void loop() {
-  util_cycle();
+void util_cycle() {
+	cycleMs = millis();
+}
 
-#if ENABLE_LOGGER
-  log_cycle();
-#endif
-
-  eb_fire(BusEvent::CYCLE);
-
-#if LOG
-  log(F("**** Loop %d ****"), loopIdex);
-#endif
-
-  if (loopIdex == 7) {
-    loopIdex = 0;
-  }
-  //ll->show(loopIdex);
-  loopIdex++;
-  delay(1000);
+uint32_t util_ms() {
+	return cycleMs;
 }
