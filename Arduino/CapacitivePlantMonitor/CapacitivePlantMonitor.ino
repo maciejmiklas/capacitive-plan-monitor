@@ -16,13 +16,16 @@
  */
 #include "ArdLog.h"
 #include "Util.h"
-#include "CapacitiveSensor.h"
-#include <Arduino.h>
+#include "MoistureSensor.h"
+#include "MoistureDisplay.h"
+#include "Arduino.h"
 #include "EventBus.h"
-#include "LEDLevel.h"
+#include "LED.h"
 
-CapacitiveSensor* cs = new CapacitiveSensor();
-LEDLevel* ll = new LEDLevel();
+MoistureSensor* ms = new MoistureSensor();
+MoistureDisplay* md = new MoistureDisplay();
+
+LED* led = new LED();
 
 void setup() {
   util_setup();
@@ -31,12 +34,15 @@ void setup() {
   log_setup();
 #endif
 
-  cs->setup();
-  cs->start();
-  ll->setup();
+  ms->setup();
+  ms->start();
+
+  md->setup();
+
+  led->setup();
 }
 
-uint16_t loopIdex = 1;
+uint16_t loopIdex = 0;
 void loop() {
   util_cycle();
 
@@ -44,16 +50,20 @@ void loop() {
   log_cycle();
 #endif
 
+  log(F("**** Loop %d ****"), loopIdex++);
+
   eb_fire(BusEvent::CYCLE);
 
-#if LOG
-  log(F("**** Loop %d ****"), loopIdex);
-#endif
+  md->show(1);
+  /*
+  log(F("Moisture: %d"), ms->read());
 
-  if (loopIdex == 7) {
-    loopIdex = 0;
-  }
-  //ll->show(loopIdex);
-  loopIdex++;
+  led->on(LED_PIN::PWR_ON);
   delay(1000);
+  led->off(LED_PIN::PWR_ON);
+  delay(1000);
+  led->on(LED_PIN::PWR_LOW);
+  delay(1000);
+  led->off(LED_PIN::PWR_LOW);
+  delay(1000);*/
 }

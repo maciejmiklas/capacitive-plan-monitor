@@ -14,27 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef CAPACITIVE_SENSOR_H
-#define CAPACITIVE_SENSOR_H
+#include "LED.h"
 
-#include "Arduino.h"
+LED::LED() {
+}
 
-/** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN */
-class CapacitiveSensor {
-public:
-  CapacitiveSensor();
-  void setup();
-  void start();
-  void stop();
+void LED::setup() {
+  for (uint8_t pin = LED_PIN::PWR_ON; pin <= LED_PIN::PWR_LOW; pin++) {
+    pinMode(pin, OUTPUT);
+    analogWrite(pin, LOW);
+  }
+}
 
-private:
-  const static uint8_t PWM_OUT_PIN = 3;
+void LED::off(LED_PIN led) {
+  uint8_t pin = led;
+#if TRACE
+  log(F("LED OFF %d"), pin);
+#endif
+  analogWrite(pin, LOW);
+}
 
-  // 10 = 1.45 MHz
-  // 9  = 1.60 MHz
-  // 8  = 1.78 MHz
-  // 7  = 2.00 MHz
-  const static uint8_t PWM_PERIOD = 9;
-};
-
-#endif  // CAPACITIVE_SENSOR_H
+void LED::on(LED_PIN led) {
+  uint8_t pin = led;
+#if TRACE
+  log(F("LED ON %d"), pin);
+#endif
+  analogWrite(pin, BRIGHTNESS);
+}

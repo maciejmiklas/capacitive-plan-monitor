@@ -14,13 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef MOISTURE_DISPLAY_H
+#define MOISTURE_DISPLAY_H
 
 #include <Arduino.h>
- 
-void util_setup();
-void util_cycle();
-uint32_t util_ms(); 
+#include <Servo.h>
+#include "PIN.h"
+#include "ArdLog.h"
 
-#endif // UTIL_H
+class MoistureDisplay {
+public:
+  MoistureDisplay();
+  void setup();
+  void reset();
+
+  /** #level goes from 0 to 180. */
+  void show(uint8_t level);
+ 
+private:
+  const static uint8_t SERVO_PIN = P_D9;
+  Servo servo;
+};
+
+#endif  // MOISTURE_DISPLAY_H

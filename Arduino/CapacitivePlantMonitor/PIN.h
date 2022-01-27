@@ -14,35 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LED_LEVEL_H
-#define LED_LEVEL_H
+#ifndef PIN_H
+#define PIN_H
 
-#include "Arduino.h"
-#include "ArdLog.h"
+#include <Arduino.h>
 
-class LEDLevel {
-public:
-  LEDLevel();
+const uint8_t P_D3 = 3;
+const uint8_t P_D5 = 5;
+const uint8_t P_D6 = 6;
+const uint8_t P_D9 = 9;
 
-  void setup();
+const uint8_t P_A0 = A0;
 
-  /** #level is between 1 and 6 */
-  void show(uint8_t level);
-
-private:
-  void ledOff(uint8_t ixd);
-  void ledOn(uint8_t ixd);
-  boolean supportsPWM(uint8_t pin);
-
-  // LEDs are connected to Digital PWM out in order to controll brightness
-  static const uint8_t LED_OUT_6 = 12;
-  static const uint8_t LED_OUT_5 = 11;
-  static const uint8_t LED_OUT_4 = 10;
-  static const uint8_t LED_OUT_3 = 9;
-  static const uint8_t LED_OUT_2 = 6;
-  static const uint8_t LED_OUT_1 = 5;
-  static uint8_t LED_MAP[6];
-};
-
-
-#endif  // LED_LEVEL_H
+#endif  // PIN_H

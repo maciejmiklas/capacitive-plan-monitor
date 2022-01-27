@@ -14,13 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#include "MoistureDisplay.h"
 
-#include <Arduino.h>
- 
-void util_setup();
-void util_cycle();
-uint32_t util_ms(); 
+MoistureDisplay::MoistureDisplay()
+  : servo() {
+}
 
-#endif // UTIL_H
+void MoistureDisplay::setup() {
+  servo.attach(SERVO_PIN);
+}
+
+void MoistureDisplay::reset() {
+}
+
+void MoistureDisplay::show(uint8_t level) {
+  uint8_t pos = 0;
+
+  log(F("POS %d"), pos);
+  servo.write(pos);
+  delay(2000);
+
+  pos = 90;
+  log(F("POS %d"), pos);
+  servo.write(90);
+  delay(2000);
+
+  /*
+    for (uint8_t pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    servo.write(pos);              
+    delay(20);                       
+  }
+  for (uint8_t pos = 180; pos >= 0; pos -= 1) { 
+    servo.write(pos);             
+    delay(20);                      
+  }*/
+}

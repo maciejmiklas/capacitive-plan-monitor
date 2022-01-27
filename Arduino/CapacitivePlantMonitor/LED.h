@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "CapacitiveSensor.h"
+#ifndef LED_H
+#define LED_H
 
-CapacitiveSensor::CapacitiveSensor() {
-}
+#include <Arduino.h>
+#include "ArdLog.h"
+#include "PIN.h"
 
-void CapacitiveSensor::setup() {
-  pinMode(PWM_OUT_PIN, OUTPUT);
-  TCCR2B = 0;
-  TCNT2 = 0;
-  TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
-  TCCR2B = _BV(WGM22);
-  OCR2A = PWM_PERIOD;
-  OCR2B = PWM_PERIOD / 2;
-}
+// Enum values are out PINs
+enum LED_PIN { PWR_ON = P_D5,
+               PWR_LOW = P_D6 };
+class LED {
+public:
+  LED();
 
-void CapacitiveSensor::start() {
-  TCCR2B |= _BV(CS20);
-}
+  void setup();
 
-void CapacitiveSensor::stop() {
-  TCCR2B &= ~_BV(CS20);
-  TCNT2 = 0;
-}
+  void on(LED_PIN led);
+  void off(LED_PIN led);
+
+private:
+  void write(uint8_t pin, uint8_t valA, uint8_t valD);
+  static const uint8_t BRIGHTNESS = 100;
+};
+
+
+#endif  // LED_H

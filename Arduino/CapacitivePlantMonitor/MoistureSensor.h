@@ -14,13 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef MOISTURE_SENSOR_H
+#define MOISTURE_SENSOR_H
 
 #include <Arduino.h>
- 
-void util_setup();
-void util_cycle();
-uint32_t util_ms(); 
+#include "PIN.h"
 
-#endif // UTIL_H
+/** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN */
+class MoistureSensor {
+public:
+  MoistureSensor();
+  void setup();
+  void start();
+  void stop();
+
+  /* returns last value read from moisture sensor. */
+  uint8_t read();
+
+
+private:
+  const static uint8_t READ_PIN = P_A0;
+  const static uint8_t PWM_OUT_PIN = P_D3;
+
+  // 10 = 1.45 MHz
+  // 9  = 1.60 MHz
+  // 8  = 1.78 MHz
+  // 7  = 2.00 MHz
+  const static uint8_t PWM_PERIOD = 9;
+};
+
+#endif  // MOISTURE_SENSOR_H

@@ -17,7 +17,7 @@
 #ifndef EVENTBUS_H_
 #define EVENTBUS_H_
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include "ArdLog.h"
 
 enum class BusEvent {

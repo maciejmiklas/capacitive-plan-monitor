@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,13 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#include "MoistureSensor.h"
 
-#include <Arduino.h>
- 
-void util_setup();
-void util_cycle();
-uint32_t util_ms(); 
+MoistureSensor::MoistureSensor() {
+}
 
-#endif // UTIL_H
+uint8_t MoistureSensor::read(){
+  return analogRead(READ_PIN);
+}
+void MoistureSensor::setup() {
+  pinMode(PWM_OUT_PIN, OUTPUT);
+  TCCR2B = 0;
+  TCNT2 = 0;
+  TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
+  TCCR2B = _BV(WGM22);
+  OCR2A = PWM_PERIOD;
+  OCR2B = PWM_PERIOD / 2;
+}
+
+void MoistureSensor::start() {
+  TCCR2B |= _BV(CS20);
+}
+
+void MoistureSensor::stop() {
+  TCCR2B &= ~_BV(CS20);
+  TCNT2 = 0;
+}
