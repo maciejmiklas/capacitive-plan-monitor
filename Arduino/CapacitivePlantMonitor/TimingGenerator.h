@@ -14,53 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "ArdLog.h"
-#include "Util.h"
-#include "MoistureSensor.h"
-#include "MoistureDisplay.h"
-#include "Arduino.h"
+#ifndef TIMING_GENERATOR_H
+#define TIMING_GENERATOR_H
+
+#include <Arduino.h>
 #include "EventBus.h"
-#include "LED.h"
 
-MoistureSensor* ms = new MoistureSensor();
-MoistureDisplay* md = new MoistureDisplay();
+class TimingGenerator {
+public:
+  TimingGenerator();
+  void setup();
 
-LED* led = new LED();
+private:
+  class CycleListener : public BusListener {
+    CycleListener();
+    virtual void onEvent(BusEvent event, va_list ap);
+    virtual uint8_t listenerId();
+  };
+  CycleListener* cycleListener;
+};
 
-void setup() {
-  util_setup();
-
-#if ENABLE_LOGGER
-  log_setup();
-#endif
-
-  ms->setup();
-  md->setup();
-  led->setup();
-}
-
-uint16_t loopIdex = 0;
-void loop() {
-  util_cycle();
-
-#if ENABLE_LOGGER
-  log_cycle();
-#endif
-
-  log(F("**** Loop %d ****"), loopIdex++);
-
-  eb_fire(BusEvent::CYCLE);
-
-  md->show(1);
-  /*
-  log(F("Moisture: %d"), ms->read());
-
-  led->on(LED_PIN::PWR_ON);
-  delay(1000);
-  led->off(LED_PIN::PWR_ON);
-  delay(1000);
-  led->on(LED_PIN::PWR_LOW);
-  delay(1000);
-  led->off(LED_PIN::PWR_LOW);
-  delay(1000);*/
-}
+#endif  // TIMING_GENERATOR_H

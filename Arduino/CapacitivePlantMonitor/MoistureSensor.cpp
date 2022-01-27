@@ -17,12 +17,14 @@
  */
 #include "MoistureSensor.h"
 
-MoistureSensor::MoistureSensor() {
+MoistureSensor::MoistureSensor()
+  : eventListener(this), moistureLevel(0), running(false) {
 }
 
-uint8_t MoistureSensor::read(){
+uint8_t MoistureSensor::read() {
   return analogRead(READ_PIN);
 }
+
 void MoistureSensor::setup() {
   pinMode(PWM_OUT_PIN, OUTPUT);
   TCCR2B = 0;
@@ -33,11 +35,31 @@ void MoistureSensor::setup() {
   OCR2B = PWM_PERIOD / 2;
 }
 
-void MoistureSensor::start() {
+void MoistureSensor::pwmStart() {
   TCCR2B |= _BV(CS20);
+  running = true;
 }
 
-void MoistureSensor::stop() {
+void MoistureSensor::pwmStop() {
   TCCR2B &= ~_BV(CS20);
   TCNT2 = 0;
+  running = false;
+}
+
+// ############ EventListener #############
+MoistureSensor::EventListener::EventListener(MoistureSensor* sensor)
+  : sensor(sensor) {
+}
+
+void MoistureSensor::EventListener::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::WAKE_UP) {
+    sensor->pwmStart();
+
+  } else if (event == BusEvent::GOTO_SLEEP) {
+    sensor->pwmStop();
+  }
+}
+
+uint8_t MoistureSensor::EventListener::listenerId() {
+  return LISTENER_MS;
 }

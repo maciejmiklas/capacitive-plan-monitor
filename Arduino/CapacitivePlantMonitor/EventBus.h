@@ -20,10 +20,25 @@
 #include <Arduino.h>
 #include "ArdLog.h"
 
+const uint8_t LISTENER_MS = 1;
+const uint8_t LISTENER_TG = 2;
+
 enum class BusEvent {
 
-  /** Parameters: none */
+  /** Sent on every iteration of a main loop. Parameters: none */
   CYCLE = 0,
+
+/** Sent every sesond */
+  CYCLE_1S =1,
+
+  /** Sent every 10 seconds */
+  CYCLE_10S =2,
+
+  /** Sent on wake up from hibernation. Parameters: none */
+  WAKE_UP = 20,
+
+  /** Sent right before goint to hibernate. Parameters: none */
+  GOTO_SLEEP = 21
 };
 
 

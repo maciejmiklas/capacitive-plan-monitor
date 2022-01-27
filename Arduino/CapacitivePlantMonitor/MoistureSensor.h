@@ -19,18 +19,16 @@
 
 #include <Arduino.h>
 #include "PIN.h"
+#include "EventBus.h"
 
 /** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN */
 class MoistureSensor {
 public:
   MoistureSensor();
   void setup();
-  void start();
-  void stop();
 
-  /* returns last value read from moisture sensor. */
+  /* returns last value read from moisture sensor from 0 to 255. */
   uint8_t read();
-
 
 private:
   const static uint8_t READ_PIN = P_A0;
@@ -41,6 +39,22 @@ private:
   // 8  = 1.78 MHz
   // 7  = 2.00 MHz
   const static uint8_t PWM_PERIOD = 9;
+
+  void pwmStart();
+  void pwmStop();
+  uint8_t moistureLevel;
+  boolean running;
+
+  class EventListener : public BusListener {
+  public:
+    EventListener(MoistureSensor* sensor);
+    virtual void onEvent(BusEvent event, va_list ap);
+    virtual uint8_t listenerId();
+
+  private:
+    MoistureSensor* sensor;
+  };
+  EventListener eventListener;
 };
 
 #endif  // MOISTURE_SENSOR_H
