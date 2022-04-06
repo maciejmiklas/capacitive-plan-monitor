@@ -17,36 +17,56 @@
 #include "MoistureDisplay.h"
 
 MoistureDisplay::MoistureDisplay()
-  : servo() {
+  : brightness(INITIAL_BRIGHTNESS) {
 }
 
-void MoistureDisplay::setup() {
-  servo.attach(SERVO_PIN);
+void MoistureDisplay::demo() {
+  for (uint8_t lev = MOISTURE_MIN; lev <= MOISTURE_MAX; lev++) {
+    show(lev);
+    delay(DEMO_LED_ON_MS);
+  }
+
+    for (uint8_t lev = MOISTURE_MAX; lev >= MOISTURE_MIN; lev--) {
+    show(lev);
+    delay(DEMO_LED_ON_MS);
+  }
 }
 
-void MoistureDisplay::reset() {
+void MoistureDisplay::init() {
+  pinMode(SR_LATCH, OUTPUT);
+  pinMode(SR_DATA, OUTPUT);
+  pinMode(SR_CLOCK, OUTPUT);
+
+  pinMode(SR_ENABLE, OUTPUT);
+}
+
+const char* MoistureDisplay::name() {
+  return NAME;
+}
+
+void MoistureDisplay::standby() {
+}
+
+void MoistureDisplay::wakeup() {
+}
+
+void MoistureDisplay::cycle() {
 }
 
 void MoistureDisplay::show(uint8_t level) {
-  uint8_t pos = 0;
-
-  log(F("POS %d"), pos);
-  servo.write(pos);
-  delay(2000);
-
-  pos = 90;
-  log(F("POS %d"), pos);
-  servo.write(90);
-  delay(2000);
-
-  /*
-    for (uint8_t pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    servo.write(pos);              
-    delay(20);                       
+#if LOG
+  log(F("%s SHOW %d"), NAME, level);
+#endif
+  uint8_t leds = 0;
+  for (uint8_t i = 0; i < level; i++) {
+    bitSet(leds, i);
   }
-  for (uint8_t pos = 180; pos >= 0; pos -= 1) { 
-    servo.write(pos);             
-    delay(20);                      
-  }*/
+
+  digitalWrite(SR_LATCH, LOW);
+  shiftOut(SR_DATA, SR_CLOCK, LSBFIRST, leds);
+  digitalWrite(SR_LATCH, HIGH);
+}
+
+void MoistureDisplay::setBrightness(Brightness brightness) {
+  analogWrite(SR_ENABLE, 255 - brightness);
 }

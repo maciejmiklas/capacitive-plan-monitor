@@ -19,48 +19,67 @@
 #include "MoistureSensor.h"
 #include "MoistureDisplay.h"
 #include "Arduino.h"
-#include "EventBus.h"
 #include "LED.h"
+#include "Buttons.h"
 
 MoistureSensor* ms = new MoistureSensor();
 MoistureDisplay* md = new MoistureDisplay();
-
 LED* led = new LED();
+Buttons* buttons = new Buttons(led, ms);
+
+const static uint8_t DEVICES = 4;
+Device* dev[DEVICES] = { led, ms, md, buttons};
 
 void setup() {
-  util_setup();
-
 #if ENABLE_LOGGER
   log_setup();
 #endif
 
-  ms->setup();
-  md->setup();
-  led->setup();
-}
-
-uint16_t loopIdex = 0;
-void loop() {
-  util_cycle();
-
-#if ENABLE_LOGGER
-  log_cycle();
+#if LOG
+  log(F("\n\n## SETUP ##"));
 #endif
 
-  log(F("**** Loop %d ****"), loopIdex++);
+  util_setup();
+  execAsc([](Device* d) {
+    d->init();
+    d->wakeup();
+    d->demo();
+  });
+}
 
-  eb_fire(BusEvent::CYCLE);
+void loop() {
+  execAsc([](Device* d) {
+    d->cycle();
+  });
+}
 
-  md->show(1);
-  /*
-  log(F("Moisture: %d"), ms->read());
+void standby() {
+#if LOG
+  log(F("\n\n## STAND-BY ##"));
+#endif
 
-  led->on(LED_PIN::PWR_ON);
-  delay(1000);
-  led->off(LED_PIN::PWR_ON);
-  delay(1000);
-  led->on(LED_PIN::PWR_LOW);
-  delay(1000);
-  led->off(LED_PIN::PWR_LOW);
-  delay(1000);*/
+  execDesc([](Device* d) {
+    d->standby();
+  });
+}
+
+void wakeup() {
+#if LOG
+  log(F("\n\n## WAKE-UP ##"));
+#endif
+  execAsc([](Device* d) {
+    d->wakeup();
+  });
+}
+
+void execAsc(void (*func)(Device*)) {
+  for (uint8_t i = 0; i < DEVICES; i++) {
+    func(dev[i]);
+  }
+}
+
+void execDesc(void (*func)(Device*)) {
+  for (uint8_t i = DEVICES; i > 0; i--) {
+    func(dev[i - 1]);
+  }
 }

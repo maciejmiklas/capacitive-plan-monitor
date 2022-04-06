@@ -17,25 +17,37 @@
 #ifndef LED_H
 #define LED_H
 
-#include <Arduino.h>
 #include "ArdLog.h"
-#include "PIN.h"
+#include "Config.h"
+#include "Device.h"
+#include "Brightness.h"
 
 // Enum values are out PINs
-enum LED_PIN { PWR_ON = P_D5,
-               PWR_LOW = P_D6 };
-class LED {
+enum LedPin { MESURE = PIN_LED_MESURE,
+               PWR_LOW = PIN_LED_PWR_LOW };
+
+class LED: public Device {
 public:
   LED();
 
-  void setup();
-
-  void on(LED_PIN led);
-  void off(LED_PIN led);
+  void on(LedPin led);
+  void off(LedPin led);
+  void setBrightness(Brightness brightness);
+   
+  // from Device.h
+  virtual void init();
+  virtual void demo();
+  virtual void standby();
+  virtual void wakeup();
+  virtual void cycle();
+  virtual const char* name();
 
 private:
-  void write(uint8_t pin, uint8_t valA, uint8_t valD);
-  static const uint8_t BRIGHTNESS = 100;
+  const static uint16_t DEMO_LED_ON_MS = 500;
+  const static uint8_t FIRST_PIN = LedPin::MESURE;
+  const static uint8_t LAST_PIN = LedPin::PWR_LOW;
+  static constexpr const char* NAME = "LE";
+  Brightness brightness;
 };
 
 

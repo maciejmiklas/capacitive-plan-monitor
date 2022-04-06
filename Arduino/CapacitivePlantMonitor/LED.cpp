@@ -16,28 +16,54 @@
  */
 #include "LED.h"
 
-LED::LED() {
+LED::LED():brightness(INITIAL_BRIGHTNESS) {
 }
 
-void LED::setup() {
-  for (uint8_t pin = LED_PIN::PWR_ON; pin <= LED_PIN::PWR_LOW; pin++) {
+void LED::init() {
+  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
     pinMode(pin, OUTPUT);
     analogWrite(pin, LOW);
   }
 }
 
-void LED::off(LED_PIN led) {
+void LED::demo() {
+  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
+    LedPin pinEn = static_cast<LedPin>(pin);
+    on(pinEn);
+    delay(DEMO_LED_ON_MS);
+    off(pinEn);
+  }
+}
+
+void LED::standby() {
+}
+
+void LED::wakeup() {
+}
+
+void LED::cycle() {
+}
+
+void LED::setBrightness(Brightness br){
+  brightness = br;
+}
+
+const char* LED::name() {
+  return NAME;
+}
+
+void LED::off(LedPin led) {
   uint8_t pin = led;
 #if TRACE
-  log(F("LED OFF %d"), pin);
+  log(F("%s OFF %d"), NAME, pin);
 #endif
   analogWrite(pin, LOW);
 }
 
-void LED::on(LED_PIN led) {
+void LED::on(LedPin led) {
   uint8_t pin = led;
 #if TRACE
-  log(F("LED ON %d"), pin);
+  log(F("%s ON %d"),NAME, pin);
 #endif
-  analogWrite(pin, BRIGHTNESS);
+  analogWrite(pin, brightness);
 }

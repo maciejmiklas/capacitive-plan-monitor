@@ -14,22 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "TimingGenerator.h"
+#ifndef BRIGHTNESS_H
+#define BRIGHTNESS_H
 
-TimingGenerator::TimingGenerator()
-  : cycleListener() {
-}
+enum Brightness { BR100 = 255,
+                  BR75 = 192,
+                  BR50 = 128,
+                  BR25 = 64,
+                  BR10 = 25 };
 
-void TimingGenerator::setup() {
-}
+const static Brightness INITIAL_BRIGHTNESS = BR100;
 
-// ########## CycleListener #########
-TimingGenerator::CycleListener::CycleListener() {
-}
-
-uint8_t TimingGenerator::CycleListener::listenerId() {
-  return LISTENER_TG;
-}
-
-void TimingGenerator::CycleListener::onEvent(BusEvent event, va_list ap) {
-}
+#endif  // BRIGHTNESS_H

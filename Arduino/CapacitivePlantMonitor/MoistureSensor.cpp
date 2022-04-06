@@ -1,4 +1,3 @@
-#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,15 +16,18 @@
  */
 #include "MoistureSensor.h"
 
-MoistureSensor::MoistureSensor()
-  : eventListener(this), moistureLevel(0), running(false) {
+MoistureSensor::MoistureSensor() {
 }
 
 uint8_t MoistureSensor::read() {
   return analogRead(READ_PIN);
 }
 
-void MoistureSensor::setup() {
+const char* MoistureSensor::name() {
+  return NAME;
+}
+
+void MoistureSensor::init() {
   pinMode(PWM_OUT_PIN, OUTPUT);
   TCCR2B = 0;
   TCNT2 = 0;
@@ -35,31 +37,17 @@ void MoistureSensor::setup() {
   OCR2B = PWM_PERIOD / 2;
 }
 
-void MoistureSensor::pwmStart() {
-  TCCR2B |= _BV(CS20);
-  running = true;
+void MoistureSensor::demo() {
 }
 
-void MoistureSensor::pwmStop() {
+void MoistureSensor::cycle() {
+}
+
+void MoistureSensor::wakeup() {
+  TCCR2B |= _BV(CS20);
+}
+
+void MoistureSensor::standby() {
   TCCR2B &= ~_BV(CS20);
   TCNT2 = 0;
-  running = false;
-}
-
-// ############ EventListener #############
-MoistureSensor::EventListener::EventListener(MoistureSensor* sensor)
-  : sensor(sensor) {
-}
-
-void MoistureSensor::EventListener::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::WAKE_UP) {
-    sensor->pwmStart();
-
-  } else if (event == BusEvent::GOTO_SLEEP) {
-    sensor->pwmStop();
-  }
-}
-
-uint8_t MoistureSensor::EventListener::listenerId() {
-  return LISTENER_MS;
 }

@@ -14,45 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef EVENTBUS_H_
-#define EVENTBUS_H_
+#ifndef BUTTONS_H
+#define BUTTONS_H
 
-#include <Arduino.h>
-#include "ArdLog.h"
+#include "LED.h"
+#include "MoistureSensor.h"
 
-const uint8_t LISTENER_MS = 1;
-const uint8_t LISTENER_TG = 2;
-
-enum class BusEvent {
-
-  /** Sent on every iteration of a main loop. Parameters: none */
-  CYCLE = 0,
-
-/** Sent every sesond */
-  CYCLE_1S =1,
-
-  /** Sent every 10 seconds */
-  CYCLE_10S =2,
-
-  /** Sent on wake up from hibernation. Parameters: none */
-  WAKE_UP = 20,
-
-  /** Sent right before goint to hibernate. Parameters: none */
-  GOTO_SLEEP = 21
-};
-
-
-class BusListener {
+class Buttons: public Device {
 public:
-  virtual void onEvent(BusEvent event, va_list ap) = 0;
-  virtual uint8_t listenerId() = 0;
+  Buttons(LED* led,MoistureSensor* moistureSensor);
 
-protected:
-  virtual ~BusListener();
-  BusListener();
+  // from Device.h
+  virtual void init();
+  virtual void demo();
+  virtual void standby();
+  virtual void wakeup();
+  virtual void cycle();
+  virtual const char* name();
+
+private:
+  static constexpr const char* NAME = "BT";
+  const static uint8_t BNT_BRIGHTNESS = PIN_BNT_BRIGHTNESS;
+
+  LED* led;
+  MoistureSensor* moistureSensor;
+  Brightness brightness;
+
+  void setupButton(uint8_t pin);
+  void changeBrightness();
 };
 
-void eb_register(BusListener* listener);
-void eb_fire(BusEvent event, ...);
 
-#endif /* EVENTBUS_H_ */
+#endif  // BUTTONS_H

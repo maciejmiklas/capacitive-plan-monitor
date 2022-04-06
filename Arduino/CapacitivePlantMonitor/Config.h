@@ -19,11 +19,32 @@
 
 #include <Arduino.h>
 
-const uint8_t P_D3 = 3;
-const uint8_t P_D5 = 5;
-const uint8_t P_D6 = 6;
-const uint8_t P_D9 = 9;
+// ######## BUTTONS ######## 
+const static uint8_t PIN_BNT_BRIGHTNESS = 4;
 
-const uint8_t P_A0 = A0;
+// ######## MOISTURE ######## 
+const static uint8_t PIN_MOISTURE_PWM_OUT = 3;
+const static uint8_t PIN_MOISTURE_READ = A0;
+
+// ######## LED ######## 
+const static uint8_t PIN_LED_MESURE = 5;
+const static uint8_t PIN_LED_PWR_LOW = 6;
+
+// ######## MD ######## 
+
+/** PIN 11 (OE) on 74HC595 */
+const static uint8_t PIN_MD_ENABLE = 10;
+
+/** PIN 11 (SRCLK) on 74HC595 */
+const static uint8_t PIN_MD_CLOCK = 7;
+
+/** PIN 12 (RCLK) on 74HC595 */
+const static uint8_t PIN_MD_LATCH = 8;
+
+/** PIN 14 on 74HC595 */
+const static uint8_t PIN_MD_DATA = 9;
+
+// ######## PWR ######## 
+const static uint8_t PIN_PWR_READ = A1;
 
 #endif  // PIN_H

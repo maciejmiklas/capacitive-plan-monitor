@@ -14,24 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef TIMING_GENERATOR_H
-#define TIMING_GENERATOR_H
+#ifndef DEVICE_H_
+#define DEVICE_H_
 
 #include <Arduino.h>
-#include "EventBus.h"
 
-class TimingGenerator {
+class Device {
 public:
-  TimingGenerator();
-  void setup();
+  /** Called only once after hard reset */
+  virtual void init() = 0;
 
-private:
-  class CycleListener : public BusListener {
-    CycleListener();
-    virtual void onEvent(BusEvent event, va_list ap);
-    virtual uint8_t listenerId();
-  };
-  CycleListener* cycleListener;
+  /** Plays demo. */
+  virtual void demo() = 0;
+
+  /** Device will go to standby */
+  virtual void standby() = 0;
+
+  /** device commes from standby and gets ready to run */
+  virtual void wakeup() = 0;
+
+  virtual void cycle() = 0;
+
+  virtual const char* name() = 0;
 };
 
-#endif  // TIMING_GENERATOR_H
+#endif /* DEVICE_H_ */

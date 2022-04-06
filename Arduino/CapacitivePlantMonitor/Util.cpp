@@ -19,13 +19,13 @@
 static uint32_t cycleMs;
 
 void util_setup() {
-	util_cycle();
+  util_cycle();
 }
 
 void util_cycle() {
-	cycleMs = millis();
+  cycleMs = millis();
 }
 
 uint32_t util_ms() {
-	return cycleMs;
+  return cycleMs;
 }

@@ -18,9 +18,9 @@
 #define UTIL_H
 
 #include <Arduino.h>
- 
+
 void util_setup();
 void util_cycle();
-uint32_t util_ms(); 
+uint32_t util_ms();
 
-#endif // UTIL_H
+#endif  // UTIL_H
