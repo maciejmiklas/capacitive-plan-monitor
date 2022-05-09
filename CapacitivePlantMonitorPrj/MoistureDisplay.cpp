@@ -16,28 +16,28 @@
  */
 #include "MoistureDisplay.h"
 
-MoistureDisplay::MoistureDisplay()
-  : brightness(INITIAL_BRIGHTNESS) {
+MoistureDisplay::MoistureDisplay() {
 }
 
 void MoistureDisplay::demo() {
-  for (uint8_t lev = MOISTURE_MIN; lev <= MOISTURE_MAX; lev++) {
+  for (uint16_t lev = MOISTURE_MIN; lev <= MOISTURE_MAX; lev++) {
     show(lev);
-    delay(DEMO_LED_ON_MS);
+    delay(MD_DEMO_SPEED_MS);
   }
 
-    for (uint8_t lev = MOISTURE_MAX; lev >= MOISTURE_MIN; lev--) {
+  for (uint16_t lev = MOISTURE_MAX; lev >= MOISTURE_MIN; lev--) {
     show(lev);
-    delay(DEMO_LED_ON_MS);
+    delay(MD_DEMO_SPEED_MS);
   }
 }
 
 void MoistureDisplay::init() {
-  pinMode(SR_LATCH, OUTPUT);
-  pinMode(SR_DATA, OUTPUT);
-  pinMode(SR_CLOCK, OUTPUT);
+  pinMode(MD_PIN_LATCH, OUTPUT);
+  pinMode(MD_PIN_DATA, OUTPUT);
+  pinMode(MD_PIN_CLOCK, OUTPUT);
+  pinMode(MD_PIN_ENABLE, OUTPUT);
 
-  pinMode(SR_ENABLE, OUTPUT);
+  changeBrightness(BM_BRIGHTNESS_INITIAL);
 }
 
 const char* MoistureDisplay::name() {
@@ -54,7 +54,7 @@ void MoistureDisplay::cycle() {
 }
 
 void MoistureDisplay::show(uint8_t level) {
-#if LOG
+#if LOG && LOG_MD
   log(F("%s SHOW %d"), NAME, level);
 #endif
   uint8_t leds = 0;
@@ -62,11 +62,11 @@ void MoistureDisplay::show(uint8_t level) {
     bitSet(leds, i);
   }
 
-  digitalWrite(SR_LATCH, LOW);
-  shiftOut(SR_DATA, SR_CLOCK, LSBFIRST, leds);
-  digitalWrite(SR_LATCH, HIGH);
+  digitalWrite(MD_PIN_LATCH, LOW);
+  shiftOut(MD_PIN_DATA, MD_PIN_CLOCK, LSBFIRST, leds);
+  digitalWrite(MD_PIN_LATCH, HIGH);
 }
 
-void MoistureDisplay::setBrightness(Brightness brightness) {
-  analogWrite(SR_ENABLE, 255 - brightness);
+void MoistureDisplay::changeBrightness(uint8_t level) {
+  analogWrite(MD_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
 }

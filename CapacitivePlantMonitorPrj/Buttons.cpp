@@ -17,7 +17,7 @@
 
 #include "Buttons.h"
 
-const static uint8_t PRESS_MS = 100;
+const static uint8_t PRESS_MS = BT_PRESS_MS;
 static volatile uint8_t brightnessPressed = false;
 static volatile uint32_t pressMs = 0;
 
@@ -36,13 +36,13 @@ static void onBrightnessPressed() {
   }
 }
 
-Buttons::Buttons(LED* led, MoistureSensor* moistureSensor)
-  : led(led), moistureSensor(moistureSensor), brightness(INITIAL_BRIGHTNESS) {
+Buttons::Buttons(BrightnessManager* ledManager)
+  : ledManager(ledManager) {
 }
 
 void Buttons::init() {
-  setupButton(BNT_BRIGHTNESS);
-  attachInterrupt(digitalPinToInterrupt(BNT_BRIGHTNESS), onBrightnessPressed, FALLING);
+  setupButton(BT_PIN_BRIGHTNESS);
+  attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
 }
 
 void Buttons::demo() {
@@ -55,14 +55,10 @@ void Buttons::wakeup() {
 }
 
 void Buttons::cycle() {
-  if(brightnessPressed){
-
+  if (brightnessPressed) {
+    ledManager->nextLevel();
+    brightnessPressed = false;
   }
-  brightnessPressed = false;
-}
-
-void Buttons::changeBrightness(){
-
 }
 
 const char* Buttons::name() {

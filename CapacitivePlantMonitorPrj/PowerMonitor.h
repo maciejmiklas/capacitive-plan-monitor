@@ -14,40 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "MoistureSensor.h"
+#ifndef POWER_MONITOR_H
+#define POWER_MONITOR_H
 
-MoistureSensor::MoistureSensor() {
-}
+#include "ArdLog.h"
+#include "Config.h"
+#include "Device.h"
+#include "BrightnessListener.h"
+#include "LED.h"
+#include "Reader.h"
 
-uint8_t MoistureSensor::read() {
-  return analogRead(READ_PIN);
-}
+class PowerMonitorReader: public ReaderSupplier{
+public:
+  PowerMonitorReader();
+  uint16_t read();
+  const char* name();
 
-const char* MoistureSensor::name() {
-  return NAME;
-}
+private:
+  static constexpr const char* NAME = "PM";   
+};
 
-void MoistureSensor::init() {
-  pinMode(PWM_OUT_PIN, OUTPUT);
-  TCCR2B = 0;
-  TCNT2 = 0;
-  TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
-  TCCR2B = _BV(WGM22);
-  OCR2A = PWM_PERIOD;
-  OCR2B = PWM_PERIOD / 2;
-}
+class PowerMonitor: public Device {
+public:
+  PowerMonitor(LED* led);
 
-void MoistureSensor::demo() {
-}
+  float readVoltage();
 
-void MoistureSensor::cycle() {
-}
+  // from Device.h
+  void init();
+  void demo();
+  void standby();
+  void wakeup();
+  void cycle();
+  const char* name();
+private:
+  LED* led;
+  Reader* reader;
+  static constexpr const char* NAME = "PM";  
+};
 
-void MoistureSensor::wakeup() {
-  TCCR2B |= _BV(CS20);
-}
-
-void MoistureSensor::standby() {
-  TCCR2B &= ~_BV(CS20);
-  TCNT2 = 0;
-}
+#endif  // POWER_MONITOR_H

@@ -14,41 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LED_H
-#define LED_H
+#include "PowerMonitor.h"
 
-#include "ArdLog.h"
-#include "Config.h"
-#include "Device.h"
-#include "Brightness.h"
+PowerMonitor::PowerMonitor(LED* led)
+  : led(led) {
+  reader = new Reader(new PowerMonitorReader());
+}
 
-// Enum values are out PINs
-enum LedPin { MESURE = PIN_LED_MESURE,
-               PWR_LOW = PIN_LED_PWR_LOW };
+float PowerMonitor::readVoltage() {
+  return (float)reader->read() * PM_SYSTEM_VOLTS / 1023.0;
+}
 
-class LED: public Device {
-public:
-  LED();
+void PowerMonitor::init() {}
+void PowerMonitor::demo() {}
+void PowerMonitor::standby() {}
+void PowerMonitor::wakeup() {}
 
-  void on(LedPin led);
-  void off(LedPin led);
-  void setBrightness(Brightness brightness);
-   
-  // from Device.h
-  virtual void init();
-  virtual void demo();
-  virtual void standby();
-  virtual void wakeup();
-  virtual void cycle();
-  virtual const char* name();
+void PowerMonitor::cycle() {
+  if (readVoltage() <= PM_PWR_LOW) {
+    led->on(LedPin::PWR_LOW);
+  } else {
+    led->off(LedPin::PWR_LOW);
+  }
+}
 
-private:
-  const static uint16_t DEMO_LED_ON_MS = 500;
-  const static uint8_t FIRST_PIN = LedPin::MESURE;
-  const static uint8_t LAST_PIN = LedPin::PWR_LOW;
-  static constexpr const char* NAME = "LE";
-  Brightness brightness;
-};
+const char* PowerMonitor::name() {
+  return NAME;
+}
 
+// ############## PowerMonitorReader ################
+PowerMonitorReader::PowerMonitorReader() {
+}
 
-#endif  // LED_H
+uint16_t PowerMonitorReader::read() {
+  return analogRead(PM_PIN_READ);
+}
+
+const char* PowerMonitorReader::name() {
+  return NAME;
+}

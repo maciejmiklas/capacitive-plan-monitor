@@ -14,13 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#include "Storage.h"
 
-#include <Arduino.h>
+Storage::Storage() {
+}
 
-void util_setup();
-void util_cycle();
-uint32_t util_ms();
+void Storage::store(StorageIdx idx, uint8_t val) {
+#if LOG && LOG_ST
+  log(F("%s WR %d=%d"), NAME, idx, val);
+#endif
+  EEPROM.write(idx, val);
+}
 
-#endif  // UTIL_H
+uint8_t Storage::read(StorageIdx idx) {
+  uint8_t val = EEPROM.read(idx);
+#if LOG && LOG_ST
+  log(F("%s RD %d=%d"), NAME, idx, val);
+#endif  
+}

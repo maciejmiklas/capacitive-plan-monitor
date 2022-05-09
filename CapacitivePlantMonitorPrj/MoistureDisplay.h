@@ -20,10 +20,10 @@
 #include "Config.h"
 #include "ArdLog.h"
 #include "Device.h"
-#include "Brightness.h"
+#include "BrightnessListener.h"
 
 /** Moisture level LED display base on 74HC595 */
-class MoistureDisplay : public Device{
+class MoistureDisplay : public Device, public BrightnessListener {
 public:
   /** Min level inclusive. */
   const static uint8_t MOISTURE_MIN = 1;
@@ -35,34 +35,21 @@ public:
 
   /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
   void show(uint8_t level);
-  
-  void setBrightness(Brightness brightness);
+
+  // from BrightnessListener.h
+  void changeBrightness(uint8_t level);
 
   // from Device.h
-  virtual void init();
-  virtual void demo();
-  virtual void standby();
-  virtual void wakeup();
-  virtual void cycle();
-  virtual const char* name();
+  void init();
+  void demo();
+  void standby();
+  void wakeup();
+  void cycle();
+  const char* name();
 
 private:
-  /** SRCLK (Shift Register Clock) - PIN 11 on 74HC595 */
-  const uint8_t SR_CLOCK = PIN_MD_CLOCK;
-
-  /** RCLK (Register Clock / Latch) - PIN 12 on 74HC595 */
-  const uint8_t SR_LATCH = PIN_MD_LATCH;
-
-  /** SER (Serial Input) - PIN 14 on 74HC595 */
-  const uint8_t SR_DATA = PIN_MD_DATA;
-
-  /** OE (Output Enable) - PIN 13 on 74HC595 */
-  const uint8_t SR_ENABLE = PIN_MD_ENABLE;
-
-  const static uint16_t DEMO_LED_ON_MS = 100;
 
   static constexpr const char* NAME = "MD";
-  uint8_t brightness;
 };
 
 #endif  // MOISTURE_DISPLAY_H

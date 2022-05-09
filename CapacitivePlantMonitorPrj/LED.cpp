@@ -14,35 +14,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef BUTTONS_H
-#define BUTTONS_H
-
 #include "LED.h"
-#include "MoistureSensor.h"
 
-class Buttons: public Device {
-public:
-  Buttons(LED* led,MoistureSensor* moistureSensor);
+LED::LED(){
+}
 
-  // from Device.h
-  virtual void init();
-  virtual void demo();
-  virtual void standby();
-  virtual void wakeup();
-  virtual void cycle();
-  virtual const char* name();
+void LED::init() {
+  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
+    pinMode(pin, OUTPUT);
+    analogWrite(pin, LOW);
+  }
+}
 
-private:
-  static constexpr const char* NAME = "BT";
-  const static uint8_t BNT_BRIGHTNESS = PIN_BNT_BRIGHTNESS;
+void LED::demo() {
+  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
+    LedPin pinEn = static_cast<LedPin>(pin);
+    on(pinEn);
+    delay(LE_DEMO_SPEED_MS);
+    off(pinEn);
+  }
+}
 
-  LED* led;
-  MoistureSensor* moistureSensor;
-  Brightness brightness;
+void LED::standby() {
+}
 
-  void setupButton(uint8_t pin);
-  void changeBrightness();
-};
+void LED::wakeup() {
+}
 
+void LED::cycle() {
+}
 
-#endif  // BUTTONS_H
+void LED::changeBrightness(uint8_t level){
+}
+
+const char* LED::name() {
+  return NAME;
+}
+
+void LED::off(LedPin led) {
+  uint8_t pin = led;
+#if LOG && LOG_LE
+  log(F("%s OFF %d"), NAME, pin);
+#endif
+  analogWrite(pin, LOW);
+}
+
+void LED::on(LedPin led) {
+  uint8_t pin = led;
+#if LOG && LOG_LE
+  log(F("%s ON %d %d"), NAME, pin,currentBrightness());
+#endif
+  analogWrite(pin, currentBrightness());
+}

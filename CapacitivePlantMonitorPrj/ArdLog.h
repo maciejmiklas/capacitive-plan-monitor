@@ -21,13 +21,31 @@
 #include <stdarg.h>
 
 /** Enables logger so that it can log over serial port. */
-#define ENABLE_LOGGER true
-
-/** Enables log on Debug level. */
 #define LOG true
 
-/** Enables log on Trace level. */
-#define TRACE true
+/** Enable logger for: BrightnessListener */
+#define LOG_BL true
+
+/** Enable logger for: BrightnessManager */
+#define LOG_BM true
+
+/** Enable logger for: LED */
+#define LOG_LE true
+
+/** Enable logger for: MoistureDisplay */
+#define LOG_MD true
+
+/** Enable logger for: MoistureSensor */
+#define LOG_MS true
+
+/** Enable logger for: PowerMonitor */
+#define LOG_PM true
+
+/** Enable logger for: Storage */
+#define LOG_ST true
+
+/** Enable logger for: Reader */
+#define LOG_RE true
 
 void log_setup();
 void log_cycle();

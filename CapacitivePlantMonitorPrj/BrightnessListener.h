@@ -14,37 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PIN_H
-#define PIN_H
+#ifndef BRIGHTNESS_LISTENER_H
+#define BRIGHTNESS_LISTENER_H
 
-#include <Arduino.h>
+#include "Config.h"
+#include "ArdLog.h"
 
-// ######## BUTTONS ######## 
-const static uint8_t PIN_BNT_BRIGHTNESS = 4;
+class BrightnessListener {
+public:
+  BrightnessListener();
+  virtual void changeBrightness(uint8_t level) = 0;
+  void setBrightnessLevel(uint8_t level);
 
-// ######## MOISTURE ######## 
-const static uint8_t PIN_MOISTURE_PWM_OUT = 3;
-const static uint8_t PIN_MOISTURE_READ = A0;
+protected:
+  uint8_t currentBrightness();
 
-// ######## LED ######## 
-const static uint8_t PIN_LED_MESURE = 5;
-const static uint8_t PIN_LED_PWR_LOW = 6;
+private:
+  uint8_t brightness;
+  static constexpr const char* NAME = "BL";
+};
 
-// ######## MD ######## 
-
-/** PIN 11 (OE) on 74HC595 */
-const static uint8_t PIN_MD_ENABLE = 10;
-
-/** PIN 11 (SRCLK) on 74HC595 */
-const static uint8_t PIN_MD_CLOCK = 7;
-
-/** PIN 12 (RCLK) on 74HC595 */
-const static uint8_t PIN_MD_LATCH = 8;
-
-/** PIN 14 on 74HC595 */
-const static uint8_t PIN_MD_DATA = 9;
-
-// ######## PWR ######## 
-const static uint8_t PIN_PWR_READ = A1;
-
-#endif  // PIN_H
+#endif  // BRIGHTNESS_LISTENER_H

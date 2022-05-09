@@ -14,56 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LED.h"
+#include "Reader.h"
 
-LED::LED():brightness(INITIAL_BRIGHTNESS) {
+Reader::Reader(ReaderSupplier* supplier)
+  : supplier(supplier) {
 }
 
-void LED::init() {
-  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
-    pinMode(pin, OUTPUT);
-    analogWrite(pin, LOW);
+uint16_t Reader::read() {
+  uint16_t probes[RE_PROBES];
+  for (uint8_t i; i < RE_PROBES; i++) {
+    probes[i] = supplier->read();
   }
-}
+  sort_16(probes, RE_PROBES);
+  uint16_t val = probes[RE_PROBE_AT];
 
-void LED::demo() {
-  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
-    LedPin pinEn = static_cast<LedPin>(pin);
-    on(pinEn);
-    delay(DEMO_LED_ON_MS);
-    off(pinEn);
-  }
-}
+  log(F(">> %d %d %d %d => %d"), probes[0], probes[1], probes[2], probes[3], val);
 
-void LED::standby() {
-}
-
-void LED::wakeup() {
-}
-
-void LED::cycle() {
-}
-
-void LED::setBrightness(Brightness br){
-  brightness = br;
-}
-
-const char* LED::name() {
-  return NAME;
-}
-
-void LED::off(LedPin led) {
-  uint8_t pin = led;
-#if TRACE
-  log(F("%s OFF %d"), NAME, pin);
+#if LOG && LOG_RE
+  log(F("%s RV %s=%d"), NAME, supplier->name(), val);
 #endif
-  analogWrite(pin, LOW);
-}
-
-void LED::on(LedPin led) {
-  uint8_t pin = led;
-#if TRACE
-  log(F("%s ON %d"),NAME, pin);
-#endif
-  analogWrite(pin, brightness);
+  return val;
 }

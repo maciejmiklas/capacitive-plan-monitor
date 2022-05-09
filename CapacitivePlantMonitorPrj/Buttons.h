@@ -14,39 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MOISTURE_SENSOR_H
-#define MOISTURE_SENSOR_H
+#ifndef BUTTONS_H
+#define BUTTONS_H
 
+#include "BrightnessManager.h"
+#include "ArdLog.h"
 #include "Device.h"
-#include "Config.h"
 
-/** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN */
-class MoistureSensor : public Device {
+class Buttons: public Device {
 public:
-  MoistureSensor();
-
-  /* returns last value read from moisture sensor from 0 to 255. */
-  uint8_t read();
+  Buttons(BrightnessManager* ledManager);
 
   // from Device.h
-  virtual void init();
-  virtual void demo();
-  virtual void standby();
-  virtual void wakeup();
-  virtual void cycle();
-  virtual const char* name();
+  void init();
+  void demo();
+  void standby();
+  void wakeup();
+  void cycle();
+  const char* name();
 
 private:
-  const static uint8_t READ_PIN = PIN_MOISTURE_READ;
-  const static uint8_t PWM_OUT_PIN = PIN_MOISTURE_PWM_OUT;
+  static constexpr const char* NAME = "BT";
 
-  // 10 = 1.45 MHz
-  // 9  = 1.60 MHz
-  // 8  = 1.78 MHz
-  // 7  = 2.00 MHz
-  const static uint8_t PWM_PERIOD = 9;
+  BrightnessManager* ledManager;
 
-  static constexpr const char* NAME = "MS";
+  void setupButton(uint8_t pin);
+  void changeBrightness();
 };
 
-#endif  // MOISTURE_SENSOR_H
+#endif  // BUTTONS_H

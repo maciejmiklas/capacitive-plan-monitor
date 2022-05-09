@@ -14,15 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef BRIGHTNESS_H
-#define BRIGHTNESS_H
+#include "MoistureSensor.h"
 
-enum Brightness { BR100 = 255,
-                  BR75 = 192,
-                  BR50 = 128,
-                  BR25 = 64,
-                  BR10 = 25 };
+MoistureSensor::MoistureSensor() {
+}
 
-const static Brightness INITIAL_BRIGHTNESS = BR100;
+uint8_t MoistureSensor::read() {
+  return analogRead(MS_PIN_READ);
+}
 
-#endif  // BRIGHTNESS_H
+const char* MoistureSensor::name() {
+  return NAME;
+}
+
+void MoistureSensor::init() {
+  pinMode(MS_PIN_PWM_OUT, OUTPUT);
+  TCCR2B = 0;
+  TCNT2 = 0;
+  TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
+  TCCR2B = _BV(WGM22);
+  OCR2A = PWM_PERIOD;
+  OCR2B = PWM_PERIOD / 2;
+}
+
+void MoistureSensor::demo() {
+}
+
+void MoistureSensor::cycle() {
+}
+
+void MoistureSensor::wakeup() {
+  TCCR2B |= _BV(CS20);
+}
+
+void MoistureSensor::standby() {
+  TCCR2B &= ~_BV(CS20);
+  TCNT2 = 0;
+}
