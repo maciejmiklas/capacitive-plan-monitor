@@ -23,6 +23,9 @@
 /** Enables logger so that it can log over serial port. */
 #define LOG true
 
+/** Enable logger for: CapacitivePlantMonitor */
+#define LOG_CPM false
+
 /** Enable logger for: BrightnessListener */
 #define LOG_BL true
 
@@ -30,22 +33,25 @@
 #define LOG_BM true
 
 /** Enable logger for: LED */
-#define LOG_LE true
+#define LOG_LE false
 
 /** Enable logger for: MoistureDisplay */
 #define LOG_MD true
 
 /** Enable logger for: MoistureSensor */
-#define LOG_MS true
+#define LOG_MS false
+
+/** Enable logger for: MoistureDriver */
+#define LOG_MR false
 
 /** Enable logger for: PowerMonitor */
-#define LOG_PM true
+#define LOG_PM false
 
 /** Enable logger for: Storage */
-#define LOG_ST true
+#define LOG_ST false
 
 /** Enable logger for: Reader */
-#define LOG_RE true
+#define LOG_RE false
 
 void log_setup();
 void log_cycle();

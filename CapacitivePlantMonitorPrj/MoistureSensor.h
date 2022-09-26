@@ -19,18 +19,35 @@
 
 #include "Device.h"
 #include "Config.h"
+#include "Reader.h"
+
+class MoistureReader: public ReaderSupplier {
+public:
+  MoistureReader();
+  uint16_t read();
+  const char* name();
+
+private:
+  static constexpr const char* NAME = "PM";
+};
 
 /** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN, reads and maps moisture value. */
 class MoistureSensor: public Device {
 public:
+
+  /** Min level inclusive. */
+  const static uint8_t READ_MIN = 0;
+
+  /** Max level inclusive. */
+  const static uint16_t READ_MAX = 1023;
+  
   MoistureSensor();
 
-  /* returns last value read from moisture sensor from 0 to 255. */
-  uint8_t read();
+  /* returns last value read from moisture sensor from 0 to 1023. */
+  uint16_t read();
 
   // from Device.h
   void init();
-  void demo();
   void standby();
   void wakeup();
   void cycle();
@@ -42,9 +59,10 @@ private:
   // 9  = 1.60 MHz
   // 8  = 1.78 MHz
   // 7  = 2.00 MHz
-  const static uint8_t PWM_PERIOD = 9;
+  const static uint8_t PWM_PERIOD =30;
 
   static constexpr const char* NAME = "MS";
+  MoistureReader* reader;
 };
 
 #endif  // MOISTURE_SENSOR_H

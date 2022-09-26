@@ -16,7 +16,7 @@
  */
 #include "LED.h"
 
-LED::LED(){
+LED::LED() {
 }
 
 void LED::init() {
@@ -44,7 +44,8 @@ void LED::wakeup() {
 void LED::cycle() {
 }
 
-void LED::changeBrightness(uint8_t level){
+void LED::changeBrightness(uint8_t level) {
+  BrightnessListener::changeBrightness(level);
 }
 
 const char* LED::name() {
@@ -62,7 +63,7 @@ void LED::off(LedPin led) {
 void LED::on(LedPin led) {
   uint8_t pin = led;
 #if LOG && LOG_LE
-  log(F("%s ON %d %d"), NAME, pin,currentBrightness());
+  log(F("%s ON %d %d"), NAME, pin, currentBrightness());
 #endif
   analogWrite(pin, currentBrightness());
 }

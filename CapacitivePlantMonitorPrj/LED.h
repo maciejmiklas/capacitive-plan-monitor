@@ -20,13 +20,14 @@
 #include "ArdLog.h"
 #include "Config.h"
 #include "Device.h"
+#include "Demo.h"
 #include "BrightnessListener.h"
 
 // Enum values are out PINs
-enum LedPin { MESURE = LE_PIN_MESURE,
+enum LedPin { SENSOR_ON = LE_PIN_SENSOR_ON,
               PWR_LOW = LE_PIN_PWR_LOW };
 
-class LED: public Device, public BrightnessListener {
+class LED: public Device, public BrightnessListener, public Demo {
 public:
   LED();
 
@@ -38,14 +39,16 @@ public:
 
   // from Device.h
   void init();
-  void demo();
   void standby();
   void wakeup();
   void cycle();
   const char* name();
 
+  // from Demo.h
+  void demo();
+
 private:
-  const static uint8_t FIRST_PIN = LedPin::MESURE;
+  const static uint8_t FIRST_PIN = LedPin::SENSOR_ON;
   const static uint8_t LAST_PIN = LedPin::PWR_LOW;
   static constexpr const char* NAME = "LE";
 };

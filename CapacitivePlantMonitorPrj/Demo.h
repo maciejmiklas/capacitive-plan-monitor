@@ -14,23 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef DEMO_H_
+#define DEMO_H_
 
 #include <Arduino.h>
 
-void util_setup();
-void util_cycle();
-uint32_t util_ms();
+class Demo {
 
-inline int comp_16(const void *cmp1, const void *cmp2) {
-  uint16_t a = *((uint16_t *)cmp1);
-  uint16_t b = *((uint16_t *)cmp2);
-  return a - b;
-}
+public:
+  /** Plays demo. */
+  virtual void demo() = 0;
 
-inline void sort_16(uint16_t arr[], uint8_t size) {
-  qsort(arr, size, sizeof(arr[0]), comp_16);
-}
-
-#endif  // UTIL_H
+};
+#endif /* DEMO_H_ */

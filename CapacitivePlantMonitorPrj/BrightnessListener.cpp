@@ -25,9 +25,9 @@ uint8_t BrightnessListener::currentBrightness() {
   return brightness;
 }
 
-void BrightnessListener::setBrightnessLevel(uint8_t level) {
+void BrightnessListener::changeBrightness(uint8_t level) {
   brightness = level;
 #if LOG && LOG_BL
-  log(F("%s %d %d"), NAME, currentBrightness(), level);
+  log(F("%s CHANGE: %d"), NAME, level);
 #endif
 }

@@ -14,23 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
+#include "MoistureDriver.h"
 
-#include <Arduino.h>
 
-void util_setup();
-void util_cycle();
-uint32_t util_ms();
-
-inline int comp_16(const void *cmp1, const void *cmp2) {
-  uint16_t a = *((uint16_t *)cmp1);
-  uint16_t b = *((uint16_t *)cmp2);
-  return a - b;
+MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display):sensor(sensor), display(display) {
 }
 
-inline void sort_16(uint16_t arr[], uint8_t size) {
-  qsort(arr, size, sizeof(arr[0]), comp_16);
+void MoistureDriver::cycle() {
 }
 
-#endif  // UTIL_H
+void MoistureDriver::init() {
+}
+
+const char* MoistureDriver::name() {
+  return NAME;
+}

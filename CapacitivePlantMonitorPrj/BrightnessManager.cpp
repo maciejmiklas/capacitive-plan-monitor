@@ -36,7 +36,6 @@ void BrightnessManager::nextLevel() {
 #endif
 
   for (uint8_t i = 0; i < registeredCount; i++) {
-    listeners[i]->setBrightnessLevel(brightness);
     listeners[i]->changeBrightness(brightness);
   }
 }

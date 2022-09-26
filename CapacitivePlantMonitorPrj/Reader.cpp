@@ -22,13 +22,12 @@ Reader::Reader(ReaderSupplier* supplier)
 
 uint16_t Reader::read() {
   uint16_t probes[RE_PROBES];
-  for (uint8_t i; i < RE_PROBES; i++) {
+  for (uint8_t i = 0; i < RE_PROBES; i++) {
     probes[i] = supplier->read();
   }
   sort_16(probes, RE_PROBES);
   uint16_t val = probes[RE_PROBE_AT];
 
-  log(F(">> %d %d %d %d => %d"), probes[0], probes[1], probes[2], probes[3], val);
 
 #if LOG && LOG_RE
   log(F("%s RV %s=%d"), NAME, supplier->name(), val);

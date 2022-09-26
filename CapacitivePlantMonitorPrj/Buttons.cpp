@@ -36,16 +36,13 @@ static void onBrightnessPressed() {
   }
 }
 
-Buttons::Buttons(BrightnessManager* ledManager)
-  : ledManager(ledManager) {
+Buttons::Buttons(BrightnessManager* brightnessManager)
+  : brightnessManager(brightnessManager) {
 }
 
 void Buttons::init() {
   setupButton(BT_PIN_BRIGHTNESS);
   attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
-}
-
-void Buttons::demo() {
 }
 
 void Buttons::standby() {
@@ -56,7 +53,7 @@ void Buttons::wakeup() {
 
 void Buttons::cycle() {
   if (brightnessPressed) {
-    ledManager->nextLevel();
+    brightnessManager->nextLevel();
     brightnessPressed = false;
   }
 }

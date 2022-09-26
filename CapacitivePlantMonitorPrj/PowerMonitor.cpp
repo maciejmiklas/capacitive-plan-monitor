@@ -26,7 +26,6 @@ float PowerMonitor::readVoltage() {
 }
 
 void PowerMonitor::init() {}
-void PowerMonitor::demo() {}
 void PowerMonitor::standby() {}
 void PowerMonitor::wakeup() {}
 

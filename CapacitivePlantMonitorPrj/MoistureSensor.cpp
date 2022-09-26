@@ -17,10 +17,11 @@
 #include "MoistureSensor.h"
 
 MoistureSensor::MoistureSensor() {
+  reader = new MoistureReader();
 }
 
-uint8_t MoistureSensor::read() {
-  return analogRead(MS_PIN_READ);
+uint16_t MoistureSensor::read() {
+  return reader->read();
 }
 
 const char* MoistureSensor::name() {
@@ -37,9 +38,6 @@ void MoistureSensor::init() {
   OCR2B = PWM_PERIOD / 2;
 }
 
-void MoistureSensor::demo() {
-}
-
 void MoistureSensor::cycle() {
 }
 
@@ -50,4 +48,17 @@ void MoistureSensor::wakeup() {
 void MoistureSensor::standby() {
   TCCR2B &= ~_BV(CS20);
   TCNT2 = 0;
+}
+
+
+// ############## MoistureReader ################
+MoistureReader::MoistureReader() {
+}
+
+uint16_t MoistureReader::read() {
+  return analogRead(MS_PIN_READ);
+}
+
+const char* MoistureReader::name() {
+  return NAME;
 }

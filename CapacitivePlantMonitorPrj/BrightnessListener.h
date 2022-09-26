@@ -23,8 +23,7 @@
 class BrightnessListener {
 public:
   BrightnessListener();
-  virtual void changeBrightness(uint8_t level) = 0;
-  void setBrightnessLevel(uint8_t level);
+  virtual void changeBrightness(uint8_t level);
 
 protected:
   uint8_t currentBrightness();

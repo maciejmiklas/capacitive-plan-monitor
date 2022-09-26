@@ -20,12 +20,12 @@ MoistureDisplay::MoistureDisplay() {
 }
 
 void MoistureDisplay::demo() {
-  for (uint16_t lev = MOISTURE_MIN; lev <= MOISTURE_MAX; lev++) {
+  for (int8_t lev = MOISTURE_OFF; lev <= MOISTURE_MAX; lev++) {
     show(lev);
     delay(MD_DEMO_SPEED_MS);
   }
-
-  for (uint16_t lev = MOISTURE_MAX; lev >= MOISTURE_MIN; lev--) {
+  delay(200);
+  for (int8_t lev = MOISTURE_MAX; lev >= MOISTURE_OFF; lev--) {
     show(lev);
     delay(MD_DEMO_SPEED_MS);
   }
@@ -37,7 +37,9 @@ void MoistureDisplay::init() {
   pinMode(MD_PIN_CLOCK, OUTPUT);
   pinMode(MD_PIN_ENABLE, OUTPUT);
 
-  changeBrightness(BM_BRIGHTNESS_INITIAL);
+  changeBrightness(currentBrightness());
+
+  show(MOISTURE_OFF);
 }
 
 const char* MoistureDisplay::name() {
@@ -68,5 +70,8 @@ void MoistureDisplay::show(uint8_t level) {
 }
 
 void MoistureDisplay::changeBrightness(uint8_t level) {
+  BrightnessListener::changeBrightness(level);
+
+  log(F(">>>> %d"), level);
   analogWrite(MD_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
 }

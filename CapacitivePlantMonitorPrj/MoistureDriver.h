@@ -14,36 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MOISTURE_DISPLAY_H
-#define MOISTURE_DISPLAY_H
+#ifndef MOISTURE_DRIVER_H
+#define MOISTURE_DRIVER_H
 
 #include "Config.h"
 #include "ArdLog.h"
 #include "Device.h"
-#include "Demo.h"
-#include "BrightnessListener.h"
+#include "MoistureSensor.h"
+#include "MoistureDisplay.h"
 
-/** Moisture level LED display base on 74HC595 */
-class MoistureDisplay : public Device, public BrightnessListener, public Demo {
+class MoistureDriver : public Device {
 public:
 
-  /** LEvel that will disable all LEDs. */
-  const static uint8_t MOISTURE_OFF = 0;
-
-  /** Min level inclusive. */
-  const static uint8_t MOISTURE_MIN = 1;
-
-  /** Max level inclusive. */
-  const static uint8_t MOISTURE_MAX = 7;
-
-  MoistureDisplay();
-
-  /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
-  void show(uint8_t level);
-
-  // from BrightnessListener.h
-  void changeBrightness(uint8_t level);
-
+  MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display);
+  
   // from Device.h
   void init();
   void standby();
@@ -51,12 +35,10 @@ public:
   void cycle();
   const char* name();
 
-  // from Demo.h
-  void demo();
-
 private:
-
-  static constexpr const char* NAME = "MD";
+  static constexpr const char* NAME = "MR";
+  MoistureSensor* sensor;
+  MoistureDisplay* display;
 };
 
-#endif  // MOISTURE_DISPLAY_H
+#endif  // MOISTURE_DRIVER_H

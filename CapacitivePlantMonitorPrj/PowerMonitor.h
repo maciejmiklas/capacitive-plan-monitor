@@ -24,17 +24,17 @@
 #include "LED.h"
 #include "Reader.h"
 
-class PowerMonitorReader: public ReaderSupplier{
+class PowerMonitorReader : public ReaderSupplier {
 public:
   PowerMonitorReader();
   uint16_t read();
   const char* name();
 
 private:
-  static constexpr const char* NAME = "PM";   
+  static constexpr const char* NAME = "PM";
 };
 
-class PowerMonitor: public Device {
+class PowerMonitor : public Device {
 public:
   PowerMonitor(LED* led);
 
@@ -42,15 +42,15 @@ public:
 
   // from Device.h
   void init();
-  void demo();
   void standby();
   void wakeup();
   void cycle();
   const char* name();
+
 private:
   LED* led;
   Reader* reader;
-  static constexpr const char* NAME = "PM";  
+  static constexpr const char* NAME = "PM";
 };
 
 #endif  // POWER_MONITOR_H

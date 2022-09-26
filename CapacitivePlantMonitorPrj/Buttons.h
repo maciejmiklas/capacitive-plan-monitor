@@ -21,13 +21,12 @@
 #include "ArdLog.h"
 #include "Device.h"
 
-class Buttons: public Device {
+class Buttons : public Device {
 public:
-  Buttons(BrightnessManager* ledManager);
+  Buttons(BrightnessManager* brightnessManager);
 
   // from Device.h
   void init();
-  void demo();
   void standby();
   void wakeup();
   void cycle();
@@ -36,7 +35,7 @@ public:
 private:
   static constexpr const char* NAME = "BT";
 
-  BrightnessManager* ledManager;
+  BrightnessManager* brightnessManager;
 
   void setupButton(uint8_t pin);
   void changeBrightness();

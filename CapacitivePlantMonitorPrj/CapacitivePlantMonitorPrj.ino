@@ -34,7 +34,11 @@ BrightnessManager* brManager = new BrightnessManager();
 Buttons* buttons = new Buttons(brManager);
 
 const static uint8_t DEVICES = 5;
-Device* dev[DEVICES] = { led, ms, md, buttons,pm };
+Device* dev[DEVICES] = { led, ms, md, buttons, pm };
+
+
+const static uint8_t DEMOS = 2;
+Demo* demos[DEMOS] = { led, md };
 
 /** ### SETUP ### */
 void setup() {
@@ -42,27 +46,44 @@ void setup() {
   log_setup();
 #endif
 
-#if LOG
+#if LOG && LOG_CPM
   log(F("\n\n### SETUP ###"));
 #endif
+
   brManager->registerListener(led);
   brManager->registerListener(md);
 
   util_setup();
+  initDevices();
+  playDemos();
+
+  led->on(LedPin::SENSOR_ON);
+  // led->on(LedPin::PWR_LOW);
+  md->show(7);
+
+
+  led->on(LedPin::PWR_LOW);
+   led->on(LedPin::SENSOR_ON);
+}
+
+void initDevices() {
   execAsc([](Device* d) {
     d->init();
     d->wakeup();
-    d->demo();
   });
+}
 
-  led->on(LedPin::MESURE);
- // led->on(LedPin::PWR_LOW);
-  md->show(7);
+void playDemos() {
+  for (uint8_t i = 0; i < DEMOS; i++) {
+    delay(CP_DEMO_DELAY_MS);
+    demos[i]->demo();
+  }
+  delay(CP_DEMO_DELAY_MS);
 }
 
 /** ### LOOP ### */
 void loop() {
-#if LOG
+#if LOG && LOG_CPM
   log(F("### LOOP ###"));
 #endif
 
@@ -70,14 +91,14 @@ void loop() {
     d->cycle();
   });
 
-  if(CP_LOOP_DELAY > 0){
+  if (CP_LOOP_DELAY > 0) {
     delay(CP_LOOP_DELAY);
   }
 }
 
 /** ### STANDBY ### */
 void standby() {
-#if LOG
+#if LOG && LOG_CPM
   log(F("\n\n### STAND-BY ###"));
 #endif
 
@@ -88,7 +109,7 @@ void standby() {
 
 /** ### WAKEUP ### */
 void wakeup() {
-#if LOG
+#if LOG && LOG_CPM
   log(F("\n\n### WAKE-UP ###"));
 #endif
   execAsc([](Device* d) {
