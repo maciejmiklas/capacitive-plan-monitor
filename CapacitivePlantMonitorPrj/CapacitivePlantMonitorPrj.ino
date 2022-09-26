@@ -66,21 +66,6 @@ void setup() {
    led->on(LedPin::SENSOR_ON);
 }
 
-void initDevices() {
-  execAsc([](Device* d) {
-    d->init();
-    d->wakeup();
-  });
-}
-
-void playDemos() {
-  for (uint8_t i = 0; i < DEMOS; i++) {
-    delay(CP_DEMO_DELAY_MS);
-    demos[i]->demo();
-  }
-  delay(CP_DEMO_DELAY_MS);
-}
-
 /** ### LOOP ### */
 void loop() {
 #if LOG && LOG_CPM
@@ -96,7 +81,21 @@ void loop() {
   }
 }
 
-/** ### STANDBY ### */
+void initDevices() {
+  execAsc([](Device* d) {
+    d->init();
+    d->wakeup();
+  });
+}
+
+void playDemos() {
+  for (uint8_t i = 0; i < DEMOS; i++) {
+    delay(CP_DEMO_DELAY_MS);
+    demos[i]->demo();
+  }
+  delay(CP_DEMO_DELAY_MS);
+}
+
 void standby() {
 #if LOG && LOG_CPM
   log(F("\n\n### STAND-BY ###"));
@@ -107,7 +106,6 @@ void standby() {
   });
 }
 
-/** ### WAKEUP ### */
 void wakeup() {
 #if LOG && LOG_CPM
   log(F("\n\n### WAKE-UP ###"));
@@ -117,14 +115,12 @@ void wakeup() {
   });
 }
 
-/** ### EXEC ASC ### */
 void execAsc(void (*func)(Device*)) {
   for (uint8_t i = 0; i < DEVICES; i++) {
     func(dev[i]);
   }
 }
 
-/** ### EXEC DESC ### */
 void execDesc(void (*func)(Device*)) {
   for (uint8_t i = DEVICES; i > 0; i--) {
     func(dev[i - 1]);

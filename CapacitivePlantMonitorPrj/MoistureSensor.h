@@ -34,12 +34,6 @@ private:
 /** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN, reads and maps moisture value. */
 class MoistureSensor: public Device {
 public:
-
-  /** Min level inclusive. */
-  const static uint8_t READ_MIN = 0;
-
-  /** Max level inclusive. */
-  const static uint16_t READ_MAX = 1023;
   
   MoistureSensor();
 
@@ -59,7 +53,7 @@ private:
   // 9  = 1.60 MHz
   // 8  = 1.78 MHz
   // 7  = 2.00 MHz
-  const static uint8_t PWM_PERIOD =30;
+  const static uint8_t PWM_PERIOD = 30;
 
   static constexpr const char* NAME = "MS";
   MoistureReader* reader;

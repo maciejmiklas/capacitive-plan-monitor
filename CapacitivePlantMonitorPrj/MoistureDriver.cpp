@@ -17,10 +17,19 @@
 #include "MoistureDriver.h"
 
 
-MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display):sensor(sensor), display(display) {
+MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display)
+  : sensor(sensor), display(display) {
 }
 
 void MoistureDriver::cycle() {
+  uint16_t sr = sensor->read();
+  uint16_t level = map(sr, MS_LEVEL_MIN, MS_LEVEL_MAX, MD_LEVEL_MIN, MD_LEVEL_MAX);
+
+#if LOG && LOG_MR
+  log(F("%s MAP %d->%d"), NAME, sr, level);
+#endif
+
+  display->changeBrightness(level);
 }
 
 void MoistureDriver::init() {

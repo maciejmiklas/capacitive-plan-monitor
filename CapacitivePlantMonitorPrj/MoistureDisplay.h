@@ -27,15 +27,6 @@
 class MoistureDisplay : public Device, public BrightnessListener, public Demo {
 public:
 
-  /** LEvel that will disable all LEDs. */
-  const static uint8_t MOISTURE_OFF = 0;
-
-  /** Min level inclusive. */
-  const static uint8_t MOISTURE_MIN = 1;
-
-  /** Max level inclusive. */
-  const static uint8_t MOISTURE_MAX = 7;
-
   MoistureDisplay();
 
   /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
