@@ -27,21 +27,15 @@ void LED::init() {
 }
 
 void LED::demo() {
-  for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
-    LedPin pinEn = static_cast<LedPin>(pin);
-    on(pinEn);
-    delay(LE_DEMO_SPEED_MS);
-    off(pinEn);
+  for (uint8_t bl = 0; bl < LE_DEMO_BLNIKS; bl++) {
+    for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
+      LedPin pinEn = static_cast<LedPin>(pin);
+      on(pinEn);
+      delay(LE_DEMO_DELAY_MS);
+      off(pinEn);
+      delay(LE_DEMO_DELAY_MS);
+    }
   }
-}
-
-void LED::standby() {
-}
-
-void LED::wakeup() {
-}
-
-void LED::cycle() {
 }
 
 void LED::changeBrightness(uint8_t level) {
@@ -66,4 +60,13 @@ void LED::on(LedPin led) {
   log(F("%s ON %d %d"), NAME, pin, currentBrightness());
 #endif
   analogWrite(pin, currentBrightness());
+}
+
+void LED::standby() {
+}
+
+void LED::wakeup() {
+}
+
+void LED::cycle() {
 }

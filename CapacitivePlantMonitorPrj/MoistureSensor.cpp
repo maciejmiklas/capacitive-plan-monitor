@@ -17,7 +17,7 @@
 #include "MoistureSensor.h"
 
 MoistureSensor::MoistureSensor() {
-  reader = new MoistureReader();
+  reader = new Reader(new MoistureReader());
 }
 
 uint16_t MoistureSensor::read() {
@@ -34,8 +34,8 @@ void MoistureSensor::init() {
   TCNT2 = 0;
   TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
   TCCR2B = _BV(WGM22);
-  OCR2A = PWM_PERIOD;
-  OCR2B = PWM_PERIOD / 2;
+  OCR2A = MS_PWM_PERIOD;
+  OCR2B = MS_PWM_PERIOD / MS_PWM_DUTY;
 }
 
 void MoistureSensor::cycle() {

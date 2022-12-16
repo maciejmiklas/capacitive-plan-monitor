@@ -32,6 +32,9 @@ public:
   /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
   void show(uint8_t level);
 
+  /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
+  void blink(uint8_t level);
+
   // from BrightnessListener.h
   void changeBrightness(uint8_t level);
 
@@ -47,7 +50,7 @@ public:
 
 private:
 
-  static constexpr const char* NAME = "MD";
+  static constexpr const char* NAME = "MI";
 };
 
 #endif  // MOISTURE_DISPLAY_H

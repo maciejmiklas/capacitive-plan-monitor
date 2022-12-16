@@ -1,3 +1,5 @@
+#include "Arduino.h"
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,13 +19,13 @@
 
 #include "Buttons.h"
 
-const static uint8_t PRESS_MS = BT_PRESS_MS;
 static volatile uint8_t brightnessPressed = false;
+static volatile uint8_t adjustPressed = false;
 static volatile uint32_t pressMs = 0;
 
 static inline boolean process() {
   uint32_t ms = millis();
-  if (ms - pressMs < PRESS_MS) {
+  if (ms - pressMs < BT_PRESS_MS) {
     return false;
   }
   pressMs = ms;
@@ -36,33 +38,58 @@ static void onBrightnessPressed() {
   }
 }
 
-Buttons::Buttons(BrightnessManager* brightnessManager)
-  : brightnessManager(brightnessManager) {
+static void onAdjustPressed() {
+  if (process()) {
+    adjustPressed = true;
+  }
+}
+
+Buttons::Buttons(BrightnessManager* brightnessManager, MoistureDriver* moistureDriver, LED* led)
+  : brightnessManager(brightnessManager), moistureDriver(moistureDriver), led(led) {
 }
 
 void Buttons::init() {
   setupButton(BT_PIN_BRIGHTNESS);
   attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
-}
 
-void Buttons::standby() {
-}
-
-void Buttons::wakeup() {
+  setupButton(BT_PIN_ADJUST);
+  attachInterrupt(digitalPinToInterrupt(BT_PIN_ADJUST), onAdjustPressed, FALLING);
 }
 
 void Buttons::cycle() {
   if (brightnessPressed) {
+    blinkOnPress();
     brightnessManager->nextLevel();
     brightnessPressed = false;
   }
+  if (adjustPressed) {
+    blinkOnPress();
+    moistureDriver->adjustyNextLevel();
+    adjustPressed = false;
+  }
+}
+
+void Buttons::blinkOnPress() {
+  for (uint8_t i = 0; i < BT_PRESS_BLINK_REPEAT; i++) {
+    led->off(LedPin::AWAKE);
+    delay(BT_PRESS_BLINK_OFF_MS);
+    led->on(LedPin::AWAKE);
+    delay(BT_PRESS_BLINK_ON_MS);
+  }
+  led->on(LedPin::AWAKE);
+}
+
+void Buttons::setupButton(uint8_t pin) {
+  pinMode(pin, INPUT);
+  digitalWrite(pin, HIGH);  // enable pull-up resistor
 }
 
 const char* Buttons::name() {
   return NAME;
 }
 
-void Buttons::setupButton(uint8_t pin) {
-  pinMode(pin, INPUT);
-  digitalWrite(pin, HIGH);  // enable pull-up resistor
+void Buttons::standby() {
+}
+
+void Buttons::wakeup() {
 }

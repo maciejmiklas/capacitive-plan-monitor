@@ -27,22 +27,22 @@
 #define LOG_CPM false
 
 /** Enable logger for: BrightnessListener */
-#define LOG_BL true
+#define LOG_BL false
 
 /** Enable logger for: BrightnessManager */
-#define LOG_BM true
+#define LOG_BM false
 
 /** Enable logger for: LED */
 #define LOG_LE false
 
 /** Enable logger for: MoistureDisplay */
-#define LOG_MD true
+#define LOG_MI false
 
 /** Enable logger for: MoistureSensor */
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MR false
+#define LOG_MD false
 
 /** Enable logger for: PowerMonitor */
 #define LOG_PM false

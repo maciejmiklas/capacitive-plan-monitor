@@ -17,20 +17,20 @@
 #include "PowerMonitor.h"
 
 PowerMonitor::PowerMonitor(LED* led)
-  : led(led) {
+  : led(led), last(PM_PWR_MAX) {
   reader = new Reader(new PowerMonitorReader());
 }
 
-float PowerMonitor::readVoltage() {
-  return (float)reader->read() * PM_SYSTEM_VOLTS / 1023.0;
+
+void PowerMonitor::init() {
 }
 
-void PowerMonitor::init() {}
 void PowerMonitor::standby() {}
 void PowerMonitor::wakeup() {}
 
 void PowerMonitor::cycle() {
-  if (readVoltage() <= PM_PWR_LOW) {
+  last = reader->read();
+  if (last <= PM_PWR_LOW) {
     led->on(LedPin::PWR_LOW);
   } else {
     led->off(LedPin::PWR_LOW);
@@ -41,12 +41,27 @@ const char* PowerMonitor::name() {
   return NAME;
 }
 
+uint16_t PowerMonitor::mv() {
+  return last;
+}
+
 // ############## PowerMonitorReader ################
 PowerMonitorReader::PowerMonitorReader() {
 }
 
+
 uint16_t PowerMonitorReader::read() {
-  return analogRead(PM_PIN_READ);
+  // https://github.com/cygig/MCUVoltage
+  ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  delay(PM_VCC_READ_DELAY_MS);
+  ADCSRA |= _BV(ADSC);
+  while (bit_is_set(ADCSRA, ADSC))
+    ;
+    
+  uint32_t result = ADCL;
+  result |= ADCH << 8;
+  result = 1110L * 1023L / result;
+  return result;
 }
 
 const char* PowerMonitorReader::name() {

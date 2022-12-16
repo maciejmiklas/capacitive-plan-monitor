@@ -14,36 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MOISTURE_DRIVER_H
-#define MOISTURE_DRIVER_H
+#ifndef POWER_PROVIDER_H
+#define POWER_PROVIDER_H
 
-#include "Config.h"
-#include "ArdLog.h"
-#include "Device.h"
-#include "MoistureSensor.h"
-#include "MoistureDisplay.h"
-#include "PowerProvider.h"
-
-class MoistureDriver : public Device {
+class PowerProvider {
 public:
 
-  MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, PowerProvider* power);
-  
-  // from Device.h
-  void init();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
-  void adjustyNextLevel();
-
-private:
-  static constexpr const char* NAME = "MD";
-  MoistureSensor* sensor;
-  MoistureDisplay* display;
-  PowerProvider* power;
-
-  uint8_t getLevel();
+  /** Current power level in mv. */
+  virtual uint16_t mv() = 0;
 };
 
-#endif  // MOISTURE_DRIVER_H
+#endif  // POWER_PROVIDER_H

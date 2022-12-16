@@ -28,7 +28,7 @@ public:
   const char* name();
 
 private:
-  static constexpr const char* NAME = "PM";
+  static constexpr const char* NAME = "MS";
 };
 
 /** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN, reads and maps moisture value. */
@@ -49,14 +49,8 @@ public:
 
 private:
 
-  // 10 = 1.45 MHz
-  // 9  = 1.60 MHz
-  // 8  = 1.78 MHz
-  // 7  = 2.00 MHz
-  const static uint8_t PWM_PERIOD = 30;
-
   static constexpr const char* NAME = "MS";
-  MoistureReader* reader;
+  Reader* reader;
 };
 
 #endif  // MOISTURE_SENSOR_H

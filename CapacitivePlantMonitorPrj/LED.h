@@ -24,7 +24,7 @@
 #include "BrightnessListener.h"
 
 // Enum values are out PINs
-enum LedPin { SENSOR_ON = LE_PIN_SENSOR_ON,
+enum LedPin { AWAKE = LE_PIN_AWAKE,
               PWR_LOW = LE_PIN_PWR_LOW };
 
 class LED: public Device, public BrightnessListener, public Demo {
@@ -48,7 +48,7 @@ public:
   void demo();
 
 private:
-  const static uint8_t FIRST_PIN = LedPin::SENSOR_ON;
+  const static uint8_t FIRST_PIN = LedPin::AWAKE;
   const static uint8_t LAST_PIN = LedPin::PWR_LOW;
   static constexpr const char* NAME = "LE";
 };

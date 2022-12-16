@@ -23,22 +23,11 @@
 #include "BrightnessListener.h"
 #include "LED.h"
 #include "Reader.h"
+#include "PowerProvider.h"
 
-class PowerMonitorReader : public ReaderSupplier {
-public:
-  PowerMonitorReader();
-  uint16_t read();
-  const char* name();
-
-private:
-  static constexpr const char* NAME = "PM";
-};
-
-class PowerMonitor : public Device {
+class PowerMonitor : public Device, public PowerProvider {
 public:
   PowerMonitor(LED* led);
-
-  float readVoltage();
 
   // from Device.h
   void init();
@@ -47,9 +36,23 @@ public:
   void cycle();
   const char* name();
 
+  // from PowerProvider.h
+  uint16_t mv();
+
 private:
   LED* led;
   Reader* reader;
+  static constexpr const char* NAME = "PM";
+  uint16_t last;
+};
+
+class PowerMonitorReader : public ReaderSupplier {
+public:
+  PowerMonitorReader();
+  uint16_t read();
+  const char* name();
+
+private:
   static constexpr const char* NAME = "PM";
 };
 

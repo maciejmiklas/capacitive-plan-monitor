@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -20,26 +21,55 @@ MoistureDisplay::MoistureDisplay() {
 }
 
 void MoistureDisplay::demo() {
-  for (int8_t lev = MOISTURE_OFF; lev <= MOISTURE_MAX; lev++) {
+  for (int8_t lev = MI_LEVEL_OFF; lev <= MI_LEVEL_MAX; lev++) {
     show(lev);
-    delay(MD_DEMO_SPEED_MS);
+    delay(MI_DEMO_SPEED_MS);
   }
-  delay(200);
-  for (int8_t lev = MOISTURE_MAX; lev >= MOISTURE_OFF; lev--) {
+  delay(MI_DEMO_WAIT_MIDDLE_MS);
+  for (int8_t lev = MI_LEVEL_MAX; lev >= MI_LEVEL_OFF; lev--) {
     show(lev);
-    delay(MD_DEMO_SPEED_MS);
+    delay(MI_DEMO_SPEED_MS);
   }
 }
 
 void MoistureDisplay::init() {
-  pinMode(MD_PIN_LATCH, OUTPUT);
-  pinMode(MD_PIN_DATA, OUTPUT);
-  pinMode(MD_PIN_CLOCK, OUTPUT);
-  pinMode(MD_PIN_ENABLE, OUTPUT);
+  pinMode(MI_PIN_LATCH, OUTPUT);
+  pinMode(MI_PIN_DATA, OUTPUT);
+  pinMode(MI_PIN_CLOCK, OUTPUT);
+  pinMode(MI_PIN_ENABLE, OUTPUT);
 
   changeBrightness(currentBrightness());
+  show(MI_LEVEL_OFF);
+}
 
-  show(MOISTURE_OFF);
+void MoistureDisplay::blink(uint8_t level) {
+
+  for (uint8_t i = 0; i < MI_BLINK_REPEAT; i++) {
+    show(level);
+    delay(MI_BLINK_ON_MS);
+    show(MI_LEVEL_OFF);
+    delay(MI_BLINK_OFF_MS);
+  }
+}
+
+void MoistureDisplay::show(uint8_t level) {
+#if LOG && LOG_MI
+  log(F("%s SH %d"), NAME, level);
+#endif
+
+  uint8_t leds = 0;
+  for (uint8_t i = 0; i < level; i++) {
+    bitSet(leds, i);
+  }
+
+  digitalWrite(MI_PIN_LATCH, LOW);
+  shiftOut(MI_PIN_DATA, MI_PIN_CLOCK, LSBFIRST, leds);
+  digitalWrite(MI_PIN_LATCH, HIGH);
+}
+
+void MoistureDisplay::changeBrightness(uint8_t level) {
+  BrightnessListener::changeBrightness(level);
+  analogWrite(MI_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
 }
 
 const char* MoistureDisplay::name() {
@@ -53,25 +83,4 @@ void MoistureDisplay::wakeup() {
 }
 
 void MoistureDisplay::cycle() {
-}
-
-void MoistureDisplay::show(uint8_t level) {
-#if LOG && LOG_MD
-  log(F("%s SHOW %d"), NAME, level);
-#endif
-  uint8_t leds = 0;
-  for (uint8_t i = 0; i < level; i++) {
-    bitSet(leds, i);
-  }
-
-  digitalWrite(MD_PIN_LATCH, LOW);
-  shiftOut(MD_PIN_DATA, MD_PIN_CLOCK, LSBFIRST, leds);
-  digitalWrite(MD_PIN_LATCH, HIGH);
-}
-
-void MoistureDisplay::changeBrightness(uint8_t level) {
-  BrightnessListener::changeBrightness(level);
-
-  log(F(">>>> %d"), level);
-  analogWrite(MD_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
 }

@@ -18,6 +18,7 @@
 #include "Util.h"
 #include "MoistureSensor.h"
 #include "MoistureDisplay.h"
+#include "MoistureDriver.h"
 #include "Arduino.h"
 #include "LED.h"
 #include "Buttons.h"
@@ -27,18 +28,18 @@
 
 Storage* st = new Storage();
 MoistureSensor* ms = new MoistureSensor();
-MoistureDisplay* md = new MoistureDisplay();
+MoistureDisplay* mi = new MoistureDisplay();
 LED* led = new LED();
 PowerMonitor* pm = new PowerMonitor(led);
 BrightnessManager* brManager = new BrightnessManager();
-Buttons* buttons = new Buttons(brManager);
+MoistureDriver* md = new MoistureDriver(ms, mi, pm);
+Buttons* buttons = new Buttons(brManager, md, led);
 
-const static uint8_t DEVICES = 5;
-Device* dev[DEVICES] = { led, ms, md, buttons, pm };
-
+const static uint8_t DEVICES = 6;
+Device* dev[DEVICES] = { ms, led, mi, buttons, pm, md };
 
 const static uint8_t DEMOS = 2;
-Demo* demos[DEMOS] = { led, md };
+Demo* demos[DEMOS] = { led, mi };
 
 /** ### SETUP ### */
 void setup() {
@@ -49,21 +50,14 @@ void setup() {
 #if LOG && LOG_CPM
   log(F("\n\n### SETUP ###"));
 #endif
+  util_setup();
 
   brManager->registerListener(led);
-  brManager->registerListener(md);
+  brManager->registerListener(mi);
 
-  util_setup();
   initDevices();
   playDemos();
-
-  led->on(LedPin::SENSOR_ON);
-  // led->on(LedPin::PWR_LOW);
-  md->show(7);
-
-
-  led->on(LedPin::PWR_LOW);
-   led->on(LedPin::SENSOR_ON);
+  led->on(LedPin::AWAKE);
 }
 
 /** ### LOOP ### */
@@ -100,6 +94,7 @@ void standby() {
 #if LOG && LOG_CPM
   log(F("\n\n### STAND-BY ###"));
 #endif
+  led->off(LedPin::AWAKE);
 
   execDesc([](Device* d) {
     d->standby();
@@ -110,6 +105,7 @@ void wakeup() {
 #if LOG && LOG_CPM
   log(F("\n\n### WAKE-UP ###"));
 #endif
+  led->on(LedPin::AWAKE);
   execAsc([](Device* d) {
     d->wakeup();
   });

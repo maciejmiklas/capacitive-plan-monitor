@@ -20,10 +20,12 @@
 #include "BrightnessManager.h"
 #include "ArdLog.h"
 #include "Device.h"
+#include "MoistureDriver.h"
+#include "LED.h"
 
 class Buttons : public Device {
 public:
-  Buttons(BrightnessManager* brightnessManager);
+  Buttons(BrightnessManager* brightnessManager, MoistureDriver* moistureDriver, LED* led);
 
   // from Device.h
   void init();
@@ -36,9 +38,12 @@ private:
   static constexpr const char* NAME = "BT";
 
   BrightnessManager* brightnessManager;
+  MoistureDriver* moistureDriver;
+  LED* led;
 
   void setupButton(uint8_t pin);
   void changeBrightness();
+  void blinkOnPress();
 };
 
 #endif  // BUTTONS_H

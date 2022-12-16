@@ -17,19 +17,52 @@
 #include "MoistureDriver.h"
 
 
-MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display)
-  : sensor(sensor), display(display) {
+MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, PowerProvider* power)
+  : sensor(sensor), display(display), power(power) {
 }
 
 void MoistureDriver::cycle() {
-  uint16_t sr = sensor->read();
-  uint16_t level = map(sr, MS_LEVEL_MIN, MS_LEVEL_MAX, MD_LEVEL_MIN, MD_LEVEL_MAX);
+  display->show(getLevel());
+}
 
-#if LOG && LOG_MR
-  log(F("%s MAP %d->%d"), NAME, sr, level);
+uint8_t MoistureDriver::getLevel() {
+  uint16_t sr = sensor->read();
+  uint16_t smv = (long)sr * (long)power->mv() / 1023L;  // sensor read in mv
+
+  uint16_t dry = MI_LEVEL_MAP[0][1];
+  uint16_t wet = MI_LEVEL_MAP[0][2];
+  uint16_t powerMv = power->mv();
+  for (uint8_t idx = 0; idx < MI_LEVEL_MAP_SIZE - 1; idx++) {
+    const uint16_t* el = MI_LEVEL_MAP[idx];
+    const uint16_t* en = MI_LEVEL_MAP[idx + 1];
+    if (el[0] >= powerMv && en[0] < powerMv) {
+      if (el[0] - powerMv > powerMv - en[0]) {
+        dry = en[1];
+        wet = en[2];
+      } else {
+        dry = el[1];
+        wet = el[2];
+      }
+    }
+  }
+  uint8_t level = map(smv, dry, wet, MI_LEVEL_MIN, MI_LEVEL_MAX);
+
+#if LOG && LOG_MD
+  log(F("%s MAP %d[%d,%d,%d]=%d"), NAME, sr, powerMv, dry, wet, level);
 #endif
 
-  display->changeBrightness(level);
+  return level;
+}
+
+
+void MoistureDriver::adjustyNextLevel() {
+  display->blink(6);
+}
+
+void MoistureDriver::wakeup() {
+}
+
+void MoistureDriver::standby() {
 }
 
 void MoistureDriver::init() {
