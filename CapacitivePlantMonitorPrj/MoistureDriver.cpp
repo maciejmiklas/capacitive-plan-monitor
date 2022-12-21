@@ -18,7 +18,7 @@
 
 
 MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, PowerProvider* power)
-  : sensor(sensor), display(display), power(power) {
+  : sensor(sensor), display(display), power(power), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0) {
 }
 
 void MoistureDriver::cycle() {
@@ -28,6 +28,7 @@ void MoistureDriver::cycle() {
 uint8_t MoistureDriver::getLevel() {
   uint16_t sr = sensor->read();
   uint16_t smv = (long)sr * (long)power->mv() / 1023L;  // sensor read in mv
+  smv *= adjust;
 
   uint16_t dry = MI_LEVEL_MAP[0][1];
   uint16_t wet = MI_LEVEL_MAP[0][2];
@@ -54,12 +55,42 @@ uint8_t MoistureDriver::getLevel() {
   return level;
 }
 
-
+/*
+const static uint16_t MI_ADJUST_SHOW_MS = 2000;
+const static uint16_t MI_ADJUST_CHANGE_MS = 10000;
+*/
 void MoistureDriver::adjustyNextLevel() {
-  display->blink(6);
+  if (adjustPressMs == 0 || (util_ms() - adjustPressMs > MI_ADJUST_SHOW_MS)) {
+    ;
+  } else if (adjustLevel == MI_ADJUST_LEV_MAX) {
+    adjustUp = false;
+    adjustLevel = MI_ADJUST_LEV_INIT;
+    adjust = MI_ADJUST_INIT;
+
+  } else if (adjustLevel == MI_ADJUST_LEV_MIN) {
+    adjustUp = true;
+    adjustLevel = MI_ADJUST_LEV_INIT;
+    adjust = MI_ADJUST_INIT;
+
+  } else if (adjustUp) {
+    adjustLevel++;
+    adjust -= MI_ADJUST_MUL;
+
+  } else {
+    adjustLevel--;
+    adjust += MI_ADJUST_MUL;
+  }
+
+  display->blink(adjustLevel);
+  adjustPressMs = util_ms();
+
+#if LOG && LOG_MD
+  log(F("%s ADJ %d"), NAME, adjustLevel);
+#endif
 }
 
 void MoistureDriver::wakeup() {
+  adjustUp = true;
 }
 
 void MoistureDriver::standby() {

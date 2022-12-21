@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -28,7 +29,7 @@ class MoistureDriver : public Device {
 public:
 
   MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, PowerProvider* power);
-  
+
   // from Device.h
   void init();
   void standby();
@@ -43,6 +44,10 @@ private:
   MoistureDisplay* display;
   PowerProvider* power;
 
+  float adjust;
+  uint8_t adjustLevel;
+  boolean adjustUp;
+  long adjustPressMs;  
   uint8_t getLevel();
 };
 

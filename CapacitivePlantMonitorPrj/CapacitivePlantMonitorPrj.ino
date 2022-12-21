@@ -65,6 +65,7 @@ void loop() {
 #if LOG && LOG_CPM
   log(F("### LOOP ###"));
 #endif
+  util_cycle();
 
   execAsc([](Device* d) {
     d->cycle();

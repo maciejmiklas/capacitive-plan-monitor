@@ -58,34 +58,10 @@ const static uint8_t MS_PIN_READ = A0;
 const static uint8_t MS_PWM_PERIOD = 15;
 const static uint8_t MS_PWM_DUTY = 4;
 
-
-// ######## MOISTURE DRIVER(MD) ########
-
-const static uint16_t MI_LEVEL_MAP_SIZE = 9;
-
-/**
-  * Voltage levels read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge. 
-  * Different battery level reflects the amplitude of generated square wave for a sensor. It is hard to write a function 
-  * that appropriately adjusts readings based on changes in the VCC level because it is not linear. For this reason, 
-  * there is a mapping table consisting of three elements: VCC level, dry and wet level - all on mV.
-  */
-const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
-  // {VCC, DRY, WET} - all in mV
-  { 4000, 2600, 780 },
-  { 3700, 2600, 780 },
-  { 3600, 2580, 780 },
-  { 3500, 2496, 791 },
-  { 3400, 2362, 770 },
-  { 3300, 2308, 717 },
-  { 3200, 2216, 676 },
-  { 3100, 2114, 643 },
-  { 2000, 2100, 600 }
-};
-
 // ######## LED(LE) ########
 const static uint8_t LE_PIN_AWAKE = D5_PWM;
 const static uint8_t LE_PIN_PWR_LOW = D6_PWM;
-const static uint16_t LE_DEMO_DELAY_MS = 200;
+const static uint16_t LE_DEMO_DELAY_MS = 100;
 const static uint16_t LE_DEMO_BLNIKS = 3;
 
 // ######## BrightnessManager(BM) ########
@@ -123,6 +99,36 @@ const static uint8_t MI_LEVEL_MAX = 7;
 const static uint8_t MI_BLINK_REPEAT = 10;
 const static uint8_t MI_BLINK_ON_MS = 30;
 const static uint8_t MI_BLINK_OFF_MS = 15;
+
+// ######## MOISTURE DRIVER(MD) ########
+
+const static uint8_t MI_LEVEL_MAP_SIZE = 9;
+
+/**
+  * Voltage levels read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge. 
+  * Different battery level reflects the amplitude of generated square wave for a sensor. It is hard to write a function 
+  * that appropriately adjusts readings based on changes in the VCC level because it is not linear. For this reason, 
+  * there is a mapping table consisting of three elements: VCC level, dry and wet level - all on mV.
+  */
+const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
+  // {VCC, DRY, WET} - all in mV
+  { 4000, 2600, 780 },
+  { 3700, 2600, 780 },
+  { 3600, 2580, 780 },
+  { 3500, 2496, 791 },
+  { 3400, 2362, 770 },
+  { 3300, 2308, 717 },
+  { 3200, 2216, 676 },
+  { 3100, 2114, 643 },
+  { 2000, 2100, 600 }
+};
+
+const static float MI_ADJUST_MUL = 0.1;
+const static float MI_ADJUST_INIT = 1.0;
+const static uint8_t MI_ADJUST_LEV_INIT = 4;
+const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
+const static uint8_t MI_ADJUST_LEV_MIN = MI_LEVEL_OFF;
+const static uint16_t MI_ADJUST_SHOW_MS = 10000;
 
 // ######## PowerMonitor(PM) ########
 
