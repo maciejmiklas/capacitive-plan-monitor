@@ -19,6 +19,11 @@
 
 #include <Arduino.h>
 
+// ####### CapactitvePlantMonitorPrj(CP) ######
+const static uint16_t CP_LOOP_DELAY = 0;
+const static uint16_t CP_DEMO_DELAY_MS = 500;
+
+
 // ######## DIGITAL PINs ########
 // PWM PINs: 3, 5, 6, 9, 10, 11
 const static uint8_t D1 = 1;
@@ -35,8 +40,8 @@ const static uint8_t D11 = 11;
 const static uint8_t D12 = 12;
 
 // ######## BUTTONS(BT) ########
-const static uint8_t BT_PIN_BRIGHTNESS = D4;  //D2;
-const static uint8_t BT_PIN_ADJUST = D2;      //D4;
+const static uint8_t BT_PIN_BRIGHTNESS = D2;  //D2;
+const static uint8_t BT_PIN_ADJUST = D4;      //D4;
 const static uint8_t BT_PRESS_MS = 200;
 const static uint8_t BT_PRESS_BLINK_REPEAT = 2;
 const static uint8_t BT_PRESS_BLINK_ON_MS = 10;
@@ -136,10 +141,6 @@ const static uint16_t MI_ADJUST_SHOW_MS = 10000;
 static constexpr const uint16_t PM_PWR_LOW = 3200;
 static constexpr const uint16_t PM_PWR_MAX = 3700;
 static constexpr const uint16_t PM_VCC_READ_DELAY_MS = 5;
-
-// ####### CapactitvePlantMonitorPrj(CP) ######
-const static uint16_t CP_LOOP_DELAY = 0;
-const static uint16_t CP_DEMO_DELAY_MS = 500;
 
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;
