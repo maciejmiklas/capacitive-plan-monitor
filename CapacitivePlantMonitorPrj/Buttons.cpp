@@ -52,8 +52,8 @@ void Buttons::init() {
   setupButton(BT_PIN_BRIGHTNESS);
   attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
 
-  setupButton(BT_PIN_ADJUST);
-  attachInterrupt(digitalPinToInterrupt(BT_PIN_ADJUST), onAdjustPressed, FALLING);
+  setupButton(BT_PIN_MI_ADJUST);
+  attachInterrupt(digitalPinToInterrupt(BT_PIN_MI_ADJUST), onAdjustPressed, FALLING);
 }
 
 void Buttons::cycle() {

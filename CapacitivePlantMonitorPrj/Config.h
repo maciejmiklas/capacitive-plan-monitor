@@ -19,12 +19,16 @@
 
 #include <Arduino.h>
 
+// ####### CapactitvePlantMonitorPrj(CP) ######
+const static uint16_t CP_LOOP_DELAY = 1000;
+const static uint16_t CP_DEMO_DELAY_MS = 500;
+
 // ######## DIGITAL PINs ########
 // PWM PINs: 3, 5, 6, 9, 10, 11
 const static uint8_t D1 = 1;
 const static uint8_t D2 = 2;      // BT_PIN_BRIGHTNESS
 const static uint8_t D3_PWM = 3;  // MS_PIN_PWM_OUT
-const static uint8_t D4 = 4;      // BT_PIN_ADJUST
+const static uint8_t D4 = 4;      // BT_PIN_MI_ADJUST
 const static uint8_t D5_PWM = 5;  // LE_PIN_SENSOR_ON
 const static uint8_t D6_PWM = 6;  // LE_PIN_PWR_LOW
 const static uint8_t D7 = 7;      // MI_PIN_CLOCK
@@ -35,8 +39,8 @@ const static uint8_t D11 = 11;
 const static uint8_t D12 = 12;
 
 // ######## BUTTONS(BT) ########
-const static uint8_t BT_PIN_BRIGHTNESS = D2;  //D2;
-const static uint8_t BT_PIN_ADJUST = D4;      //D4;
+const static uint8_t BT_PIN_BRIGHTNESS = D2;  
+const static uint8_t BT_PIN_MI_ADJUST = D4; 
 const static uint8_t BT_PRESS_MS = 200;
 const static uint8_t BT_PRESS_BLINK_REPEAT = 2;
 const static uint8_t BT_PRESS_BLINK_ON_MS = 10;
@@ -55,7 +59,7 @@ const static uint8_t MS_PIN_READ = A0;
   * 8  = 1.78 MHz
   * 7  = 2.00 MHz
 */
-const static uint8_t MS_PWM_PERIOD = 15;
+const static uint8_t MS_PWM_PERIOD = 9;
 const static uint8_t MS_PWM_DUTY = 4;
 
 // ######## LED(LE) ########
@@ -102,7 +106,7 @@ const static uint8_t MI_BLINK_OFF_MS = 15;
 
 // ######## MOISTURE DRIVER(MD) ########
 
-const static uint8_t MI_LEVEL_MAP_SIZE = 9;
+const static uint8_t MI_LEVEL_MAP_SIZE = 11;
 
 /**
   * Voltage levels read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge. 
@@ -111,16 +115,18 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 9;
   * there is a mapping table consisting of three elements: VCC level, dry and wet level - all on mV.
   */
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
-  // {VCC, DRY, WET} - all in mV
-  { 4000, 2600, 780 },
-  { 3700, 2600, 780 },
-  { 3600, 2580, 780 },
-  { 3500, 2496, 791 },
-  { 3400, 2362, 770 },
-  { 3300, 2308, 717 },
-  { 3200, 2216, 676 },
-  { 3100, 2114, 643 },
-  { 2000, 2100, 600 }
+//{VCC , DRY , WET} (mV)
+  {4000, 1427, 933},
+  {3900, 1384, 896},
+  {3800, 1334, 861},
+  {3700, 1283, 833},
+  {3600, 1235, 808},
+  {3500, 1182, 755},
+  {3400, 1139, 742},
+  {3300, 1099, 718},
+  {3200, 1051, 684},
+  {3100, 1007, 655},
+  {2000, 0, 0}
 };
 
 const static float MI_ADJUST_MUL = 0.1;
@@ -133,13 +139,10 @@ const static uint16_t MI_ADJUST_SHOW_MS = 10000;
 // ######## PowerMonitor(PM) ########
 
 /** Low voltage level in mv */
-static constexpr const uint16_t PM_PWR_LOW = 3200;
-static constexpr const uint16_t PM_PWR_MAX = 3700;
-static constexpr const uint16_t PM_VCC_READ_DELAY_MS = 5;
-
-// ####### CapactitvePlantMonitorPrj(CP) ######
-const static uint16_t CP_LOOP_DELAY = 0;
-const static uint16_t CP_DEMO_DELAY_MS = 500;
+static const uint16_t PM_PWR_LOW = 3200;
+static const uint16_t PM_PWR_MAX = 3700;
+static const uint16_t PM_VCC_READ_DELAY_MS = 5;
+static const uint16_t PM_VCC_REF = 1076; // default for ATmega328P: 1110 
 
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;

@@ -60,7 +60,7 @@ uint16_t PowerMonitorReader::read() {
     
   uint32_t result = ADCL;
   result |= ADCH << 8;
-  result = 1110L * 1023L / result;
+  result = PM_VCC_REF * 1024L / result;
   return result;
 }
 

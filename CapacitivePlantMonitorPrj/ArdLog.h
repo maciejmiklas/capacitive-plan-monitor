@@ -24,13 +24,13 @@
 #define LOG true
 
 /** Enable logger for: CapacitivePlantMonitor */
-#define LOG_CPM false
+#define LOG_CPM true
 
 /** Enable logger for: BrightnessListener */
-#define LOG_BL true
+#define LOG_BL false
 
 /** Enable logger for: BrightnessManager */
-#define LOG_BM true
+#define LOG_BM false
 
 /** Enable logger for: LED */
 #define LOG_LE false
@@ -42,7 +42,7 @@
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MD false
+#define LOG_MD true
 
 /** Enable logger for: PowerMonitor */
 #define LOG_PM false
