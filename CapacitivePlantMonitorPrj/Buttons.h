@@ -28,7 +28,7 @@ public:
   Buttons(BrightnessManager* brightnessManager, MoistureDriver* moistureDriver, LED* led);
 
   // from Device.h
-  void init();
+  void setup();
   void standby();
   void wakeup();
   void cycle();

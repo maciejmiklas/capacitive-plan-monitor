@@ -1,71 +1,70 @@
 #include "Arduino.h"
 
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 #include "Buttons.h"
 
 static volatile uint8_t brightnessPressed = false;
-static volatile uint8_t adjustPressed = false;
-static volatile uint32_t pressMs = 0;
+static volatile uint32_t processMs = 0;
 
 static inline boolean process() {
   uint32_t ms = millis();
-  if (ms - pressMs < BT_PRESS_MS) {
+  if (ms - processMs < BT_PRESS_MS) {
     return false;
   }
-  pressMs = ms;
+  processMs = ms;
   return true;
 }
 
 static void onBrightnessPressed() {
-  if (process()) {
-    brightnessPressed = true;
-  }
-}
-
-static void onAdjustPressed() {
-  if (process()) {
-    adjustPressed = true;
-  }
+  brightnessPressed = true;
 }
 
 Buttons::Buttons(BrightnessManager* brightnessManager, MoistureDriver* moistureDriver, LED* led)
   : brightnessManager(brightnessManager), moistureDriver(moistureDriver), led(led) {
 }
 
-void Buttons::init() {
+void Buttons::setup() {
   setupButton(BT_PIN_BRIGHTNESS);
-  attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
-
   setupButton(BT_PIN_MI_ADJUST);
-  attachInterrupt(digitalPinToInterrupt(BT_PIN_MI_ADJUST), onAdjustPressed, FALLING);
+
+  // there is only one PIN left with interupt support
+  attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
 }
 
 void Buttons::cycle() {
-  if (brightnessPressed) {
+  if (!process()) {
+    return;
+  }
+  if (brightnessPressed) { // set by interput
+#if LOG && LOG_BT
+    log(F("%s BR"), NAME);
+#endif
     blinkOnPress();
     brightnessManager->nextLevel();
     brightnessPressed = false;
-  }
-  if (adjustPressed) {
+
+  } else  if (digitalRead(BT_PIN_MI_ADJUST) == LOW) {// non-interupt pin
+#if LOG && LOG_BT
+    log(F("%s AD"), NAME);
+#endif
     blinkOnPress();
     moistureDriver->adjustyNextLevel();
-    adjustPressed = false;
   }
 }
 

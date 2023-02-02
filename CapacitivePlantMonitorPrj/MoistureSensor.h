@@ -41,7 +41,7 @@ public:
   uint16_t read();
 
   // from Device.h
-  void init();
+  void setup();
   void standby();
   void wakeup();
   void cycle();

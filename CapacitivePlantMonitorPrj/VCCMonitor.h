@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef POWER_MONITOR_H
-#define POWER_MONITOR_H
+#ifndef VCC_MONITOR_H
+#define VCC_MONITOR_H
 
 #include "ArdLog.h"
 #include "Config.h"
@@ -23,14 +23,14 @@
 #include "BrightnessListener.h"
 #include "LED.h"
 #include "Reader.h"
-#include "PowerProvider.h"
+#include "VCCProvider.h"
 
-class PowerMonitor : public Device, public PowerProvider {
+class VCCMonitor : public Device, public VCCProvider {
 public:
-  PowerMonitor(LED* led);
+  VCCMonitor(LED* led);
 
   // from Device.h
-  void init();
+  void setup();
   void standby();
   void wakeup();
   void cycle();
@@ -46,9 +46,9 @@ private:
   uint16_t last;
 };
 
-class PowerMonitorReader : public ReaderSupplier {
+class VCCMonitorReader : public ReaderSupplier {
 public:
-  PowerMonitorReader();
+  VCCMonitorReader();
   uint16_t read();
   const char* name();
 
@@ -56,4 +56,4 @@ private:
   static constexpr const char* NAME = "PM";
 };
 
-#endif  // POWER_MONITOR_H
+#endif  // VCC_MONITOR_H

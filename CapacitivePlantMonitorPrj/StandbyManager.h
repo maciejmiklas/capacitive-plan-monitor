@@ -14,35 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTIL_H
-#define UTIL_H
 
+#ifndef STANDBY_MANGER_H
+#define STANDBY_MANGER_H
+
+#include "ArdLog.h"
+#include "Config.h"
+#include "Util.h"
 #include "Device.h"
+#include "LED.h"
+#include <avr/sleep.h>
+#include <avr/power.h>
 
-void util_setup();
-void util_cycle();
-uint32_t util_ms();
+class StandbyManager {
 
-inline int comp_16(const void *cmp1, const void *cmp2) {
-  uint16_t a = *((uint16_t *)cmp1);
-  uint16_t b = *((uint16_t *)cmp2);
-  return a - b;
-}
+public:
+  StandbyManager(LED* led, Device** devices,uint8_t devicesSize);
+  
+  void setup();
+  void cycle();
 
-inline void sort_16(uint16_t arr[], uint8_t size) {
-  qsort(arr, size, sizeof(arr[0]), comp_16);
-}
+private:
+  Device** devices;
+  uint8_t devicesSize;
+  LED* led;
 
-inline void exec_dev_asc(Device** devices, uint8_t size, void (*func)(Device *)) {
-  for (uint8_t i = 0; i < size; i++) {
-    func(devices[i]);
-  }
-}
+  void standby();
+  void wakeup();
+};
 
-inline void exec_dev_desc(Device** devices, uint8_t size, void (*func)(Device *)) {
-  for (uint8_t i = size; i > 0; i--) {
-    func(devices[i - 1]);
-  }
-}
-
-#endif  // UTIL_H
+#endif  // STANDBY_MANGER_H

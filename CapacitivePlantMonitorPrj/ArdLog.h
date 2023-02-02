@@ -42,7 +42,7 @@
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MD true
+#define LOG_MD false
 
 /** Enable logger for: PowerMonitor */
 #define LOG_PM false
@@ -52,6 +52,12 @@
 
 /** Enable logger for: Reader */
 #define LOG_RE false
+
+/** Enable logger for: Buttons */
+#define LOG_BT false
+
+/** Enable logger for: StandbyManager */
+#define LOG_SM true
 
 void log_setup();
 void log_cycle();

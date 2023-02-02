@@ -17,8 +17,8 @@
 
 #include "BrightnessManager.h"
 
-BrightnessManager::BrightnessManager()
-  : registeredCount(0), brightness(BM_BRIGHTNESS_INITIAL) {
+BrightnessManager::BrightnessManager(LED* led)
+  : registeredCount(0), brightness(BM_BRIGHTNESS_INITIAL), led(led) {
 }
 
 void BrightnessManager::registerListener(BrightnessListener* listener) {
@@ -27,8 +27,12 @@ void BrightnessManager::registerListener(BrightnessListener* listener) {
 
 void BrightnessManager::nextLevel() {
   brightness += BM_BRIGHTNESS_CHANGE;
+
   if (brightness > BM_BRIGHTNESS_MAX) {
     brightness = BM_BRIGHTNESS_MIN;
+
+  } else if (brightness + BM_BRIGHTNESS_CHANGE > BM_BRIGHTNESS_MAX) {
+    blink();
   }
 
 #if LOG && LOG_BM
@@ -38,4 +42,14 @@ void BrightnessManager::nextLevel() {
   for (uint8_t i = 0; i < registeredCount; i++) {
     listeners[i]->changeBrightness(brightness);
   }
+}
+
+void BrightnessManager::blink() {
+  for (uint8_t i = 0; i < BM_BLINK_REPEAT; i++) {
+    led->off(LedPin::AWAKE);
+    delay(BM_BLINK_OFF_MS);
+    led->on(LedPin::AWAKE);
+    delay(BM_BLINK_ON_MS);
+  }
+  led->on(LedPin::AWAKE);
 }

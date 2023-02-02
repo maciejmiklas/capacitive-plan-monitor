@@ -19,7 +19,7 @@
 LED::LED() {
 }
 
-void LED::init() {
+void LED::setup() {
   for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
     pinMode(pin, OUTPUT);
     analogWrite(pin, LOW);

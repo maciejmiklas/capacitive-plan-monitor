@@ -22,7 +22,7 @@
 class Device {
 public:
   /** Called only once after hard reset */
-  virtual void init() = 0;
+  virtual void setup() = 0;
 
   /** Device will go to standby */
   virtual void standby() = 0;

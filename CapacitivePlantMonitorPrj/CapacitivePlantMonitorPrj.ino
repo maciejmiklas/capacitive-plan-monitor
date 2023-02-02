@@ -23,15 +23,16 @@
 #include "LED.h"
 #include "Buttons.h"
 #include "BrightnessManager.h"
-#include "PowerMonitor.h"
+#include "VCCMonitor.h"
 #include "Storage.h"
+#include "StandbyManager.h"
 
 Storage* st = new Storage();
 MoistureSensor* ms = new MoistureSensor();
 MoistureDisplay* mi = new MoistureDisplay();
 LED* led = new LED();
-PowerMonitor* pm = new PowerMonitor(led);
-BrightnessManager* brManager = new BrightnessManager();
+VCCMonitor* pm = new VCCMonitor(led);
+BrightnessManager* brManager = new BrightnessManager(led);
 MoistureDriver* md = new MoistureDriver(ms, mi, pm);
 Buttons* buttons = new Buttons(brManager, md, led);
 
@@ -40,6 +41,8 @@ Device* dev[DEVICES] = { ms, led, mi, buttons, pm, md };
 
 const static uint8_t DEMOS = 2;
 Demo* demos[DEMOS] = { led, mi };
+
+StandbyManager* sm = new StandbyManager(led, dev, DEVICES);
 
 /** ### SETUP ### */
 void setup() {
@@ -57,7 +60,8 @@ void setup() {
 
   initDevices();
   playDemos();
-  led->on(LedPin::AWAKE);
+
+  sm->setup();
 }
 
 /** ### LOOP ### */
@@ -65,20 +69,23 @@ void loop() {
 #if LOG && LOG_CPM
   log(F("### LOOP ###"));
 #endif
+
   util_cycle();
 
-  execAsc([](Device* d) {
+  exec_dev_asc(dev, DEVICES, [](Device* d) {
     d->cycle();
   });
 
   if (CP_LOOP_DELAY > 0) {
     delay(CP_LOOP_DELAY);
   }
+
+   sm->cycle();
 }
 
 void initDevices() {
-  execAsc([](Device* d) {
-    d->init();
+  exec_dev_asc(dev, DEVICES, [](Device* d) {
+    d->setup();
     d->wakeup();
   });
 }
@@ -89,37 +96,4 @@ void playDemos() {
     demos[i]->demo();
   }
   delay(CP_DEMO_DELAY_MS);
-}
-
-void standby() {
-#if LOG && LOG_CPM
-  log(F("\n\n### STAND-BY ###"));
-#endif
-  led->off(LedPin::AWAKE);
-
-  execDesc([](Device* d) {
-    d->standby();
-  });
-}
-
-void wakeup() {
-#if LOG && LOG_CPM
-  log(F("\n\n### WAKE-UP ###"));
-#endif
-  led->on(LedPin::AWAKE);
-  execAsc([](Device* d) {
-    d->wakeup();
-  });
-}
-
-void execAsc(void (*func)(Device*)) {
-  for (uint8_t i = 0; i < DEVICES; i++) {
-    func(dev[i]);
-  }
-}
-
-void execDesc(void (*func)(Device*)) {
-  for (uint8_t i = DEVICES; i > 0; i--) {
-    func(dev[i - 1]);
-  }
 }

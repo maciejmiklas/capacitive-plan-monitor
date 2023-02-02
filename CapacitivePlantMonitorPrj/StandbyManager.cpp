@@ -14,14 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef POWER_PROVIDER_H
-#define POWER_PROVIDER_H
 
-class PowerProvider {
-public:
+#include "StandbyManager.h"
 
-  /** Current power level in mv. */
-  virtual uint16_t mv() = 0;
-};
+StandbyManager::StandbyManager(LED* led, Device** devices, uint8_t devicesSize)
+  : led(led), devices(devices), devicesSize(devicesSize) {
+}
 
-#endif  // POWER_PROVIDER_H
+void StandbyManager::cycle() {
+}
+
+void StandbyManager::setup() {
+}
+
+
+void StandbyManager::standby() {
+#if LOG && LOG_SM
+  log(F("\n\n### STAND-BY ###"));
+#endif
+  led->off(LedPin::AWAKE);
+
+  exec_dev_desc(devices, devicesSize, [](Device* d) {
+    d->standby();
+  });
+}
+
+void StandbyManager::wakeup() {
+#if LOG && LOG_SM
+  log(F("\n\n### WAKE-UP ###"));
+#endif
+  led->on(LedPin::AWAKE);
+  exec_dev_asc(devices, devicesSize, [](Device* d) {
+    d->wakeup();
+  });
+}

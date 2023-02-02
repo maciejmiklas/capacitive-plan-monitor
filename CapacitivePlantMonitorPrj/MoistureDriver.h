@@ -23,15 +23,15 @@
 #include "Device.h"
 #include "MoistureSensor.h"
 #include "MoistureDisplay.h"
-#include "PowerProvider.h"
+#include "VCCProvider.h"
 
 class MoistureDriver : public Device {
 public:
 
-  MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, PowerProvider* power);
+  MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, VCCProvider* vcc);
 
   // from Device.h
-  void init();
+  void setup();
   void standby();
   void wakeup();
   void cycle();
@@ -42,7 +42,7 @@ private:
   static constexpr const char* NAME = "MD";
   MoistureSensor* sensor;
   MoistureDisplay* display;
-  PowerProvider* power;
+  VCCProvider* vcc;
 
   float adjust;
   uint8_t adjustLevel;

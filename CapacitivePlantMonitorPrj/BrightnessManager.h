@@ -19,10 +19,11 @@
 
 #include "BrightnessListener.h"
 #include "ArdLog.h"
+#include "LED.h"
 
 class BrightnessManager {
 public:
-  BrightnessManager();
+  BrightnessManager(LED* led);
   void registerListener(BrightnessListener* listener);
   void nextLevel();
 
@@ -33,6 +34,9 @@ private:
   BrightnessListener* listeners[MAX_LISTENERS];
   uint8_t registeredCount;
   uint16_t brightness;
+  LED* led;
+
+  void blink();
 };
 
 #endif  // BRIGHTNESS_MANAGER_H

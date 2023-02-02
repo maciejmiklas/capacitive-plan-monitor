@@ -17,8 +17,8 @@
 #include "MoistureDriver.h"
 
 
-MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, PowerProvider* power)
-  : sensor(sensor), display(display), power(power), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0) {
+MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, VCCProvider* vcc)
+  : sensor(sensor), display(display), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0) {
 }
 
 void MoistureDriver::cycle() {
@@ -27,12 +27,12 @@ void MoistureDriver::cycle() {
 
 uint8_t MoistureDriver::getLevel() {
   uint16_t sr = sensor->read();// 0-1023
-  uint16_t smv = (long)sr * (long)power->mv() / 1023L;  // sensor read in mv
+  uint16_t smv = (long)sr * (long)vcc->mv() / 1023L;  // sensor read in mv
   smv *= adjust;
 
   uint16_t dry = MI_LEVEL_MAP[0][1];
   uint16_t wet = MI_LEVEL_MAP[0][2];
-  uint16_t powerMv = power->mv(); // current baterry charge in mv
+  uint16_t powerMv = vcc->mv(); // current baterry charge in mv
   for (uint8_t idx = 0; idx < MI_LEVEL_MAP_SIZE - 1; idx++) {
     const uint16_t* el = MI_LEVEL_MAP[idx];
     const uint16_t* en = MI_LEVEL_MAP[idx + 1];
@@ -53,7 +53,7 @@ uint8_t MoistureDriver::getLevel() {
 
   } else if (smv <= wet) {
     level = MI_LEVEL_MAX;
-    
+
   } else {
     level = map(smv, dry, wet, MI_LEVEL_MIN, MI_LEVEL_MAX);
   }
@@ -95,7 +95,9 @@ void MoistureDriver::adjustyNextLevel() {
   adjustPressMs = util_ms();
 
 #if LOG && LOG_MD
-  log(F("%s ADJ %d"), NAME, adjustLevel);
+  char sb[6];
+  dtostrf(adjust, 2, 2, sb);
+  log(F("%s ADJ %d->%s"), NAME, adjustLevel, sb);
 #endif
 }
 
@@ -106,7 +108,7 @@ void MoistureDriver::wakeup() {
 void MoistureDriver::standby() {
 }
 
-void MoistureDriver::init() {
+void MoistureDriver::setup() {
 }
 
 const char* MoistureDriver::name() {

@@ -28,8 +28,10 @@ const char* MoistureSensor::name() {
   return NAME;
 }
 
-void MoistureSensor::init() {
+void MoistureSensor::setup() {
   pinMode(MS_PIN_PWM_OUT, OUTPUT);
+
+  // setup for Timer 2 controlling PIN 3 and 11
   TCCR2B = 0;
   TCNT2 = 0;
   TCCR2A = _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);

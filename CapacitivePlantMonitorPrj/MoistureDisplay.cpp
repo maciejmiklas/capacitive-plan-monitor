@@ -32,7 +32,7 @@ void MoistureDisplay::demo() {
   }
 }
 
-void MoistureDisplay::init() {
+void MoistureDisplay::setup() {
   pinMode(MI_PIN_LATCH, OUTPUT);
   pinMode(MI_PIN_DATA, OUTPUT);
   pinMode(MI_PIN_CLOCK, OUTPUT);
@@ -43,7 +43,6 @@ void MoistureDisplay::init() {
 }
 
 void MoistureDisplay::blink(uint8_t level) {
-
   for (uint8_t i = 0; i < MI_BLINK_REPEAT; i++) {
     show(level);
     delay(MI_BLINK_ON_MS);

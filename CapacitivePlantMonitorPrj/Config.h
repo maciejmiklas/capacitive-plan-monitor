@@ -20,14 +20,14 @@
 #include <Arduino.h>
 
 // ####### CapactitvePlantMonitorPrj(CP) ######
-const static uint16_t CP_LOOP_DELAY = 1000;
+const static uint16_t CP_LOOP_DELAY = 0;
 const static uint16_t CP_DEMO_DELAY_MS = 500;
 
 // ######## DIGITAL PINs ########
 // PWM PINs: 3, 5, 6, 9, 10, 11
 const static uint8_t D1 = 1;
 const static uint8_t D2 = 2;      // BT_PIN_BRIGHTNESS
-const static uint8_t D3_PWM = 3;  // MS_PIN_PWM_OUT
+const static uint8_t D3_PWM = 3;  // MS_PIN_PWM_OUT, MoistureSensor sets Timer 2 for 1.6MHz on PIN 3 and 11
 const static uint8_t D4 = 4;      // BT_PIN_MI_ADJUST
 const static uint8_t D5_PWM = 5;  // LE_PIN_SENSOR_ON
 const static uint8_t D6_PWM = 6;  // LE_PIN_PWR_LOW
@@ -35,7 +35,7 @@ const static uint8_t D7 = 7;      // MI_PIN_CLOCK
 const static uint8_t D8 = 8;      // MI_PIN_LATCH
 const static uint8_t D9_PWM = 9;  // MI_PIN_ENABLE
 const static uint8_t D10 = 10;    // MI_PIN_DATA
-const static uint8_t D11 = 11;
+const static uint8_t D11 = 11;   
 const static uint8_t D12 = 12;
 
 // ######## BUTTONS(BT) ########
@@ -67,12 +67,16 @@ const static uint8_t LE_PIN_AWAKE = D5_PWM;
 const static uint8_t LE_PIN_PWR_LOW = D6_PWM;
 const static uint16_t LE_DEMO_DELAY_MS = 100;
 const static uint16_t LE_DEMO_BLNIKS = 3;
+const static uint16_t LE_PWM_HZ = 100;
 
 // ######## BrightnessManager(BM) ########
-const static uint8_t BM_BRIGHTNESS_MIN = 5;
+const static uint8_t BM_BRIGHTNESS_MIN = 1;
 const static uint8_t BM_BRIGHTNESS_MAX = 255;
-const static uint8_t BM_BRIGHTNESS_CHANGE = 50;
-const static uint8_t BM_BRIGHTNESS_INITIAL = 5;
+const static uint8_t BM_BRIGHTNESS_CHANGE = 30;
+const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
+const static uint8_t BM_BLINK_REPEAT = 6;
+const static uint8_t BM_BLINK_ON_MS = 200;
+const static uint8_t BM_BLINK_OFF_MS = 100;
 
 // ######## MoistureDisplay(MI) ########
 
@@ -106,7 +110,7 @@ const static uint8_t MI_BLINK_OFF_MS = 15;
 
 // ######## MOISTURE DRIVER(MD) ########
 
-const static uint8_t MI_LEVEL_MAP_SIZE = 11;
+const static uint8_t MI_LEVEL_MAP_SIZE = 12;
 
 /**
   * Voltage levels read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge. 
@@ -116,20 +120,21 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 11;
   */
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
 //{VCC , DRY , WET} (mV)
-  {4000, 1427, 933},
-  {3900, 1384, 896},
-  {3800, 1334, 861},
-  {3700, 1283, 833},
-  {3600, 1235, 808},
-  {3500, 1182, 755},
-  {3400, 1139, 742},
-  {3300, 1099, 718},
-  {3200, 1051, 684},
-  {3100, 1007, 655},
-  {2000, 0, 0}
+  {5000, 2369, 1795},
+  {4000, 1742, 1358},
+  {3900, 1680, 1313},
+  {3800, 1622, 1274},
+  {3700, 1577, 1229},
+  {3600, 1520, 1182},
+  {3500, 1476, 1145},
+  {3400, 1420, 1093},
+  {3300, 1364, 1057},
+  {3200, 1308, 1017},
+  {3100, 1258, 973},
+  {2000, 1200, 960}
 };
 
-const static float MI_ADJUST_MUL = 0.1;
+const static float MI_ADJUST_MUL = 0.05;
 const static float MI_ADJUST_INIT = 1.0;
 const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
@@ -139,7 +144,7 @@ const static uint16_t MI_ADJUST_SHOW_MS = 10000;
 // ######## PowerMonitor(PM) ########
 
 /** Low voltage level in mv */
-static const uint16_t PM_PWR_LOW = 3200;
+static const uint16_t PM_PWR_LOW = 3300;
 static const uint16_t PM_PWR_MAX = 3700;
 static const uint16_t PM_VCC_READ_DELAY_MS = 5;
 static const uint16_t PM_VCC_REF = 1076; // default for ATmega328P: 1110 
