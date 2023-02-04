@@ -61,6 +61,9 @@ void setup() {
   initDevices();
   playDemos();
 
+  // change clock from 16MHz to 2MHz
+  clock_prescale_set(clock_div_8);
+
   sm->setup();
 }
 

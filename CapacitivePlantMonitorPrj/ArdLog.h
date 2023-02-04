@@ -17,7 +17,7 @@
 #ifndef ARD_LOG_H
 #define ARD_LOG_H
 
-#include <Arduino.h>
+#include "Config.h"
 #include <stdarg.h>
 
 /** Enables logger so that it can log over serial port. */
@@ -42,7 +42,7 @@
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MD false
+#define LOG_MD true
 
 /** Enable logger for: PowerMonitor */
 #define LOG_PM false
@@ -73,19 +73,12 @@ class Logger {
     void logChangeRAM();
 
   private:
-    const static uint32_t SERIAL_SPEED = 115200;
-
-    /** Buffer size for sprintf-template passed as first argument to log method. */
-    const static uint8_t PGBUF_SIZE = 64;
-
-    /** Buffer size for created message. */
-    const static uint8_t SBUF_SIZE = 96;
 
     /** Buffer for created message */
-    char sbuf[SBUF_SIZE] = { 0 };
+    char sbuf[AL_SBUF_SIZE] = { 0 };
 
     /** Buffer for sprintf-template passed as first argument to log method. */
-    char pgbuf[PGBUF_SIZE] = { 0 };
+    char pgbuf[AL_PGBUF_SIZE] = { 0 };
 
     uint16_t lastFreeRam = 0;
 

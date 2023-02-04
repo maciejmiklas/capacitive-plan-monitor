@@ -27,11 +27,11 @@ inline void Logger::resetBuf(char *buf, uint8_t size) {
 }
 
 inline void Logger::resetSbuf() {
-  resetBuf(sbuf, SBUF_SIZE);
+  resetBuf(sbuf, AL_SBUF_SIZE);
 }
 
 inline void Logger::resetPgbuf() {
-  resetBuf(pgbuf, PGBUF_SIZE);
+  resetBuf(pgbuf, AL_PGBUF_SIZE);
 }
 
 inline void Logger::copyPGM(const __FlashStringHelper *ifsh) {
@@ -39,7 +39,7 @@ inline void Logger::copyPGM(const __FlashStringHelper *ifsh) {
 }
 
 void Logger::setup() {
-  Serial.begin(SERIAL_SPEED);
+  Serial.begin(AL_SERIAL_SPEED);
 #if LOG_FREE_RAM
   log(F("LOG ON,RAM:%u"), getFreeRAM());
 #endif
