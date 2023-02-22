@@ -21,9 +21,9 @@
 #include <avr/power.h>
 
 // ####### CapactitvePlantMonitorPrj(CP) ######
-const static uint16_t CP_LOOP_DELAY = 200;
+const static uint16_t CP_LOOP_DELAY = 1000;
 const static uint16_t CP_DEMO_DELAY_MS = 500;
-const static clock_div_t CP_CLOCL_DIV = clock_div_4;
+const static clock_div_t CP_CLOCL_DIV = clock_div_2;
 
 // ######## DIGITAL PINs ########
 // PWM PINs: 3, 5, 6, 9, 10, 11
@@ -46,7 +46,7 @@ const static uint8_t D12 = 12;
    The serial is set to 19200, but due to the divider, it gives an actual speed of 2400 because 19200/8=2400.
 */
 // ### Serial works at 2400 due to clock prescaler! ###
-const static uint32_t AL_SERIAL_SPEED = 19200;
+const static uint32_t AL_SERIAL_SPEED = 115200;
 
 /** Buffer size for sprintf-template passed as first argument to log method. */
 const static uint8_t AL_PGBUF_SIZE = 64;
@@ -67,8 +67,15 @@ const static uint8_t MS_PIN_PWM_OUT = D3_PWM;
 const static uint8_t MS_PIN_READ = A0;
 
 /** Clock 2MHz -> PWM at 500kHz, 25% duty */
-const static uint8_t MS_PWM_PERIOD = 2;
+const static uint8_t MS_PWM_PERIOD = 4;
 const static uint8_t MS_PWM_DUTY = 4;
+
+/*
+22k 2038
+100k 1773
+100k 3187
+ 
+ */
 
 // ######## LED(LE) ########
 const static uint8_t LE_PIN_AWAKE = D5_PWM;
