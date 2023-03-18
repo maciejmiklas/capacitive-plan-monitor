@@ -61,6 +61,7 @@ void setup() {
   initDevices();
   playDemos();
 
+  // change clock speed after Demos, otherwise timing is wrogn
   clock_prescale_set(CP_CLOCL_DIV);
 
   sm->setup();

@@ -21,10 +21,10 @@
 #include <stdarg.h>
 
 /** Enables logger so that it can log over serial port. */
-#define LOG true
+#define LOG false
 
 /** Enable logger for: CapacitivePlantMonitor */
-#define LOG_CPM true
+#define LOG_CPM false
 
 /** Enable logger for: BrightnessListener */
 #define LOG_BL false
@@ -42,7 +42,7 @@
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MD true
+#define LOG_MD false
 
 /** Enable logger for: PowerMonitor */
 #define LOG_PM false
@@ -57,7 +57,7 @@
 #define LOG_BT false
 
 /** Enable logger for: StandbyManager */
-#define LOG_SM true
+#define LOG_SM false
 
 void log_setup();
 void log_cycle();

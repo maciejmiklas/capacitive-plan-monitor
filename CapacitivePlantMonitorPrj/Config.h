@@ -21,15 +21,15 @@
 #include <avr/power.h>
 
 // ####### CapactitvePlantMonitorPrj(CP) ######
-const static uint16_t CP_LOOP_DELAY = 1000;
+const static uint16_t CP_LOOP_DELAY = 100;
 const static uint16_t CP_DEMO_DELAY_MS = 500;
-const static clock_div_t CP_CLOCL_DIV = clock_div_2;
+const static clock_div_t CP_CLOCL_DIV = clock_div_8;
 
 // ######## DIGITAL PINs ########
 // PWM PINs: 3, 5, 6, 9, 10, 11
 const static uint8_t D1 = 1;
 const static uint8_t D2 = 2;      // BT_PIN_BRIGHTNESS
-const static uint8_t D3_PWM = 3;  // MS_PIN_PWM_OUT, MoistureSensor sets Timer 2 for 1.6MHz on PIN 3 and 11
+const static uint8_t D3_PWM = 3;  // MS_PIN_PWM_OUT, MoistureSensor sets Timer 2 for 200MHz on PIN 3 and 11
 const static uint8_t D4 = 4;      // BT_PIN_MI_ADJUST
 const static uint8_t D5_PWM = 5;  // LE_PIN_SENSOR_ON
 const static uint8_t D6_PWM = 6;  // LE_PIN_PWR_LOW
@@ -42,11 +42,11 @@ const static uint8_t D12 = 12;
 
 // ######## ArdLog(AL) ########
 /**
-   The clock is set to 2MHz (clock_prescale_set(clock_div_8)) using a divider of 8.
-   The serial is set to 19200, but due to the divider, it gives an actual speed of 2400 because 19200/8=2400.
+   The clock is set to 2MHz (CP_CLOCL_DIV = clock_div_8) using a divider of 8.
+   The serial is set to 19200, but due to the divider, it gives an actual speed of 4800 because 38400/8=2400.
 */
-// ### Serial works at 2400 due to clock prescaler! ###
-const static uint32_t AL_SERIAL_SPEED = 115200;
+// ### Serial works at 4800 due to clock prescaler! ###
+const static uint32_t AL_SERIAL_SPEED = 38400;
 
 /** Buffer size for sprintf-template passed as first argument to log method. */
 const static uint8_t AL_PGBUF_SIZE = 64;
@@ -66,16 +66,10 @@ const static uint8_t BT_PRESS_BLINK_OFF_MS = 100;
 const static uint8_t MS_PIN_PWM_OUT = D3_PWM;
 const static uint8_t MS_PIN_READ = A0;
 
-/** Clock 2MHz -> PWM at 500kHz, 25% duty */
-const static uint8_t MS_PWM_PERIOD = 4;
+/** Clock 2MHz (16/8=2) -> PWM at 200kHz, 30% duty */
+const static uint8_t MS_PWM_PERIOD = 9;
 const static uint8_t MS_PWM_DUTY = 4;
-
-/*
-22k 2038
-100k 1773
-100k 3187
- 
- */
+// 
 
 // ######## LED(LE) ########
 const static uint8_t LE_PIN_AWAKE = D5_PWM;
@@ -131,41 +125,23 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 12;
     Voltage levels read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge.
     Different battery level reflects the amplitude of generated square wave for a sensor. It is hard to write a function
     that appropriately adjusts readings based on changes in the VCC level because it is not linear. For this reason,
-    there is a mapping table consisting of three elements: VCC level, dry and wet level - all on mV.
+    we are using mapping table for different VCC levels.
 */
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
   //{VCC , DRY , WET} (mV)
-  {5000, 2142 , 1844},
-  {4000, 2142 , 1844},
-  {3900, 2089 , 1787},
-  {3800, 2020 , 1723},
-  {3700, 1965 , 1675},
-  {3600, 1946 , 1615},
-  {3500, 1635 , 1560},
-  {3400, 1821 , 1502},
-  {3300, 1455 , 1448},
-  {3200, 1699 , 1389},
-  {3100, 1644 , 1334},
-  {2000, 1644 , 1334}
+  {5000, 3632 , 2300},
+  {4000, 2759 , 1745},
+  {3900, 2750 , 1707},
+  {3800, 2679 , 1652},
+  {3700, 2599 , 1602},
+  {3600, 2512 , 1544},
+  {3500, 2441 , 1495},
+  {3400, 2356 , 1442},
+  {3300, 2279 , 1390},
+  {3200, 2206 , 1336},
+  {3100, 2129 , 1283},
+  {2000, 1957 , 1117}
 };
-
-/* Values mesured to 16Mhz clock
-  const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
-  //{VCC , DRY , WET} (mV)
-  {5000, 2369, 1795},
-  {4000, 1742, 1358},
-  {3900, 1680, 1313},
-  {3800, 1622, 1274},
-  {3700, 1577, 1229},
-  {3600, 1520, 1182},
-  {3500, 1476, 1145},
-  {3400, 1420, 1093},
-  {3300, 1364, 1057},
-  {3200, 1308, 1017},
-  {3100, 1258, 973},
-  {2000, 1200, 960}
-  };
-*/
 
 const static float MI_ADJUST_MUL = 0.05;
 const static float MI_ADJUST_INIT = 1.0;
