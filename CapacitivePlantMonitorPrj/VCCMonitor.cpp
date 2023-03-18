@@ -17,10 +17,9 @@
 #include "VCCMonitor.h"
 
 VCCMonitor::VCCMonitor(LED* led)
-  : led(led), last(PM_PWR_MAX) {
+  : led(led), lastVcc(PM_PWR_MAX), lastReadMs(0) {
   reader = new Reader(new VCCMonitorReader());
 }
-
 
 void VCCMonitor::setup() {
 }
@@ -29,12 +28,16 @@ void VCCMonitor::standby() {}
 void VCCMonitor::wakeup() {}
 
 void VCCMonitor::cycle() {
-  last = reader->read();
-  if (last <= PM_PWR_LOW) {
+  if (util_ms() - lastReadMs < PM_READ_FREQ_MS) {
+    return;    
+  }
+  lastVcc = reader->read();
+  if (lastVcc <= PM_PWR_LOW) {
     led->on(LedPin::PWR_LOW);
   } else {
     led->off(LedPin::PWR_LOW);
   }
+  lastReadMs = util_ms();
 }
 
 const char* VCCMonitor::name() {
@@ -42,7 +45,7 @@ const char* VCCMonitor::name() {
 }
 
 uint16_t VCCMonitor::mv() {
-  return last;
+  return lastVcc;
 }
 
 // ############## VCCMonitorReader ################

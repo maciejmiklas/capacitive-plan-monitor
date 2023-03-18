@@ -43,7 +43,8 @@ private:
   LED* led;
   Reader* reader;
   static constexpr const char* NAME = "PM";
-  uint16_t last;
+  uint16_t lastVcc;
+  uint32_t lastReadMs;
 };
 
 class VCCMonitorReader : public ReaderSupplier {

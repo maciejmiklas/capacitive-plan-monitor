@@ -21,7 +21,7 @@
 #include <avr/power.h>
 
 // ####### CapactitvePlantMonitorPrj(CP) ######
-const static uint16_t CP_LOOP_DELAY = 100;
+const static uint16_t CP_LOOP_DELAY = 0;
 const static uint16_t CP_DEMO_DELAY_MS = 500;
 const static clock_div_t CP_CLOCL_DIV = clock_div_8;
 
@@ -57,10 +57,10 @@ const static uint8_t AL_SBUF_SIZE = 96;
 // ######## BUTTONS(BT) ########
 const static uint8_t BT_PIN_BRIGHTNESS = D2;
 const static uint8_t BT_PIN_MI_ADJUST = D4;
-const static uint8_t BT_PRESS_MS = 200;
+const static uint8_t BT_PRESS_MS = 20;
 const static uint8_t BT_PRESS_BLINK_REPEAT = 2;
 const static uint8_t BT_PRESS_BLINK_ON_MS = 10;
-const static uint8_t BT_PRESS_BLINK_OFF_MS = 100;
+const static uint8_t BT_PRESS_BLINK_OFF_MS = 20;
 
 // ######## MOISTURE SENSOR(MS) ########
 const static uint8_t MS_PIN_PWM_OUT = D3_PWM;
@@ -144,7 +144,7 @@ const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
 };
 
 const static float MI_ADJUST_MUL = 0.05;
-const static float MI_ADJUST_INIT = 1.0;
+const static float MI_ADJUST_INIT = 1.1;
 const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
 const static uint8_t MI_ADJUST_LEV_MIN = MI_LEVEL_OFF;
@@ -157,6 +157,7 @@ static const uint16_t PM_PWR_LOW = 3300;
 static const uint16_t PM_PWR_MAX = 3700;
 static const uint16_t PM_VCC_READ_DELAY_MS = 5;
 static const uint16_t PM_VCC_REF = 1076; // default for ATmega328P: 1110
+static const uint8_t PM_READ_FREQ_MS = 1000;
 
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;

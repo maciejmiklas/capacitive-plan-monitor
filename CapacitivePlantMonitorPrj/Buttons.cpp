@@ -55,7 +55,7 @@ void Buttons::cycle() {
 #if LOG && LOG_BT
     log(F("%s BR"), NAME);
 #endif
-    blinkOnPress();
+    //blinkOnPress();
     brightnessManager->nextLevel();
     brightnessPressed = false;
 

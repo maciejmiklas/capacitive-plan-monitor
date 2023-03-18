@@ -70,20 +70,20 @@ void setup() {
 /** ### LOOP ### */
 void loop() {
 #if LOG && LOG_CPM
-  log(F("### LOOP ###"));
+  log(F("### LOOP ### %d"));
 #endif
 
-  util_cycle();
+util_cycle();
 
   exec_dev_asc(dev, DEVICES, [](Device* d) {
     d->cycle();
   });
-
+  
   if (CP_LOOP_DELAY > 0) {
     delay(CP_LOOP_DELAY);
   }
 
-   sm->cycle();
+  sm->cycle();
 }
 
 void initDevices() {
