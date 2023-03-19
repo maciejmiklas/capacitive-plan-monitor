@@ -19,12 +19,11 @@
 
 #include "BrightnessManager.h"
 #include "ArdLog.h"
-#include "Device.h"
 #include "MoistureDriver.h"
 #include "LED.h"
 #include "EventBus.h"
 
-class Buttons : public BusListener {
+class Buttons: public BusListener {
 public:
   Buttons();
 

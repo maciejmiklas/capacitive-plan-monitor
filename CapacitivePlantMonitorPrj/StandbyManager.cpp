@@ -17,11 +17,17 @@
 
 #include "StandbyManager.h"
 
-StandbyManager::StandbyManager(LED* led, Device** devices, uint8_t devicesSize)
-  : led(led), devices(devices), devicesSize(devicesSize) {
+StandbyManager::StandbyManager() {
 }
 
-void StandbyManager::cycle() {
+void StandbyManager::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::SYSTEM_INIT) {
+    setup();
+  }
+}
+
+const char* StandbyManager::listenerName() {
+  return NAME;
 }
 
 void StandbyManager::setup() {
@@ -32,26 +38,4 @@ void StandbyManager::setup() {
 
   power_spi_disable();
   power_twi_disable();
-}
-
-
-void StandbyManager::standby() {
-#if LOG && LOG_SM
-  log(F("\n\n### STAND-BY ###"));
-#endif
-  led->off(LedPin::AWAKE);
-
-  exec_dev_desc(devices, devicesSize, [](Device * d) {
-    d->standby();
-  });
-}
-
-void StandbyManager::wakeup() {
-#if LOG && LOG_SM
-  log(F("\n\n### WAKE-UP ###"));
-#endif
-  led->on(LedPin::AWAKE);
-  exec_dev_asc(devices, devicesSize, [](Device * d) {
-    d->wakeup();
-  });
 }

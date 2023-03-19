@@ -17,7 +17,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "Device.h"
+#include <Arduino.h>
 
 void util_setup();
 void util_cycle();
@@ -31,18 +31,6 @@ inline int comp_16(const void *cmp1, const void *cmp2) {
 
 inline void sort_16(uint16_t arr[], uint8_t size) {
   qsort(arr, size, sizeof(arr[0]), comp_16);
-}
-
-inline void exec_dev_asc(Device** devices, uint8_t size, void (*func)(Device *)) {
-  for (uint8_t i = 0; i < size; i++) {
-    func(devices[i]);
-  }
-}
-
-inline void exec_dev_desc(Device** devices, uint8_t size, void (*func)(Device *)) {
-  for (uint8_t i = size; i > 0; i--) {
-    func(devices[i - 1]);
-  }
 }
 
 #endif  // UTIL_H

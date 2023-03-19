@@ -20,24 +20,20 @@
 
 #include "Config.h"
 #include "ArdLog.h"
-#include "Device.h"
 #include "MoistureSensor.h"
 #include "MoistureDisplay.h"
 #include "VCCProvider.h"
+#include "EventBus.h"
 
-class MoistureDriver : public Device {
+class MoistureDriver : public BusListener {
 public:
 
   MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, VCCProvider* vcc);
 
-  // from Device.h
-  void setup();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
-  void adjustyNextLevel();
-
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
+  
 private:
   static constexpr const char* NAME = "MD";
   MoistureSensor* sensor;
@@ -47,8 +43,10 @@ private:
   float adjust;
   uint8_t adjustLevel;
   boolean adjustUp;
-  long adjustPressMs;  
+  long adjustPressMs;
   uint8_t getLevel();
+  void cycle();
+  void adjustyNextLevel();
 };
 
 #endif  // MOISTURE_DRIVER_H

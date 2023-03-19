@@ -36,14 +36,10 @@ VCCMonitor* pm = new VCCMonitor();
 BrightnessManager* brManager = new BrightnessManager();
 MoistureDriver* md = new MoistureDriver(ms, mi, pm);
 Buttons* buttons = new Buttons();
-
-const static uint8_t DEVICES = 5;
-Device* dev[DEVICES] = { ms };
+StandbyManager* sm = new StandbyManager();
 
 const static uint8_t DEMOS = 2;
 Demo* demos[DEMOS] = { led, mi };
-
-StandbyManager* sm = new StandbyManager(led, dev, DEVICES);
 
 /** ### SETUP ### */
 void setup() {
@@ -58,13 +54,10 @@ void setup() {
 
   eb_fire(BusEvent::SYSTEM_INIT);
 
-  initDevices();
   playDemos();
 
   // change clock speed after Demos, otherwise timing is wrogn
-  clock_prescale_set(CP_CLOCL_DIV);
-
-  sm->setup();
+  clock_prescale_set(CP_CLOCK_DIV);
 }
 
 /** ### LOOP ### */
@@ -77,22 +70,9 @@ void loop() {
 
   eb_fire(BusEvent::CYCLE);
 
-  exec_dev_asc(dev, DEVICES, [](Device* d) {
-    d->cycle();
-  });
-
   if (CP_LOOP_DELAY > 0) {
     delay(CP_LOOP_DELAY);
   }
-
-  sm->cycle();
-}
-
-void initDevices() {
-  exec_dev_asc(dev, DEVICES, [](Device* d) {
-    d->setup();
-    d->wakeup();
-  });
 }
 
 void playDemos() {

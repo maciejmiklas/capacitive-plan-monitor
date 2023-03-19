@@ -21,26 +21,23 @@
 #include "ArdLog.h"
 #include "Config.h"
 #include "Util.h"
-#include "Device.h"
-#include "LED.h"
+#include "EventBus.h"
 #include <avr/sleep.h>
 #include <avr/power.h>
 
-class StandbyManager {
+class StandbyManager : public BusListener {
 
 public:
-  StandbyManager(LED* led, Device** devices,uint8_t devicesSize);
-  
-  void setup();
-  void cycle();
+  StandbyManager();
+
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
 
 private:
-  Device** devices;
-  uint8_t devicesSize;
-  LED* led;
+ static constexpr const char* NAME = "SM";
 
-  void standby();
-  void wakeup();
+  void setup();
 };
 
 #endif  // STANDBY_MANGER_H

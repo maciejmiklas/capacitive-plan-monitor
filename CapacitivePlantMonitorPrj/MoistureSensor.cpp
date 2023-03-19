@@ -24,8 +24,20 @@ uint16_t MoistureSensor::read() {
   return reader->read();
 }
 
-const char* MoistureSensor::name() {
+const char* MoistureSensor::listenerName() {
   return NAME;
+}
+
+void MoistureSensor::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::SYSTEM_INIT) {
+    setup();
+  }
+  if (event == BusEvent::STANDBY_ON) {
+    standby();
+  }
+  if (event == BusEvent::STANDBY_OFF) {
+    wakeup();
+  }
 }
 
 void MoistureSensor::setup() {
@@ -40,9 +52,6 @@ void MoistureSensor::setup() {
   OCR2B = MS_PWM_PERIOD / MS_PWM_DUTY;
 }
 
-void MoistureSensor::cycle() {
-}
-
 void MoistureSensor::wakeup() {
   TCCR2B |= _BV(CS20);
 }
@@ -51,7 +60,6 @@ void MoistureSensor::standby() {
   TCCR2B &= ~_BV(CS20);
   TCNT2 = 0;
 }
-
 
 // ############## MoistureReader ################
 MoistureReader::MoistureReader() {

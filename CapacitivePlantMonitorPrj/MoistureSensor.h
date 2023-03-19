@@ -17,11 +17,12 @@
 #ifndef MOISTURE_SENSOR_H
 #define MOISTURE_SENSOR_H
 
-#include "Device.h"
 #include "Config.h"
 #include "Reader.h"
+#include "EventBus.h"
+#include "Arduino.h"
 
-class MoistureReader: public ReaderSupplier {
+class MoistureReader : public ReaderSupplier {
 public:
   MoistureReader();
   uint16_t read();
@@ -32,25 +33,25 @@ private:
 };
 
 /** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN, reads and maps moisture value. */
-class MoistureSensor: public Device {
+class MoistureSensor : public BusListener {
 public:
-  
+
   MoistureSensor();
 
   /* returns last value read from moisture sensor from 0 to 1023. */
   uint16_t read();
 
-  // from Device.h
-  void setup();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
 
 private:
 
   static constexpr const char* NAME = "MS";
   Reader* reader;
+  void wakeup();
+  void standby();
+  void setup();
 };
 
 #endif  // MOISTURE_SENSOR_H

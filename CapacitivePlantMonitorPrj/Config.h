@@ -23,7 +23,7 @@
 // ####### CapactitvePlantMonitorPrj(CP) ######
 const static uint16_t CP_LOOP_DELAY = 0;
 const static uint16_t CP_DEMO_DELAY_MS = 500;
-const static clock_div_t CP_CLOCL_DIV = clock_div_8;
+const static clock_div_t CP_CLOCK_DIV = clock_div_8;
 
 // ######## DIGITAL PINs ########
 // PWM PINs: 3, 5, 6, 9, 10, 11

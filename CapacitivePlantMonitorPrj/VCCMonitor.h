@@ -19,7 +19,6 @@
 
 #include "ArdLog.h"
 #include "Config.h"
-#include "Device.h"
 #include "LED.h"
 #include "Reader.h"
 #include "VCCProvider.h"

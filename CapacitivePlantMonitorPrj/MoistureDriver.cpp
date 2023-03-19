@@ -21,18 +21,18 @@ MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display,
   : sensor(sensor), display(display), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0) {
 }
 
-void MoistureDriver::cycle() {
+void MoistureDriver::cycle() {  // TODO update every 100ms
   display->show(getLevel());
 }
 
 uint8_t MoistureDriver::getLevel() {
-  uint16_t sr = sensor->read();// 0-1023
+  uint16_t sr = sensor->read();                       // 0-1023
   uint16_t smv = (long)sr * (long)vcc->mv() / 1023L;  // sensor read in mv
   smv *= adjust;
 
   uint16_t dry = MI_LEVEL_MAP[0][1];
   uint16_t wet = MI_LEVEL_MAP[0][2];
-  uint16_t powerMv = vcc->mv(); // current baterry charge in mv
+  uint16_t powerMv = vcc->mv();  // current baterry charge in mv
   for (uint8_t idx = 0; idx < MI_LEVEL_MAP_SIZE - 1; idx++) {
     const uint16_t* el = MI_LEVEL_MAP[idx];
     const uint16_t* en = MI_LEVEL_MAP[idx + 1];
@@ -65,10 +65,18 @@ uint8_t MoistureDriver::getLevel() {
   return level;
 }
 
-/*
-  const static uint16_t MI_ADJUST_SHOW_MS = 2000;
-  const static uint16_t MI_ADJUST_CHANGE_MS = 10000;
-*/
+void MoistureDriver::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::CYCLE) {
+    cycle();
+
+  } else if (event == BusEvent::BTN_ADJ_SENSOR) {
+    adjustyNextLevel();
+
+  } else if (event == BusEvent::STANDBY_OFF) {
+    adjustUp = true;
+  }
+}
+
 void MoistureDriver::adjustyNextLevel() {
   if (adjustPressMs == 0 || (util_ms() - adjustPressMs > MI_ADJUST_SHOW_MS)) {
     ;
@@ -101,16 +109,6 @@ void MoistureDriver::adjustyNextLevel() {
 #endif
 }
 
-void MoistureDriver::wakeup() {
-  adjustUp = true;
-}
-
-void MoistureDriver::standby() {
-}
-
-void MoistureDriver::setup() {
-}
-
-const char* MoistureDriver::name() {
+const char* MoistureDriver::listenerName() {
   return NAME;
 }

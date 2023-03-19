@@ -19,7 +19,6 @@
 
 #include "Config.h"
 #include "ArdLog.h"
-#include "Device.h"
 #include "Demo.h"
 #include "EventBus.h"
 

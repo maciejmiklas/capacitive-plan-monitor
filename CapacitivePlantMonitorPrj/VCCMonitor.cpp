@@ -22,7 +22,7 @@ VCCMonitor::VCCMonitor()
 }
 
 void VCCMonitor::cycle() {
-  if (lastReadMs > 0 && util_ms() - lastReadMs < PM_READ_FREQ_MS) {
+  if (util_ms() - lastReadMs < PM_READ_FREQ_MS) {
     return;
   }
   lastVcc = reader->read();
