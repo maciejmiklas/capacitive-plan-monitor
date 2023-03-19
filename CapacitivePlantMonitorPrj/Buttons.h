@@ -22,28 +22,23 @@
 #include "Device.h"
 #include "MoistureDriver.h"
 #include "LED.h"
+#include "EventBus.h"
 
-class Buttons : public Device {
+class Buttons : public BusListener {
 public:
-  Buttons(BrightnessManager* brightnessManager, MoistureDriver* moistureDriver, LED* led);
+  Buttons();
 
-  // from Device.h
-  void setup();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
 
 private:
   static constexpr const char* NAME = "BT";
 
-  BrightnessManager* brightnessManager;
-  MoistureDriver* moistureDriver;
-  LED* led;
-
   void setupButton(uint8_t pin);
   void changeBrightness();
-  void blinkOnPress();
+  void setup();
+  void cycle();
 };
 
 #endif  // BUTTONS_H

@@ -58,9 +58,6 @@ const static uint8_t AL_SBUF_SIZE = 96;
 const static uint8_t BT_PIN_BRIGHTNESS = D2;
 const static uint8_t BT_PIN_MI_ADJUST = D4;
 const static uint8_t BT_PRESS_MS = 20;
-const static uint8_t BT_PRESS_BLINK_REPEAT = 2;
-const static uint8_t BT_PRESS_BLINK_ON_MS = 10;
-const static uint8_t BT_PRESS_BLINK_OFF_MS = 20;
 
 // ######## MOISTURE SENSOR(MS) ########
 const static uint8_t MS_PIN_PWM_OUT = D3_PWM;
@@ -78,14 +75,19 @@ const static uint16_t LE_DEMO_DELAY_MS = 100;
 const static uint16_t LE_DEMO_BLNIKS = 3;
 const static uint16_t LE_PWM_HZ = 100;
 
+const static uint8_t LE_PRESS_BLINK_REPEAT = 2;
+const static uint8_t LE_PRESS_BLINK_ON_MS = 10;
+const static uint8_t LE_PRESS_BLINK_OFF_MS = 20;
+
+const static uint8_t LED_BR_MAX_BLINK_REPEAT = 6;
+const static uint8_t LED_BR_MAX_BLINK_ON_MS = 200;
+const static uint8_t LED_BR_MAX_BLINK_OFF_MS = 100;
+
 // ######## BrightnessManager(BM) ########
 const static uint8_t BM_BRIGHTNESS_MIN = 1;
 const static uint8_t BM_BRIGHTNESS_MAX = 255;
 const static uint8_t BM_BRIGHTNESS_CHANGE = 30;
 const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
-const static uint8_t BM_BLINK_REPEAT = 6;
-const static uint8_t BM_BLINK_ON_MS = 200;
-const static uint8_t BM_BLINK_OFF_MS = 100;
 
 // ######## MoistureDisplay(MI) ########
 
@@ -157,7 +159,7 @@ static const uint16_t PM_PWR_LOW = 3300;
 static const uint16_t PM_PWR_MAX = 3700;
 static const uint16_t PM_VCC_READ_DELAY_MS = 5;
 static const uint16_t PM_VCC_REF = 1076; // default for ATmega328P: 1110
-static const uint8_t PM_READ_FREQ_MS = 1000;
+static const uint16_t PM_READ_FREQ_MS = 1000;
 
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;

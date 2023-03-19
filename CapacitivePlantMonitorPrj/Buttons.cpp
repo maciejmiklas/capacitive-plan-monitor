@@ -35,8 +35,7 @@ static void onBrightnessPressed() {
   brightnessPressed = true;
 }
 
-Buttons::Buttons(BrightnessManager* brightnessManager, MoistureDriver* moistureDriver, LED* led)
-  : brightnessManager(brightnessManager), moistureDriver(moistureDriver), led(led) {
+Buttons::Buttons() {
 }
 
 void Buttons::setup() {
@@ -51,31 +50,19 @@ void Buttons::cycle() {
   if (!process()) {
     return;
   }
-  if (brightnessPressed) { // set by interput
+  if (brightnessPressed) {  // set by interput
 #if LOG && LOG_BT
     log(F("%s BR"), NAME);
 #endif
-    //blinkOnPress();
-    brightnessManager->nextLevel();
+    eb_fire(BusEvent::BTN_BRIGHTNESS);
     brightnessPressed = false;
 
-  } else  if (digitalRead(BT_PIN_MI_ADJUST) == LOW) {// non-interupt pin
+  } else if (digitalRead(BT_PIN_MI_ADJUST) == LOW) {  // non-interupt pin
 #if LOG && LOG_BT
     log(F("%s AD"), NAME);
 #endif
-    blinkOnPress();
-    moistureDriver->adjustyNextLevel();
+    eb_fire(BusEvent::BTN_BRIGHTNESS);
   }
-}
-
-void Buttons::blinkOnPress() {
-  for (uint8_t i = 0; i < BT_PRESS_BLINK_REPEAT; i++) {
-    led->off(LedPin::AWAKE);
-    delay(BT_PRESS_BLINK_OFF_MS);
-    led->on(LedPin::AWAKE);
-    delay(BT_PRESS_BLINK_ON_MS);
-  }
-  led->on(LedPin::AWAKE);
 }
 
 void Buttons::setupButton(uint8_t pin) {
@@ -83,12 +70,15 @@ void Buttons::setupButton(uint8_t pin) {
   digitalWrite(pin, HIGH);  // enable pull-up resistor
 }
 
-const char* Buttons::name() {
+const char* Buttons::listenerName() {
   return NAME;
 }
 
-void Buttons::standby() {
-}
+void Buttons::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::SYSTEM_INIT) {
+    setup();
 
-void Buttons::wakeup() {
+  } else if (event == BusEvent::CYCLE) {
+    cycle();
+  }
 }

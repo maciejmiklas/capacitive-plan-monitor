@@ -19,38 +19,39 @@
 
 #include "ArdLog.h"
 #include "Config.h"
-#include "Device.h"
 #include "Demo.h"
-#include "BrightnessListener.h"
+#include "EventBus.h"
 
 // Enum values are out PINs
 enum LedPin { AWAKE = LE_PIN_AWAKE,
               PWR_LOW = LE_PIN_PWR_LOW };
 
-class LED: public Device, public BrightnessListener, public Demo {
+class LED : public Demo, public BusListener {
 public:
   LED();
 
   void on(LedPin led);
   void off(LedPin led);
-   
-  // from BrightnessListener.h
-  void changeBrightness(uint8_t level);
-
-  // from Device.h
-  void setup();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
 
   // from Demo.h
   void demo();
+
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
 
 private:
   const static uint8_t FIRST_PIN = LedPin::AWAKE;
   const static uint8_t LAST_PIN = LedPin::PWR_LOW;
   static constexpr const char* NAME = "LE";
+  uint16_t brightness;
+
+  void changeBrightness(uint8_t level);
+  void blinkOnButton();
+  void blinkOnMaxBrightness();
+  void lowPowerOn();
+  void lowPowerOff();
+  void setup();
 };
 
 #endif  // LED_H

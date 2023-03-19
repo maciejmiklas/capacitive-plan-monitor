@@ -20,6 +20,7 @@
 #include "MoistureDisplay.h"
 #include "MoistureDriver.h"
 #include "Arduino.h"
+#include "EventBus.h"
 #include "LED.h"
 #include "Buttons.h"
 #include "BrightnessManager.h"
@@ -31,13 +32,13 @@ Storage* st = new Storage();
 MoistureSensor* ms = new MoistureSensor();
 MoistureDisplay* mi = new MoistureDisplay();
 LED* led = new LED();
-VCCMonitor* pm = new VCCMonitor(led);
-BrightnessManager* brManager = new BrightnessManager(led);
+VCCMonitor* pm = new VCCMonitor();
+BrightnessManager* brManager = new BrightnessManager();
 MoistureDriver* md = new MoistureDriver(ms, mi, pm);
-Buttons* buttons = new Buttons(brManager, md, led);
+Buttons* buttons = new Buttons();
 
-const static uint8_t DEVICES = 6;
-Device* dev[DEVICES] = { ms, led, mi, buttons, pm, md };
+const static uint8_t DEVICES = 5;
+Device* dev[DEVICES] = { ms };
 
 const static uint8_t DEMOS = 2;
 Demo* demos[DEMOS] = { led, mi };
@@ -55,8 +56,7 @@ void setup() {
 #endif
   util_setup();
 
-  brManager->registerListener(led);
-  brManager->registerListener(mi);
+  eb_fire(BusEvent::SYSTEM_INIT);
 
   initDevices();
   playDemos();
@@ -73,12 +73,14 @@ void loop() {
   log(F("### LOOP ### %d"));
 #endif
 
-util_cycle();
+  util_cycle();
+
+  eb_fire(BusEvent::CYCLE);
 
   exec_dev_asc(dev, DEVICES, [](Device* d) {
     d->cycle();
   });
-  
+
   if (CP_LOOP_DELAY > 0) {
     delay(CP_LOOP_DELAY);
   }

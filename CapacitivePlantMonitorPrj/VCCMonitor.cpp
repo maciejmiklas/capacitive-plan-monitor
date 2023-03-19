@@ -16,31 +16,33 @@
 */
 #include "VCCMonitor.h"
 
-VCCMonitor::VCCMonitor(LED* led)
-  : led(led), lastVcc(PM_PWR_MAX), lastReadMs(0) {
+VCCMonitor::VCCMonitor()
+  : lastVcc(PM_PWR_MAX), lastReadMs(0) {
   reader = new Reader(new VCCMonitorReader());
 }
 
-void VCCMonitor::setup() {
-}
-
-void VCCMonitor::standby() {}
-void VCCMonitor::wakeup() {}
-
 void VCCMonitor::cycle() {
-  if (util_ms() - lastReadMs < PM_READ_FREQ_MS) {
-    return;    
+  if (lastReadMs > 0 && util_ms() - lastReadMs < PM_READ_FREQ_MS) {
+    return;
   }
   lastVcc = reader->read();
+
   if (lastVcc <= PM_PWR_LOW) {
-    led->on(LedPin::PWR_LOW);
-  } else {
-    led->off(LedPin::PWR_LOW);
+    eb_fire(BusEvent::VCC_LOW);
+  } else {  // TODO fire NORMAL only if we had previously LOW
+    eb_fire(BusEvent::VCC_NORMAL);
   }
+
   lastReadMs = util_ms();
 }
 
-const char* VCCMonitor::name() {
+void VCCMonitor::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::CYCLE) {
+    cycle();
+  }
+}
+
+const char* VCCMonitor::listenerName() {
   return NAME;
 }
 

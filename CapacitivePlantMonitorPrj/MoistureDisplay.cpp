@@ -1,4 +1,3 @@
-#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -38,7 +37,7 @@ void MoistureDisplay::setup() {
   pinMode(MI_PIN_CLOCK, OUTPUT);
   pinMode(MI_PIN_ENABLE, OUTPUT);
 
-  changeBrightness(currentBrightness());
+  changeBrightness(BM_BRIGHTNESS_INITIAL);
   show(MI_LEVEL_OFF);
 }
 
@@ -67,19 +66,18 @@ void MoistureDisplay::show(uint8_t level) {
 }
 
 void MoistureDisplay::changeBrightness(uint8_t level) {
-  BrightnessListener::changeBrightness(level);
   analogWrite(MI_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
 }
 
-const char* MoistureDisplay::name() {
+void MoistureDisplay::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::BRIGHTNESS_CHANGE) {
+    changeBrightness(va_arg(ap, uint16_t));
+
+  } else if (event == BusEvent::SYSTEM_INIT) {
+    setup();
+  }
+}
+
+const char* MoistureDisplay::listenerName() {
   return NAME;
-}
-
-void MoistureDisplay::standby() {
-}
-
-void MoistureDisplay::wakeup() {
-}
-
-void MoistureDisplay::cycle() {
 }

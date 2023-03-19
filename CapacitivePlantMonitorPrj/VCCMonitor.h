@@ -20,31 +20,29 @@
 #include "ArdLog.h"
 #include "Config.h"
 #include "Device.h"
-#include "BrightnessListener.h"
 #include "LED.h"
 #include "Reader.h"
 #include "VCCProvider.h"
+#include "EventBus.h"
 
-class VCCMonitor : public Device, public VCCProvider {
+class VCCMonitor: public VCCProvider, public BusListener  {
 public:
-  VCCMonitor(LED* led);
-
-  // from Device.h
-  void setup();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
+  VCCMonitor();
 
   // from PowerProvider.h
   uint16_t mv();
 
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
+
 private:
-  LED* led;
   Reader* reader;
   static constexpr const char* NAME = "PM";
   uint16_t lastVcc;
   uint32_t lastReadMs;
+
+  void cycle();
 };
 
 class VCCMonitorReader : public ReaderSupplier {
@@ -54,7 +52,7 @@ public:
   const char* name();
 
 private:
-  static constexpr const char* NAME = "PM";
+  static constexpr const char* NAME = "PMR";
 };
 
 #endif  // VCC_MONITOR_H

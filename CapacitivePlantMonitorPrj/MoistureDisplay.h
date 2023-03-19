@@ -21,10 +21,10 @@
 #include "ArdLog.h"
 #include "Device.h"
 #include "Demo.h"
-#include "BrightnessListener.h"
+#include "EventBus.h"
 
 /** Moisture level LED display base on 74HC595 */
-class MoistureDisplay : public Device, public BrightnessListener, public Demo {
+class MoistureDisplay : public Demo, public BusListener {
 public:
 
   MoistureDisplay();
@@ -35,22 +35,17 @@ public:
   /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
   void blink(uint8_t level);
 
-  // from BrightnessListener.h
-  void changeBrightness(uint8_t level);
-
-  // from Device.h
-  void setup();
-  void standby();
-  void wakeup();
-  void cycle();
-  const char* name();
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
 
   // from Demo.h
   void demo();
 
 private:
-
   static constexpr const char* NAME = "MI";
+  void changeBrightness(uint8_t level);
+  void setup();
 };
 
 #endif  // MOISTURE_DISPLAY_H

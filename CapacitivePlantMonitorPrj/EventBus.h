@@ -14,23 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef BRIGHTNESS_LISTENER_H
-#define BRIGHTNESS_LISTENER_H
+#ifndef EVENTBUS_H_
+#define EVENTBUS_H_
 
-#include "Config.h"
+#include "Arduino.h"
 #include "ArdLog.h"
 
-class BrightnessListener {
-public:
-  BrightnessListener();
-  virtual void changeBrightness(uint8_t level);
+enum class BusEvent {
+  SYSTEM_INIT = 10,
 
-protected:
-  uint8_t currentBrightness();
+  BTN_BRIGHTNESS = 21,
+  BTN_ADJ_SENSOR = 22,
 
-private:
-  uint8_t brightness;
-  static constexpr const char* NAME = "BL";
+  VCC_LOW = 31,
+  VCC_NORMAL = 32,
+
+  STANDBY_ON = 41,
+  STANDBY_OFF = 42,
+
+  /** Param: brightness as uint_16, value: BM_BRIGHTNESS_MIN <-> BM_BRIGHTNESS_MAX */
+  BRIGHTNESS_CHANGE = 50,
+
+  BRIGHTNESS_MAX = 51,
+  
+  CYCLE = 255,
 };
 
-#endif  // BRIGHTNESS_LISTENER_H
+class BusListener {
+public:
+  virtual void onEvent(BusEvent event, va_list ap) = 0;
+  virtual const char* listenerName() = 0;
+
+protected:
+  virtual ~BusListener();
+  BusListener();
+};
+
+void eb_register(BusListener* listener);  // TODO method required only inside EventBus.cpp!
+void eb_fire(BusEvent event, ...);
+
+#endif /* EVENTBUS_H_ */

@@ -17,26 +17,22 @@
 #ifndef BRIGHTNESS_MANAGER_H
 #define BRIGHTNESS_MANAGER_H
 
-#include "BrightnessListener.h"
 #include "ArdLog.h"
 #include "LED.h"
 
-class BrightnessManager {
+class BrightnessManager : public BusListener {
 public:
-  BrightnessManager(LED* led);
-  void registerListener(BrightnessListener* listener);
+  BrightnessManager();
   void nextLevel();
+
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
 
 private:
   const static uint8_t MAX_LISTENERS = 2;
   static constexpr const char* NAME = "BM";
-
-  BrightnessListener* listeners[MAX_LISTENERS];
-  uint8_t registeredCount;
   uint16_t brightness;
-  LED* led;
-
-  void blink();
 };
 
 #endif  // BRIGHTNESS_MANAGER_H

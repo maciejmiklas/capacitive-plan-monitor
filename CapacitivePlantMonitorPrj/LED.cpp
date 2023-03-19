@@ -16,7 +16,8 @@
  */
 #include "LED.h"
 
-LED::LED() {
+LED::LED()
+  : brightness(BM_BRIGHTNESS_INITIAL) {
 }
 
 void LED::setup() {
@@ -38,14 +39,6 @@ void LED::demo() {
   }
 }
 
-void LED::changeBrightness(uint8_t level) {
-  BrightnessListener::changeBrightness(level);
-}
-
-const char* LED::name() {
-  return NAME;
-}
-
 void LED::off(LedPin led) {
   uint8_t pin = led;
 #if LOG && LOG_LE
@@ -57,16 +50,60 @@ void LED::off(LedPin led) {
 void LED::on(LedPin led) {
   uint8_t pin = led;
 #if LOG && LOG_LE
-  log(F("%s ON %d %d"), NAME, pin, currentBrightness());
+  log(F("%s ON %d %d"), NAME, pin, brightness);
 #endif
-  analogWrite(pin, currentBrightness());
+  analogWrite(pin, brightness);
 }
 
-void LED::standby() {
+const char* LED::listenerName() {
+  return NAME;
 }
 
-void LED::wakeup() {
+void LED::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
+    blinkOnButton();
+
+  } else if (event == BusEvent::SYSTEM_INIT) {
+    setup();
+
+  } else if (event == BusEvent::BRIGHTNESS_MAX) {
+    blinkOnMaxBrightness();
+
+  } else if (event == BusEvent::BRIGHTNESS_CHANGE) {
+    brightness = va_arg(ap, uint16_t);
+
+  } else if (event == BusEvent::VCC_LOW) {
+    lowPowerOn();
+
+  } else if (event == BusEvent::VCC_NORMAL) {
+    lowPowerOff();
+  }
 }
 
-void LED::cycle() {
+void LED::lowPowerOn() {  // TODO should be blinking
+  on(LedPin::PWR_LOW);
+}
+
+void LED::lowPowerOff() {
+  off(LedPin::PWR_LOW);
+}
+
+void LED::blinkOnMaxBrightness() {
+  for (uint8_t i = 0; i < LED_BR_MAX_BLINK_REPEAT; i++) {
+    off(LedPin::AWAKE);
+    delay(LED_BR_MAX_BLINK_OFF_MS);
+    on(LedPin::AWAKE);
+    delay(LED_BR_MAX_BLINK_ON_MS);
+  }
+  on(LedPin::AWAKE);
+}
+
+void LED::blinkOnButton() {
+  for (uint8_t i = 0; i < LE_PRESS_BLINK_REPEAT; i++) {
+    off(LedPin::AWAKE);
+    delay(LE_PRESS_BLINK_OFF_MS);
+    on(LedPin::AWAKE);
+    delay(LE_PRESS_BLINK_ON_MS);
+  }
+  on(LedPin::AWAKE);
 }

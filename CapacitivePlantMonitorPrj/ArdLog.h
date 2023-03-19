@@ -59,6 +59,9 @@
 /** Enable logger for: StandbyManager */
 #define LOG_SM false
 
+/** Enable logger for: EventBus */
+#define LOG_EB false
+
 void log_setup();
 void log_cycle();
 void log(const __FlashStringHelper *ifsh, ...);

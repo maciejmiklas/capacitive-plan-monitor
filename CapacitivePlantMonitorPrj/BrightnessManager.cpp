@@ -16,13 +16,10 @@
  */
 
 #include "BrightnessManager.h"
+#include "EventBus.h"
 
-BrightnessManager::BrightnessManager(LED* led)
-  : registeredCount(0), brightness(BM_BRIGHTNESS_INITIAL), led(led) {
-}
-
-void BrightnessManager::registerListener(BrightnessListener* listener) {
-  listeners[registeredCount++] = listener;
+BrightnessManager::BrightnessManager()
+  : brightness(BM_BRIGHTNESS_INITIAL) {
 }
 
 void BrightnessManager::nextLevel() {
@@ -32,24 +29,22 @@ void BrightnessManager::nextLevel() {
     brightness = BM_BRIGHTNESS_MIN;
 
   } else if (brightness + BM_BRIGHTNESS_CHANGE > BM_BRIGHTNESS_MAX) {
-    blink();
+    eb_fire(BusEvent::BRIGHTNESS_MAX);
   }
 
 #if LOG && LOG_BM
   log(F("%s NX %d"), NAME, brightness);
 #endif
 
-  for (uint8_t i = 0; i < registeredCount; i++) {
-    listeners[i]->changeBrightness(brightness);
-  }
+  eb_fire(BusEvent::BRIGHTNESS_CHANGE, brightness);
 }
 
-void BrightnessManager::blink() {
-  for (uint8_t i = 0; i < BM_BLINK_REPEAT; i++) {
-    led->off(LedPin::AWAKE);
-    delay(BM_BLINK_OFF_MS);
-    led->on(LedPin::AWAKE);
-    delay(BM_BLINK_ON_MS);
+const char* BrightnessManager::listenerName() {
+  return NAME;
+}
+
+void BrightnessManager::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::BTN_BRIGHTNESS) {
+    nextLevel();
   }
-  led->on(LedPin::AWAKE);
 }
