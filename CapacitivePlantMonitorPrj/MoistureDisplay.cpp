@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,20 +17,54 @@
  */
 #include "MoistureDisplay.h"
 
-MoistureDisplay::MoistureDisplay() {
+MoistureDisplay::MoistureDisplay()
+  : moistureLevel(MI_LEVEL_OFF) {
+}
+
+void MoistureDisplay::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::BRIGHTNESS_CHANGE) {
+    onChangeBrightness(va_arg(ap, uint16_t));
+
+  } else if (event == BusEvent::MOISTURE_ADJ_NEXT) {
+    onMoistureAdjust(va_arg(ap, uint16_t));
+
+  } else if (event == BusEvent::MOISTURE_LEVEL_CHANGE) {
+    onMoistureLevelChange(va_arg(ap, uint16_t));
+  }
+}
+
+void MoistureDisplay::onMoistureLevelChange(uint8_t level) {
+  show(level);
+  moistureLevel = level;
+}
+
+void MoistureDisplay::onMoistureAdjust(uint8_t level) {
+  blink(level);
+}
+
+void MoistureDisplay::onChangeBrightness(uint8_t level) {
+  changeBrightness(level);
+  show(MI_LEVEL_MAX);
+  delay(MI_BRIGHTNES_ON_DELAY);
+  showCurrentMoistureLevel();
 }
 
 void MoistureDisplay::demo() {
   for (int8_t lev = MI_LEVEL_OFF; lev <= MI_LEVEL_MAX; lev++) {
     show(lev);
-    delay(MI_DEMO_SPEED_MS);
+    delay(MI_DEMO_DELAY);
   }
-  delay(MI_DEMO_WAIT_MIDDLE_MS);
+  delay(MI_DEMO_MIDDLE_DELAY);
   for (int8_t lev = MI_LEVEL_MAX; lev >= MI_LEVEL_OFF; lev--) {
     show(lev);
-    delay(MI_DEMO_SPEED_MS);
+    delay(MI_DEMO_DELAY);
   }
+  showCurrentMoistureLevel();
 }
+
+void MoistureDisplay::showCurrentMoistureLevel() {
+  show(moistureLevel);
+};
 
 void MoistureDisplay::setup() {
   pinMode(MI_PIN_LATCH, OUTPUT);
@@ -44,10 +79,11 @@ void MoistureDisplay::setup() {
 void MoistureDisplay::blink(uint8_t level) {
   for (uint8_t i = 0; i < MI_BLINK_REPEAT; i++) {
     show(level);
-    delay(MI_BLINK_ON_MS);
+    delay(MI_BLINK_ON_DELAY);
     show(MI_LEVEL_OFF);
-    delay(MI_BLINK_OFF_MS);
+    delay(MI_BLINK_OFF_DELAY);
   }
+  showCurrentMoistureLevel();
 }
 
 void MoistureDisplay::show(uint8_t level) {
@@ -67,15 +103,6 @@ void MoistureDisplay::show(uint8_t level) {
 
 void MoistureDisplay::changeBrightness(uint8_t level) {
   analogWrite(MI_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
-}
-
-void MoistureDisplay::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::BRIGHTNESS_CHANGE) {
-    changeBrightness(va_arg(ap, uint16_t));
-
-  } else if (event == BusEvent::SYSTEM_INIT) {
-    setup();
-  }
 }
 
 const char* MoistureDisplay::listenerName() {

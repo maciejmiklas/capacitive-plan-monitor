@@ -1,3 +1,4 @@
+#include <avr/interrupt.h>
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -18,19 +19,33 @@
 #define UTIL_H
 
 #include <Arduino.h>
+#include "Config.h"
+#include "Device.h"
 
 void util_setup();
 void util_cycle();
 uint32_t util_ms();
 
-inline int comp_16(const void *cmp1, const void *cmp2) {
+inline int cmp_u16(const void *cmp1, const void *cmp2) {
   uint16_t a = *((uint16_t *)cmp1);
   uint16_t b = *((uint16_t *)cmp2);
   return a - b;
 }
 
-inline void sort_16(uint16_t arr[], uint8_t size) {
-  qsort(arr, size, sizeof(arr[0]), comp_16);
+inline void sort_u16(uint16_t arr[], uint8_t size) {
+  qsort(arr, size, sizeof(arr[0]), cmp_u16);
+}
+
+inline uint16_t abs_16(int16_t val) {
+  return val > 0 ? val : val * -1;
+}
+
+inline uint8_t abs_8(int8_t val) {
+  return val > 0 ? val : val * -1;
+}
+
+inline uint16_t sub_u16(uint16_t v1, uint16_t v2) {
+  return v1 > v2 ? v1 - v2 : v2 - v1;
 }
 
 #endif  // UTIL_H

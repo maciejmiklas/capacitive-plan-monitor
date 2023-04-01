@@ -14,43 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MOISTURE_DRIVER_H
-#define MOISTURE_DRIVER_H
+#ifndef DEVICE_H_
+#define DEVICE_H_
 
-#include "Config.h"
-#include "ArdLog.h"
-#include "MoistureSensor.h"
-#include "MoistureDisplay.h"
-#include "VCCProvider.h"
-#include "EventBus.h"
+#include <Arduino.h>
 
-class MoistureDriver : public BusListener {
+class Device {
 public:
 
-  MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc);
-
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
-
-private:
-  static constexpr const char* NAME = "MD";
-  MoistureSensor* sensor;
-  VCCProvider* vcc;
-
-  float adjust;
-  uint8_t adjustLevel;
-  boolean adjustUp;
-  long adjustPressMs;
-  uint8_t currentLevel;
-  uint8_t lastProbeMs;
-
-  uint8_t getLevel();
-  void probe(boolean force);
-
-  void onProbe();
-  void onStandbyOff();
-  void onAdjustyNextLevel();
+  /** Called only once after hard reset */
+  virtual void setup() = 0;
 };
 
-#endif  // MOISTURE_DRIVER_H
+#endif /* DEVICE_H_ */

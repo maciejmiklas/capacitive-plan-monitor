@@ -17,49 +17,41 @@
 
 #include "Buttons.h"
 
-static volatile uint8_t brightnessPressed = false;
-static volatile uint32_t processMs = 0;
+Buttons::Buttons()
+  : processMs(0) {
+}
 
-static inline boolean process() {
-  uint32_t ms = millis();
-  if (ms - processMs < BT_PRESS_MS) {
-    return false;
+void Buttons::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::CYCLE) {
+    onCycle();
   }
-  processMs = ms;
-  return true;
-}
-
-static void onBrightnessPressed() {
-  brightnessPressed = true;
-}
-
-Buttons::Buttons() {
 }
 
 void Buttons::setup() {
   setupButton(BT_PIN_BRIGHTNESS);
   setupButton(BT_PIN_MI_ADJUST);
-
-  // there is only one PIN left with interupt support
-  attachInterrupt(digitalPinToInterrupt(BT_PIN_BRIGHTNESS), onBrightnessPressed, FALLING);
 }
 
-void Buttons::cycle() {
-  if (!process()) {
+void Buttons::onCycle() {
+  if (util_ms() - processMs < BT_PRESS_MS) {
     return;
   }
-  if (brightnessPressed) {  // set by interput
-#if LOG && LOG_BT
-    log(F("%s BR"), NAME);
-#endif
-    eb_fire(BusEvent::BTN_BRIGHTNESS);
-    brightnessPressed = false;
+  readButtons();
+  processMs = util_ms();
+}
 
-  } else if (digitalRead(BT_PIN_MI_ADJUST) == LOW) {  // non-interupt pin
+void Buttons::readButtons() {
+  if (digitalRead(BT_PIN_BRIGHTNESS) == LOW) {
 #if LOG && LOG_BT
-    log(F("%s AD"), NAME);
+    log(F("%s BRIGHTNESS"), NAME);
 #endif
     eb_fire(BusEvent::BTN_BRIGHTNESS);
+
+  } else if (digitalRead(BT_PIN_MI_ADJUST) == LOW) {
+#if LOG && LOG_BT
+    log(F("%s ADJUST"), NAME);
+#endif
+    eb_fire(BusEvent::BTN_ADJ_SENSOR);
   }
 }
 
@@ -70,13 +62,4 @@ void Buttons::setupButton(uint8_t pin) {
 
 const char* Buttons::listenerName() {
   return NAME;
-}
-
-void Buttons::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::SYSTEM_INIT) {
-    setup();
-
-  } else if (event == BusEvent::CYCLE) {
-    cycle();
-  }
 }

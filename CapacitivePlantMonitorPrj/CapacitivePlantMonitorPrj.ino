@@ -27,16 +27,22 @@
 #include "VCCMonitor.h"
 #include "Storage.h"
 #include "StandbyManager.h"
+#include "ProbeDriver.h"
+
 
 Storage* st = new Storage();
-MoistureSensor* ms = new MoistureSensor();
-MoistureDisplay* mi = new MoistureDisplay();
 LED* led = new LED();
-VCCMonitor* pm = new VCCMonitor();
 BrightnessManager* brManager = new BrightnessManager();
-MoistureDriver* md = new MoistureDriver(ms, mi, pm);
 Buttons* buttons = new Buttons();
 StandbyManager* sm = new StandbyManager();
+MoistureDisplay* mi = new MoistureDisplay();
+ProbeDriver* pd = new ProbeDriver();
+VCCMonitor* pm = new VCCMonitor();
+MoistureSensor* ms = new MoistureSensor();
+MoistureDriver* md = new MoistureDriver(ms, pm);
+
+const static uint8_t DEVICES = 5;
+Device* dev[DEVICES] = { ms, led, mi, buttons, pm };
 
 const static uint8_t DEMOS = 2;
 Demo* demos[DEMOS] = { led, mi };
@@ -52,18 +58,16 @@ void setup() {
 #endif
   util_setup();
 
-  eb_fire(BusEvent::SYSTEM_INIT);
+  execSetup();
+  execDemo();
 
-  playDemos();
-
-  // change clock speed after Demos, otherwise timing is wrogn
   clock_prescale_set(CP_CLOCK_DIV);
 }
 
 /** ### LOOP ### */
 void loop() {
 #if LOG && LOG_CPM
-  log(F("### LOOP ### %d"));
+  log(F("### LOOP ###"));
 #endif
 
   util_cycle();
@@ -75,10 +79,14 @@ void loop() {
   }
 }
 
-void playDemos() {
+void execDemo() {
   for (uint8_t i = 0; i < DEMOS; i++) {
-    delay(CP_DEMO_DELAY_MS);
     demos[i]->demo();
   }
-  delay(CP_DEMO_DELAY_MS);
+}
+
+void execSetup() {
+  for (uint8_t i = 0; i < DEVICES; i++) {
+    dev[i]->setup();
+  }
 }

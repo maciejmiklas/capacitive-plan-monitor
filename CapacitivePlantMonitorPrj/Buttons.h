@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -22,8 +23,9 @@
 #include "MoistureDriver.h"
 #include "LED.h"
 #include "EventBus.h"
+#include "Device.h"
 
-class Buttons: public BusListener {
+class Buttons : public BusListener, public Device {
 public:
   Buttons();
 
@@ -31,13 +33,17 @@ public:
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
 
+  // from Device.h
+  void setup();
+
 private:
   static constexpr const char* NAME = "BT";
+  uint32_t processMs;
 
   void setupButton(uint8_t pin);
-  void changeBrightness();
-  void setup();
-  void cycle();
+  void readButtons();
+
+  void onCycle();
 };
 
 #endif  // BUTTONS_H

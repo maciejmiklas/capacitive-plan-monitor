@@ -14,43 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MOISTURE_DRIVER_H
-#define MOISTURE_DRIVER_H
+#ifndef PROPBE_DRIVER_H
+#define PROPBE_DRIVER_H
 
 #include "Config.h"
 #include "ArdLog.h"
-#include "MoistureSensor.h"
-#include "MoistureDisplay.h"
-#include "VCCProvider.h"
+#include "Demo.h"
 #include "EventBus.h"
+#include "Util.h"
 
-class MoistureDriver : public BusListener {
+class ProbeDriver : public BusListener {
 public:
 
-  MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc);
+  ProbeDriver();
 
   // from EventBus.h
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
 
 private:
-  static constexpr const char* NAME = "MD";
-  MoistureSensor* sensor;
-  VCCProvider* vcc;
+  uint32_t suspendMs;
+  static constexpr const char* NAME = "PD";
 
-  float adjust;
-  uint8_t adjustLevel;
-  boolean adjustUp;
-  long adjustPressMs;
-  uint8_t currentLevel;
-  uint8_t lastProbeMs;
-
-  uint8_t getLevel();
-  void probe(boolean force);
-
-  void onProbe();
-  void onStandbyOff();
-  void onAdjustyNextLevel();
+  void onButtonPress();
+  void onCycle();
 };
 
-#endif  // MOISTURE_DRIVER_H
+#endif  // PROPBE_DRIVER_H

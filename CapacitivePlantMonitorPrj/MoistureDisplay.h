@@ -21,9 +21,10 @@
 #include "ArdLog.h"
 #include "Demo.h"
 #include "EventBus.h"
+#include "Device.h"
 
 /** Moisture level LED display base on 74HC595 */
-class MoistureDisplay : public Demo, public BusListener {
+class MoistureDisplay : public Demo, public BusListener, public Device {
 public:
 
   MoistureDisplay();
@@ -41,10 +42,19 @@ public:
   // from Demo.h
   void demo();
 
-private:
-  static constexpr const char* NAME = "MI";
-  void changeBrightness(uint8_t level);
+  // from Device.h
   void setup();
+
+private:
+  uint8_t moistureLevel;
+  static constexpr const char* NAME = "MI";
+
+  void changeBrightness(uint8_t level);
+  void showCurrentMoistureLevel();
+
+  void onChangeBrightness(uint8_t level);
+  void onMoistureAdjust(uint8_t level);
+  void onMoistureLevelChange(uint8_t level);
 };
 
 #endif  // MOISTURE_DISPLAY_H

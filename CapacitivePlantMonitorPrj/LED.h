@@ -21,12 +21,13 @@
 #include "Config.h"
 #include "Demo.h"
 #include "EventBus.h"
+#include "Device.h"
 
 // Enum values are out PINs
-enum LedPin { AWAKE = LE_PIN_AWAKE,
+enum LedPin { AWAKE = LE_PIN_PWR_LOW, // TODO LE_PIN_AWAKE
               PWR_LOW = LE_PIN_PWR_LOW };
 
-class LED : public Demo, public BusListener {
+class LED : public Demo, public BusListener, public Device  {
 public:
   LED();
 
@@ -40,6 +41,9 @@ public:
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
 
+  // from Device.h
+  void setup();  
+
 private:
   const static uint8_t FIRST_PIN = LedPin::AWAKE;
   const static uint8_t LAST_PIN = LedPin::PWR_LOW;
@@ -51,7 +55,6 @@ private:
   void blinkOnMaxBrightness();
   void lowPowerOn();
   void lowPowerOff();
-  void setup();
 };
 
 #endif  // LED_H

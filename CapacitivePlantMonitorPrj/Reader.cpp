@@ -25,7 +25,7 @@ uint16_t Reader::read() {
   for (uint8_t i = 0; i < RE_PROBES; i++) {
     probes[i] = supplier->read();
   }
-  sort_16(probes, RE_PROBES);
+  sort_u16(probes, RE_PROBES);
   uint16_t val = probes[RE_PROBE_AT];
 
 

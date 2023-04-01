@@ -23,7 +23,6 @@
 class BrightnessManager : public BusListener {
 public:
   BrightnessManager();
-  void nextLevel();
 
   // from EventBus.h
   void onEvent(BusEvent event, va_list ap);
@@ -33,6 +32,8 @@ private:
   const static uint8_t MAX_LISTENERS = 2;
   static constexpr const char* NAME = "BM";
   uint16_t brightness;
+
+   void onNextLevel();
 };
 
 #endif  // BRIGHTNESS_MANAGER_H

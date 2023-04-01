@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -23,8 +24,9 @@
 #include "Reader.h"
 #include "VCCProvider.h"
 #include "EventBus.h"
+#include "Device.h"
 
-class VCCMonitor: public VCCProvider, public BusListener  {
+class VCCMonitor : public VCCProvider, public BusListener, public Device {
 public:
   VCCMonitor();
 
@@ -35,13 +37,19 @@ public:
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
 
+  // from Device.h
+  void setup();
+
 private:
   Reader* reader;
   static constexpr const char* NAME = "PM";
   uint16_t lastVcc;
-  uint32_t lastReadMs;
+  uint32_t lastUpdateMs;
 
-  void cycle();
+  void probe(boolean force);
+
+  void onProbe();
+  void onStandbyOff();
 };
 
 class VCCMonitorReader : public ReaderSupplier {

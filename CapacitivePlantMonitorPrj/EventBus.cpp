@@ -45,19 +45,12 @@ void eb_register(BusListener* listener) {
 
 void eb_fire(BusEvent event, ...) {
 #if LOG && LOG_EB
-  if (event != BusEvent::CYCLE) {
-    log(F("%s FR: %d"), NAME, event);
-  }
+  log(F("%s LE %d"), NAME, event);
 #endif
 
   for (uint8_t idx = 0; idx < listenersAmount; idx++) {
     va_list ap;
     va_start(ap, event);
-#if LOG && LOG_EB
-    if (event != BusEvent::CYCLE) {
-      log(F("%s LE: %s"), NAME, listeners[idx]->name());
-    }
-#endif
     listeners[idx]->onEvent(event, ap);
     va_end(ap);
   }

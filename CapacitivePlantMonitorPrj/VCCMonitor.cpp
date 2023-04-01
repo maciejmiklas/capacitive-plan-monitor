@@ -17,28 +17,51 @@
 #include "VCCMonitor.h"
 
 VCCMonitor::VCCMonitor()
-  : lastVcc(PM_PWR_MAX), lastReadMs(0) {
+  : lastVcc(VC_PWR_MAX), lastUpdateMs(0) {
   reader = new Reader(new VCCMonitorReader());
 }
 
-void VCCMonitor::cycle() {
-  if (util_ms() - lastReadMs < PM_READ_FREQ_MS) {
-    return;
-  }
-  lastVcc = reader->read();
+void VCCMonitor::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::PROBE) {
+    onProbe();
 
-  if (lastVcc <= PM_PWR_LOW) {
-    eb_fire(BusEvent::VCC_LOW);
-  } else {  // TODO fire NORMAL only if we had previously LOW
-    eb_fire(BusEvent::VCC_NORMAL);
+  } else if (event == BusEvent::STANDBY_OFF) {
+    onStandbyOff();
   }
-
-  lastReadMs = util_ms();
 }
 
-void VCCMonitor::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::CYCLE) {
-    cycle();
+void VCCMonitor::onStandbyOff() {
+  lastUpdateMs = 0;
+  probe(true);
+}
+
+void VCCMonitor::onProbe() {
+  probe(false);
+}
+
+void VCCMonitor::setup() {
+  lastVcc = reader->read();
+}
+
+void VCCMonitor::probe(boolean force) {
+  if (force || util_ms() - lastUpdateMs > VC_UPDATE_FREQ_MS) {
+
+    uint16_t vcc = reader->read();
+    if (force || sub_u16(vcc, lastVcc) > MI_MIN_VCC_CHANGE_MV) {
+      lastVcc = vcc;
+
+      if (vcc <= VC_PWR_CRITICAL) {
+        eb_fire(BusEvent::VCC_CRITICAL);
+
+        if (vcc <= VC_PWR_LOW) {
+          eb_fire(BusEvent::VCC_LOW);
+
+        } else {
+          eb_fire(BusEvent::VCC_NORMAL);
+        }
+        lastUpdateMs = util_ms();
+      }
+    }
   }
 }
 
@@ -57,16 +80,16 @@ VCCMonitorReader::VCCMonitorReader() {
 uint16_t VCCMonitorReader::read() {
   // https://github.com/cygig/MCUVoltage
   ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
-  delay(PM_VCC_READ_DELAY_MS);
+  delay(VC_VCC_READ_DELAY);
   ADCSRA |= _BV(ADSC);
   while (bit_is_set(ADCSRA, ADSC))
     ;
 
   uint32_t result = ADCL;
   result |= ADCH << 8;
-  result = PM_VCC_REF * 1024L / result;
+  result = VC_VCC_REF * 1024L / result;
 
-#if LOG && LOG_PM
+#if LOG && LOG_VC
   log(F("%s PW %d"), NAME, result);
 #endif
 

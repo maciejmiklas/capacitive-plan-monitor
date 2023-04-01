@@ -21,9 +21,7 @@ StandbyManager::StandbyManager() {
 }
 
 void StandbyManager::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::SYSTEM_INIT) {
-    setup();
-  }
+
 }
 
 const char* StandbyManager::listenerName() {

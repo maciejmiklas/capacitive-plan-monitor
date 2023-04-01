@@ -21,6 +21,7 @@
 #include "Reader.h"
 #include "EventBus.h"
 #include "Arduino.h"
+#include "Device.h"
 
 class MoistureReader : public ReaderSupplier {
 public:
@@ -32,8 +33,7 @@ private:
   static constexpr const char* NAME = "MS";
 };
 
-/** Sets Timer 2 to generate PWM of 1.6MHz on #PWM_OUT_PIN, reads and maps moisture value. */
-class MoistureSensor : public BusListener {
+class MoistureSensor : public BusListener, public Device {
 public:
 
   MoistureSensor();
@@ -45,13 +45,16 @@ public:
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
 
+  // from Device.h
+  void setup();  
+
 private:
 
   static constexpr const char* NAME = "MS";
   Reader* reader;
-  void wakeup();
-  void standby();
-  void setup();
+  
+  void onWakeup();
+  void onStandby();
 };
 
 #endif  // MOISTURE_SENSOR_H

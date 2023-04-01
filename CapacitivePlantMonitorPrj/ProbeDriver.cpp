@@ -14,43 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MOISTURE_DRIVER_H
-#define MOISTURE_DRIVER_H
 
-#include "Config.h"
-#include "ArdLog.h"
-#include "MoistureSensor.h"
-#include "MoistureDisplay.h"
-#include "VCCProvider.h"
-#include "EventBus.h"
+#include "ProbeDriver.h"
 
-class MoistureDriver : public BusListener {
-public:
+ProbeDriver::ProbeDriver()
+  : suspendMs(1) {
+}
 
-  MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc);
+void ProbeDriver::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::BTN_BRIGHTNESS || event == BusEvent::BTN_ADJ_SENSOR) {
+    onButtonPress();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
+  } else if (event == BusEvent::CYCLE) {
+    onCycle();
+  }
+}
 
-private:
-  static constexpr const char* NAME = "MD";
-  MoistureSensor* sensor;
-  VCCProvider* vcc;
+void ProbeDriver::onButtonPress() {
+  suspendMs = util_ms();
+#if LOG && LOG_PD
+  log(F("%s SUSPEND"), NAME);
+#endif
+}
 
-  float adjust;
-  uint8_t adjustLevel;
-  boolean adjustUp;
-  long adjustPressMs;
-  uint8_t currentLevel;
-  uint8_t lastProbeMs;
+void ProbeDriver::onCycle() {
+  if (util_ms() - suspendMs > PD_PROBE_SUSPEND_MS) {
+    if (suspendMs > 0) {
+      suspendMs = 0;
+#if LOG && LOG_PD
+      log(F("%s RESUME"), NAME);
+#endif
+    }
+    eb_fire(BusEvent::PROBE);
+  }
+}
 
-  uint8_t getLevel();
-  void probe(boolean force);
-
-  void onProbe();
-  void onStandbyOff();
-  void onAdjustyNextLevel();
-};
-
-#endif  // MOISTURE_DRIVER_H
+const char* ProbeDriver::listenerName() {
+  return NAME;
+}

@@ -44,8 +44,8 @@
 /** Enable logger for: MoistureDriver */
 #define LOG_MD false
 
-/** Enable logger for: PowerMonitor */
-#define LOG_PM false
+/** Enable logger for: VCCMonitor */
+#define LOG_VC false
 
 /** Enable logger for: Storage */
 #define LOG_ST false
@@ -54,13 +54,16 @@
 #define LOG_RE false
 
 /** Enable logger for: Buttons */
-#define LOG_BT true
+#define LOG_BT false
 
 /** Enable logger for: StandbyManager */
 #define LOG_SM false
 
 /** Enable logger for: EventBus */
 #define LOG_EB false
+
+/** Enable logger for: ProbeDriver */
+#define LOG_PD false
 
 void log_setup();
 void log_cycle();

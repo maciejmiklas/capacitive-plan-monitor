@@ -32,9 +32,9 @@ void LED::demo() {
     for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
       LedPin pinEn = static_cast<LedPin>(pin);
       on(pinEn);
-      delay(LE_DEMO_DELAY_MS);
+      delay(LE_DEMO_DELAY);
       off(pinEn);
-      delay(LE_DEMO_DELAY_MS);
+      delay(LE_DEMO_DELAY);
     }
   }
 }
@@ -63,16 +63,13 @@ void LED::onEvent(BusEvent event, va_list ap) {
   if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
     blinkOnButton();
 
-  } else if (event == BusEvent::SYSTEM_INIT) {
-    setup();
-
-  } else if (event == BusEvent::BRIGHTNESS_MAX) {
+  }  if (event == BusEvent::BRIGHTNESS_MAX) {
     blinkOnMaxBrightness();
 
   } else if (event == BusEvent::BRIGHTNESS_CHANGE) {
     brightness = va_arg(ap, uint16_t);
 
-  } else if (event == BusEvent::VCC_LOW) {
+  } else if (event == BusEvent::VCC_LOW || event == BusEvent::VCC_CRITICAL) {
     lowPowerOn();
 
   } else if (event == BusEvent::VCC_NORMAL) {
@@ -91,19 +88,19 @@ void LED::lowPowerOff() {
 void LED::blinkOnMaxBrightness() {
   for (uint8_t i = 0; i < LED_BR_MAX_BLINK_REPEAT; i++) {
     off(LedPin::AWAKE);
-    delay(LED_BR_MAX_BLINK_OFF_MS);
+    delay(LED_BR_MAX_BLINK_OFF_DELAY);
     on(LedPin::AWAKE);
-    delay(LED_BR_MAX_BLINK_ON_MS);
+    delay(LED_BR_MAX_BLINK_ON_DELAY);
   }
-  on(LedPin::AWAKE);
+  off(LedPin::AWAKE);
 }
 
 void LED::blinkOnButton() {
   for (uint8_t i = 0; i < LE_PRESS_BLINK_REPEAT; i++) {
     off(LedPin::AWAKE);
-    delay(LE_PRESS_BLINK_OFF_MS);
+    delay(LE_PRESS_BLINK_OFF_DELAY);
     on(LedPin::AWAKE);
-    delay(LE_PRESS_BLINK_ON_MS);
+    delay(LE_PRESS_BLINK_ON_DELAY);
   }
-  on(LedPin::AWAKE);
+  off(LedPin::AWAKE);
 }

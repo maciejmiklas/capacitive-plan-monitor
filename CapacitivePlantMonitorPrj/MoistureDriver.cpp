@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,13 +17,45 @@
 */
 #include "MoistureDriver.h"
 
-
-MoistureDriver::MoistureDriver(MoistureSensor* sensor, MoistureDisplay* display, VCCProvider* vcc)
-  : sensor(sensor), display(display), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0) {
+MoistureDriver::MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc)
+  : sensor(sensor), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0), currentLevel(0), lastProbeMs(0) {
 }
 
-void MoistureDriver::cycle() {  // TODO update every 100ms
-  display->show(getLevel());
+void MoistureDriver::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::PROBE) {
+    onProbe();
+
+  } else if (event == BusEvent::BTN_ADJ_SENSOR) {
+    onAdjustyNextLevel();
+
+  } else if (event == BusEvent::STANDBY_OFF) {
+    onStandbyOff();
+  }
+}
+
+void MoistureDriver::onProbe() {
+  probe(false);
+}
+
+void MoistureDriver::onStandbyOff() {
+  adjustUp = true;
+  lastProbeMs = 0;
+  probe(true);
+}
+
+void MoistureDriver::probe(boolean force) {
+  if (force | util_ms() - lastProbeMs > MI_UPDATE_FREQ_MS) {
+
+    uint8_t level = getLevel();
+    if (force || sub_u16(level, currentLevel) > MI_MIN_CHANGE_MV) {
+#if LOG && LOG_MD
+      log(F("%s LEVEL %d->%d"), NAME, currentLevel, level);
+#endif
+      eb_fire(BusEvent::MOISTURE_LEVEL_CHANGE, level);
+      currentLevel = level;
+    }
+    lastProbeMs = util_ms();
+  }
 }
 
 uint8_t MoistureDriver::getLevel() {
@@ -65,19 +98,7 @@ uint8_t MoistureDriver::getLevel() {
   return level;
 }
 
-void MoistureDriver::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::CYCLE) {
-    cycle();
-
-  } else if (event == BusEvent::BTN_ADJ_SENSOR) {
-    adjustyNextLevel();
-
-  } else if (event == BusEvent::STANDBY_OFF) {
-    adjustUp = true;
-  }
-}
-
-void MoistureDriver::adjustyNextLevel() {
+void MoistureDriver::onAdjustyNextLevel() {
   if (adjustPressMs == 0 || (util_ms() - adjustPressMs > MI_ADJUST_SHOW_MS)) {
     ;
   } else if (adjustLevel == MI_ADJUST_LEV_MAX) {
@@ -99,7 +120,7 @@ void MoistureDriver::adjustyNextLevel() {
     adjust += MI_ADJUST_MUL;
   }
 
-  display->blink(adjustLevel);
+  eb_fire(BusEvent::MOISTURE_ADJ_NEXT, adjustLevel);
   adjustPressMs = util_ms();
 
 #if LOG && LOG_MD

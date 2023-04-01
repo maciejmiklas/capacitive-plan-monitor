@@ -22,10 +22,11 @@
 #include "Config.h"
 #include "Util.h"
 #include "EventBus.h"
+#include "Device.h"
 #include <avr/sleep.h>
 #include <avr/power.h>
 
-class StandbyManager : public BusListener {
+class StandbyManager : public BusListener, public Device  {
 
 public:
   StandbyManager();
@@ -34,10 +35,11 @@ public:
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
 
+  // from Device.h
+  void setup();
+
 private:
  static constexpr const char* NAME = "SM";
-
-  void setup();
 };
 
 #endif  // STANDBY_MANGER_H

@@ -23,7 +23,7 @@ void util_setup() {
 }
 
 void util_cycle() {
-  cycleMs = millis();
+  cycleMs = millis() * CP_CLOCK_DIV_INT;
 }
 
 uint32_t util_ms() {

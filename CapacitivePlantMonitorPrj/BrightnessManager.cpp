@@ -22,7 +22,13 @@ BrightnessManager::BrightnessManager()
   : brightness(BM_BRIGHTNESS_INITIAL) {
 }
 
-void BrightnessManager::nextLevel() {
+void BrightnessManager::onEvent(BusEvent event, va_list ap) {
+  if (event == BusEvent::BTN_BRIGHTNESS) {
+    onNextLevel();
+  }
+}
+
+void BrightnessManager::onNextLevel() {
   brightness += BM_BRIGHTNESS_CHANGE;
 
   if (brightness > BM_BRIGHTNESS_MAX) {
@@ -41,10 +47,4 @@ void BrightnessManager::nextLevel() {
 
 const char* BrightnessManager::listenerName() {
   return NAME;
-}
-
-void BrightnessManager::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::BTN_BRIGHTNESS) {
-    nextLevel();
-  }
 }

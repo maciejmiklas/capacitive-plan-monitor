@@ -21,13 +21,14 @@
 #include "ArdLog.h"
 
 enum class BusEvent {
-  SYSTEM_INIT = 10,
+  PROBE = 11,
 
   BTN_BRIGHTNESS = 21,
   BTN_ADJ_SENSOR = 22,
 
   VCC_LOW = 31,
-  VCC_NORMAL = 32,
+  VCC_CRITICAL = 32,
+  VCC_NORMAL = 33,
 
   STANDBY_ON = 41,
   STANDBY_OFF = 42,
@@ -36,7 +37,13 @@ enum class BusEvent {
   BRIGHTNESS_CHANGE = 50,
 
   BRIGHTNESS_MAX = 51,
-  
+
+  /** Param: sensor read in mv in dependency of actual VCC level, see MI_LEVEL_MAP for details */
+  MOISTURE_LEVEL_CHANGE = 60,
+
+  /** Param: current aductment as value beetwen MI_ADJUST_LEV_MIN and MI_ADJUST_LEV_MAX */
+  MOISTURE_ADJ_NEXT = 61,
+
   CYCLE = 255,
 };
 
