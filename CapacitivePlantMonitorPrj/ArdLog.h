@@ -42,7 +42,7 @@
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MD false
+#define LOG_MD true
 
 /** Enable logger for: VCCMonitor */
 #define LOG_VC false

@@ -24,7 +24,7 @@
 #include "Device.h"
 
 // Enum values are out PINs
-enum LedPin { AWAKE = LE_PIN_PWR_LOW, // TODO LE_PIN_AWAKE
+enum LedPin { AWAKE = LE_PIN_AWAKE,
               PWR_LOW = LE_PIN_PWR_LOW };
 
 class LED : public Demo, public BusListener, public Device  {

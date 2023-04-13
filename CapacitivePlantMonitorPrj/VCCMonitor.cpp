@@ -17,7 +17,7 @@
 #include "VCCMonitor.h"
 
 VCCMonitor::VCCMonitor()
-  : lastVcc(VC_PWR_MAX), lastUpdateMs(0) {
+  : lastVcc(VC_PWR_MAX) {
   reader = new Reader(new VCCMonitorReader());
 }
 
@@ -31,7 +31,6 @@ void VCCMonitor::onEvent(BusEvent event, va_list ap) {
 }
 
 void VCCMonitor::onStandbyOff() {
-  lastUpdateMs = 0;
   probe(true);
 }
 
@@ -44,22 +43,19 @@ void VCCMonitor::setup() {
 }
 
 void VCCMonitor::probe(boolean force) {
-  if (force || util_ms() - lastUpdateMs > VC_UPDATE_FREQ_MS) {
 
-    uint16_t vcc = reader->read();
-    if (force || sub_u16(vcc, lastVcc) > MI_MIN_VCC_CHANGE_MV) {
-      lastVcc = vcc;
+  uint16_t vcc = reader->read();
+  if (force || sub_u16(vcc, lastVcc) >= MI_MIN_VCC_CHANGE_MV) {
+    lastVcc = vcc;
 
-      if (vcc <= VC_PWR_CRITICAL) {
-        eb_fire(BusEvent::VCC_CRITICAL);
+    if (vcc <= VC_PWR_CRITICAL) {
+      eb_fire(BusEvent::VCC_CRITICAL);
 
-        if (vcc <= VC_PWR_LOW) {
-          eb_fire(BusEvent::VCC_LOW);
+      if (vcc <= VC_PWR_LOW) {
+        eb_fire(BusEvent::VCC_LOW);
 
-        } else {
-          eb_fire(BusEvent::VCC_NORMAL);
-        }
-        lastUpdateMs = util_ms();
+      } else {
+        eb_fire(BusEvent::VCC_NORMAL);
       }
     }
   }
@@ -84,7 +80,6 @@ uint16_t VCCMonitorReader::read() {
   ADCSRA |= _BV(ADSC);
   while (bit_is_set(ADCSRA, ADSC))
     ;
-
   uint32_t result = ADCL;
   result |= ADCH << 8;
   result = VC_VCC_REF * 1024L / result;

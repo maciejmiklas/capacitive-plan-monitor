@@ -47,6 +47,7 @@ void MoistureSensor::setup() {
   TCCR2B = _BV(WGM22);
   OCR2A = MS_PWM_PERIOD;
   OCR2B = MS_PWM_PERIOD / MS_PWM_DUTY;
+  onWakeup();
 }
 
 void MoistureSensor::onWakeup() {

@@ -18,7 +18,7 @@
 #include "MoistureDriver.h"
 
 MoistureDriver::MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc)
-  : sensor(sensor), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0), currentLevel(0), lastProbeMs(0) {
+  : sensor(sensor), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0), currentLevel(0) {
 }
 
 void MoistureDriver::onEvent(BusEvent event, va_list ap) {
@@ -39,22 +39,17 @@ void MoistureDriver::onProbe() {
 
 void MoistureDriver::onStandbyOff() {
   adjustUp = true;
-  lastProbeMs = 0;
   probe(true);
 }
 
 void MoistureDriver::probe(boolean force) {
-  if (force | util_ms() - lastProbeMs > MI_UPDATE_FREQ_MS) {
-
-    uint8_t level = getLevel();
-    if (force || sub_u16(level, currentLevel) > MI_MIN_CHANGE_MV) {
+  uint8_t level = getLevel();
+  if (force || sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
 #if LOG && LOG_MD
-      log(F("%s LEVEL %d->%d"), NAME, currentLevel, level);
+    log(F("%s LEVEL %d->%d"), NAME, currentLevel, level);
 #endif
-      eb_fire(BusEvent::MOISTURE_LEVEL_CHANGE, level);
-      currentLevel = level;
-    }
-    lastProbeMs = util_ms();
+    eb_fire(BusEvent::MOISTURE_LEVEL_CHANGE, level);
+    currentLevel = level;
   }
 }
 
@@ -70,13 +65,8 @@ uint8_t MoistureDriver::getLevel() {
     const uint16_t* el = MI_LEVEL_MAP[idx];
     const uint16_t* en = MI_LEVEL_MAP[idx + 1];
     if (el[0] >= powerMv && en[0] < powerMv) {
-      if (el[0] - powerMv > powerMv - en[0]) {
-        dry = en[1];
-        wet = en[2];
-      } else {
-        dry = el[1];
-        wet = el[2];
-      }
+      dry = en[1];
+      wet = en[2];
     }
   }
   uint8_t level = MI_LEVEL_OFF;

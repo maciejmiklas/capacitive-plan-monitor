@@ -44,7 +44,6 @@ private:
   Reader* reader;
   static constexpr const char* NAME = "PM";
   uint16_t lastVcc;
-  uint32_t lastUpdateMs;
 
   void probe(boolean force);
 

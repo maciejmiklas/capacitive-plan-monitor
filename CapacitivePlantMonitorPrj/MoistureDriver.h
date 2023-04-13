@@ -43,7 +43,6 @@ private:
   boolean adjustUp;
   long adjustPressMs;
   uint8_t currentLevel;
-  uint8_t lastProbeMs;
 
   uint8_t getLevel();
   void probe(boolean force);

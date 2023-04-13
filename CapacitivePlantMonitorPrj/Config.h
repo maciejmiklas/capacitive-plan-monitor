@@ -91,7 +91,8 @@ const static uint8_t BM_BRIGHTNESS_CHANGE = 10;
 const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
 
 // ######## ProbeDriver(PD)  ########
-const static uint32_t PD_PROBE_SUSPEND_MS = 3000;
+const static uint32_t PD_PROBE_SUSPEND_MS = 1000;
+const static uint32_t PD_FREQ_MS = 200;
 
 // ######## MoistureDisplay(MI) ########
 
@@ -126,7 +127,7 @@ const static uint8_t MI_BRIGHTNES_ON_DELAY = 100;
 
 // ######## MOISTURE DRIVER(MD) ########
 
-const static uint8_t MI_LEVEL_MAP_SIZE = 12;
+const static uint8_t MI_LEVEL_MAP_SIZE = 19;
 
 /**
     Voltage level read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge.
@@ -135,30 +136,36 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 12;
     we are using mapping table for different VCC levels.
 */
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
-  //{VCC , DRY , WET} (mV)
-  { 5000, 3632, 2300 },
-  { 4000, 2759, 1745 },
-  { 3900, 2750, 1707 },
-  { 3800, 2679, 1652 },
-  { 3700, 2599, 1602 },
-  { 3600, 2512, 1544 },
-  { 3500, 2441, 1495 },
-  { 3400, 2356, 1442 },
-  { 3300, 2279, 1390 },
-  { 3200, 2206, 1336 },
-  { 3100, 2129, 1283 },
-  { 2000, 1957, 1117 }
+  //{VCC, DRY, WET} (mV)
+  { 5000, 4220, 3000 },  
+  { 4000, 2970, 1790 },
+  { 3900, 2870, 1720 },
+  { 3800, 2790, 1660 },
+  { 3750, 2750, 1630 },
+  { 3700, 2700, 1600 },
+  { 3650, 2660, 1580 }, 
+  { 3600, 2620, 1550 },
+  { 3550, 2570, 1520 },
+  { 3500, 2537, 1500 }, 
+  { 3450, 2490, 1460 },
+  { 3400, 2460, 1430 },
+  { 3350, 2410, 1400 },
+  { 3300, 2370, 1380 }, 
+  { 3250, 2320, 1350 },
+  { 3200, 2280, 1330 },
+  { 3100, 2200, 1270 },
+  { 3000, 2110, 1210 },
+  { 2000, 2000, 1500 }
 };
 
 const static float MI_ADJUST_MUL = 0.05;
 const static float MI_ADJUST_INIT = 1.1;
-const static uint8_t MI_MIN_CHANGE_MV = 100;
+const static uint8_t MI_MIN_CHANGE_LEVEL = 1;
 const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
 const static uint8_t MI_ADJUST_LEV_MIN = MI_LEVEL_OFF;
 const static uint16_t MI_ADJUST_SHOW_MS = 5000;
-const static uint16_t MI_UPDATE_FREQ_MS = 100;
-const static uint16_t MI_MIN_VCC_CHANGE_MV= 100;
+const static uint16_t MI_MIN_VCC_CHANGE_MV = 20;
 
 // ######## VCCMonitor(VC) ########
 
@@ -166,9 +173,8 @@ const static uint16_t MI_MIN_VCC_CHANGE_MV= 100;
 static const uint16_t VC_PWR_LOW = 3400;
 static const uint16_t VC_PWR_CRITICAL = 3200;
 static const uint16_t VC_PWR_MAX = 3700;
-static const uint16_t VC_UPDATE_FREQ_MS = 200;
-static const uint16_t VC_VCC_READ_DELAY = 5;
-static const uint16_t VC_VCC_REF = 1076;  // default for ATmega328P: 1110
+static const uint16_t VC_VCC_READ_DELAY = 10;
+static const uint16_t VC_VCC_REF = 1081;  // default for ATmega328P: 1110
 
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;
