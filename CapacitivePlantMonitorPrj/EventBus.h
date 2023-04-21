@@ -35,7 +35,6 @@ enum class BusEvent {
 
   /** Param: brightness as uint_16, value: BM_BRIGHTNESS_MIN <-> BM_BRIGHTNESS_MAX */
   BRIGHTNESS_CHANGE = 50,
-
   BRIGHTNESS_MAX = 51,
 
   /** Param: sensor read in mv in dependency of actual VCC level, see MI_LEVEL_MAP for details */

@@ -48,6 +48,10 @@ void LED::off(LedPin led) {
 }
 
 void LED::on(LedPin led) {
+  on(led, brightness);
+}
+
+void LED::on(LedPin led, uint8_t brightness) {
   uint8_t pin = led;
 #if LOG && LOG_LE
   log(F("%s ON %d %d"), NAME, pin, brightness);
@@ -61,31 +65,49 @@ const char* LED::listenerName() {
 
 void LED::onEvent(BusEvent event, va_list ap) {
   if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
-    blinkOnButton();
-
-  }  if (event == BusEvent::BRIGHTNESS_MAX) {
-    blinkOnMaxBrightness();
+    onButtonPress();
+  }
+  if (event == BusEvent::BRIGHTNESS_MAX) {
+    onMaxBrightness();
 
   } else if (event == BusEvent::BRIGHTNESS_CHANGE) {
-    brightness = va_arg(ap, uint16_t);
+    onBrightnessChange(va_arg(ap, uint16_t));
 
   } else if (event == BusEvent::VCC_LOW || event == BusEvent::VCC_CRITICAL) {
-    lowPowerOn();
+    onPowerLow();
 
   } else if (event == BusEvent::VCC_NORMAL) {
-    lowPowerOff();
-  }
+    onPowerNominal();
+
+  } else if (event == BusEvent::STANDBY_ON) {
+    onStandByOn();
+  
+  } else if (event == BusEvent::STANDBY_OFF) {
+    onStandByOff();
+  } 
 }
 
-void LED::lowPowerOn() {  // TODO should be blinking
-  on(LedPin::PWR_LOW);
+void LED::onStandByOn() {
+  off(LedPin::AWAKE);
 }
 
-void LED::lowPowerOff() {
+void LED::onStandByOff() {
+  on(LedPin::AWAKE);
+}
+
+void LED::onBrightnessChange(uint8_t newbr) {
+  brightness = newbr;
+}
+
+void LED::onPowerLow() {
+  on(LedPin::PWR_LOW, BM_BRIGHTNESS_MAX);
+}
+
+void LED::onPowerNominal() {
   off(LedPin::PWR_LOW);
 }
 
-void LED::blinkOnMaxBrightness() {
+void LED::onMaxBrightness() {
   for (uint8_t i = 0; i < LED_BR_MAX_BLINK_REPEAT; i++) {
     off(LedPin::AWAKE);
     delay(LED_BR_MAX_BLINK_OFF_DELAY);
@@ -95,7 +117,7 @@ void LED::blinkOnMaxBrightness() {
   off(LedPin::AWAKE);
 }
 
-void LED::blinkOnButton() {
+void LED::onButtonPress() {
   for (uint8_t i = 0; i < LE_PRESS_BLINK_REPEAT; i++) {
     off(LedPin::AWAKE);
     delay(LE_PRESS_BLINK_OFF_DELAY);

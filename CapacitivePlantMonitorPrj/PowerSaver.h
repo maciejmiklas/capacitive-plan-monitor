@@ -23,13 +23,13 @@
 #include "Util.h"
 #include "EventBus.h"
 #include "Device.h"
-#include <avr/sleep.h>
+#include "LowPower.h"
 #include <avr/power.h>
 
-class StandbyManager : public BusListener, public Device  {
+class PowerSaver : public BusListener, public Device {
 
 public:
-  StandbyManager();
+  PowerSaver();
 
   // from EventBus.h
   void onEvent(BusEvent event, va_list ap);
@@ -39,7 +39,14 @@ public:
   void setup();
 
 private:
- static constexpr const char* NAME = "SM";
+  static constexpr const char* NAME = "PS";
+  uint32_t nextStandbyMs;
+
+  void nextStandby();
+  void onCycle();
+  void onPowerLow();
+  void onButtonPress();
+  void onPowerCritical();
 };
 
 #endif  // STANDBY_MANGER_H

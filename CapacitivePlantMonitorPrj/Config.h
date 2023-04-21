@@ -17,6 +17,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "LowPower.h"
 #include <Arduino.h>
 #include <avr/power.h>
 
@@ -91,7 +92,7 @@ const static uint8_t BM_BRIGHTNESS_CHANGE = 10;
 const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
 
 // ######## ProbeDriver(PD)  ########
-const static uint32_t PD_PROBE_SUSPEND_MS = 1000;
+const static uint32_t PD_PROBE_SUSPEND_MS = 5000;
 const static uint32_t PD_FREQ_MS = 200;
 
 // ######## MoistureDisplay(MI) ########
@@ -137,20 +138,20 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 19;
 */
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
   //{VCC, DRY, WET} (mV)
-  { 5000, 4220, 3000 },  
+  { 5000, 4220, 3000 },
   { 4000, 2970, 1790 },
   { 3900, 2870, 1720 },
   { 3800, 2790, 1660 },
   { 3750, 2750, 1630 },
   { 3700, 2700, 1600 },
-  { 3650, 2660, 1580 }, 
+  { 3650, 2660, 1580 },
   { 3600, 2620, 1550 },
   { 3550, 2570, 1520 },
-  { 3500, 2537, 1500 }, 
+  { 3500, 2537, 1500 },
   { 3450, 2490, 1460 },
   { 3400, 2460, 1430 },
   { 3350, 2410, 1400 },
-  { 3300, 2370, 1380 }, 
+  { 3300, 2370, 1380 },
   { 3250, 2320, 1350 },
   { 3200, 2280, 1330 },
   { 3100, 2200, 1270 },
@@ -158,8 +159,8 @@ const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
   { 2000, 2000, 1500 }
 };
 
-const static float MI_ADJUST_MUL = 0.05;
-const static float MI_ADJUST_INIT = 1.1;
+const static float MI_ADJUST_STEP = 0.05;
+const static float MI_ADJUST_INIT = 1.0;
 const static uint8_t MI_MIN_CHANGE_LEVEL = 1;
 const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
@@ -179,5 +180,9 @@ static const uint16_t VC_VCC_REF = 1081;  // default for ATmega328P: 1110
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;
 const static uint8_t RE_PROBE_AT = 1;
+
+// ####### PowerSaver(PS) ######
+const static uint16_t PS_STANDBY_DELAY_MS = 10000;
+const static period_t PS_SLEEP = SLEEP_2S;
 
 #endif  // CONFIG_H

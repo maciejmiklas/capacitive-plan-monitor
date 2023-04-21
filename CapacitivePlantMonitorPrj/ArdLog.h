@@ -42,7 +42,7 @@
 #define LOG_MS false
 
 /** Enable logger for: MoistureDriver */
-#define LOG_MD true
+#define LOG_MD false
 
 /** Enable logger for: VCCMonitor */
 #define LOG_VC false
@@ -56,8 +56,8 @@
 /** Enable logger for: Buttons */
 #define LOG_BT false
 
-/** Enable logger for: StandbyManager */
-#define LOG_SM false
+/** Enable logger for: PowerSaver */
+#define LOG_PS true
 
 /** Enable logger for: EventBus */
 #define LOG_EB false

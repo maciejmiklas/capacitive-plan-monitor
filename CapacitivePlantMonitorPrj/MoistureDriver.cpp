@@ -103,11 +103,11 @@ void MoistureDriver::onAdjustyNextLevel() {
 
   } else if (adjustUp) {
     adjustLevel++;
-    adjust -= MI_ADJUST_MUL;
+    adjust -= MI_ADJUST_STEP;
 
   } else {
     adjustLevel--;
-    adjust += MI_ADJUST_MUL;
+    adjust += MI_ADJUST_STEP;
   }
 
   eb_fire(BusEvent::MOISTURE_ADJ_NEXT, adjustLevel);

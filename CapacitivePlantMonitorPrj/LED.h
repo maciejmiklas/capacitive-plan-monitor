@@ -27,11 +27,12 @@
 enum LedPin { AWAKE = LE_PIN_AWAKE,
               PWR_LOW = LE_PIN_PWR_LOW };
 
-class LED : public Demo, public BusListener, public Device  {
+class LED : public Demo, public BusListener, public Device {
 public:
   LED();
 
   void on(LedPin led);
+  void on(LedPin led, uint8_t brightness);
   void off(LedPin led);
 
   // from Demo.h
@@ -42,7 +43,7 @@ public:
   const char* listenerName();
 
   // from Device.h
-  void setup();  
+  void setup();
 
 private:
   const static uint8_t FIRST_PIN = LedPin::AWAKE;
@@ -50,11 +51,13 @@ private:
   static constexpr const char* NAME = "LE";
   uint16_t brightness;
 
-  void changeBrightness(uint8_t level);
-  void blinkOnButton();
-  void blinkOnMaxBrightness();
-  void lowPowerOn();
-  void lowPowerOff();
+  void onBrightnessChange(uint8_t level);
+  void onButtonPress();
+  void onMaxBrightness();
+  void onPowerLow();
+  void onPowerNominal();
+  void onStandByOn();
+  void onStandByOff();
 };
 
 #endif  // LED_H

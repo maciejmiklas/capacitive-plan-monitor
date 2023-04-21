@@ -26,14 +26,14 @@
 #include "BrightnessManager.h"
 #include "VCCMonitor.h"
 #include "Storage.h"
-#include "StandbyManager.h"
+#include "PowerSaver.h"
 #include "ProbeDriver.h"
 
 Storage* st = new Storage();
 LED* led = new LED();
 BrightnessManager* brManager = new BrightnessManager();
 Buttons* buttons = new Buttons();
-StandbyManager* sm = new StandbyManager();
+PowerSaver* ps = new PowerSaver();
 MoistureDisplay* mi = new MoistureDisplay();
 ProbeDriver* pd = new ProbeDriver();
 VCCMonitor* pm = new VCCMonitor();
