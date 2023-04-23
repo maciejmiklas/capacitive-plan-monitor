@@ -25,6 +25,7 @@
 #include "Device.h"
 #include "LowPower.h"
 #include <avr/power.h>
+#include <avr/sleep.h>
 
 class PowerSaver : public BusListener, public Device {
 
@@ -42,8 +43,10 @@ private:
   static constexpr const char* NAME = "PS";
   uint32_t nextStandbyMs;
 
+  void powerDown();
+
   void nextStandby();
-  void onCycle();
+  void onProbe();
   void onPowerLow();
   void onButtonPress();
   void onPowerCritical();

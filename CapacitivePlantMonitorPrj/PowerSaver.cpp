@@ -17,15 +17,16 @@
 */
 
 #include "PowerSaver.h"
-
+uint32_t vv = 0;
+uint32_t va = 0;
 PowerSaver::PowerSaver()
-  : nextStandbyMs(PS_STANDBY_DELAY_MS) {
+  : nextStandbyMs(PS_STANDBY_INIT_MS) {
 }
 
 void PowerSaver::onEvent(BusEvent event, va_list ap) {
 
-  if (event == BusEvent::CYCLE) {
-    onCycle();
+  if (event == BusEvent::PROBE) {
+    onProbe();
 
   } else if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
     onButtonPress();
@@ -38,19 +39,29 @@ void PowerSaver::onEvent(BusEvent event, va_list ap) {
   }
 }
 
-void PowerSaver::onCycle() {
+void PowerSaver::onProbe() {
   if (util_ms() >= nextStandbyMs) {
 #if LOG && LOG_PS
-    log(F("%s STANDBY"), NAME);
+    log(F("%s STANDBY ON"), NAME);
 #endif
     eb_fire(BusEvent::STANDBY_ON);
 
-    LowPower.powerDown(PS_SLEEP, ADC_OFF, BOD_OFF);
+    set_sleep_mode(SLEEP_MODE_IDLE);
+    sleep_enable();
+    sleep_cpu();
+    
+    delay(1000);
 
+#if LOG && LOG_PS
+    log(F("%s STANDBY OFF"), NAME);
+#endif
     util_cycle();
     eb_fire(BusEvent::STANDBY_OFF);
     nextStandby();
   }
+}
+
+void PowerSaver::powerDown() {
 }
 
 void PowerSaver::onButtonPress() {
@@ -75,7 +86,6 @@ const char* PowerSaver::listenerName() {
 }
 
 void PowerSaver::setup() {
-
 #if !LOG
   power_usart0_disable();
 #endif

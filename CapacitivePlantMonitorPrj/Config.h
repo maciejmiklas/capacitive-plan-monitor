@@ -45,8 +45,8 @@ const static uint8_t D12 = 12;
 // ######## ArdLog(AL) ########
 /**
    The clock is set to 2MHz (CP_CLOCL_DIV = clock_div_8) using a divider of 8.
-   The serial is set to 19200, but due to the divider, it gives an actual speed of 4800 because 38400/8=2400.
-   However, in order to see initial logs set serial to 19200, because prescaller is set after system initialization.
+   The serial is set to 38400, but due to the divider, it gives an actual speed of 4800 because 38400/8=2400.
+   However, in order to see initial logs set serial to 38400, because prescaller is set after system initialization.
 */
 // ### Serial works at 4800 due to clock prescaler! ###
 const static uint32_t AL_SERIAL_SPEED = 38400;
@@ -182,7 +182,8 @@ const static uint8_t RE_PROBES = 3;
 const static uint8_t RE_PROBE_AT = 1;
 
 // ####### PowerSaver(PS) ######
-const static uint16_t PS_STANDBY_DELAY_MS = 10000;
-const static period_t PS_SLEEP = SLEEP_2S;
+const static uint32_t PS_STANDBY_INIT_MS = 5000;
+const static uint16_t PS_STANDBY_DELAY_MS = 5000;
+const static period_t PS_SLEEP = SLEEP_8S;
 
 #endif  // CONFIG_H

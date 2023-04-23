@@ -84,7 +84,7 @@ uint8_t MoistureDriver::getLevel() {
 #if LOG && LOG_MD
   log(F("%s PWR:%d [%d,%d,%d]=>%d"), NAME, powerMv, dry, smv, wet, level);
 #endif
-
+level = 6;
   return level;
 }
 

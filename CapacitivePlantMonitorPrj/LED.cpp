@@ -114,7 +114,7 @@ void LED::onMaxBrightness() {
     on(LedPin::AWAKE);
     delay(LED_BR_MAX_BLINK_ON_DELAY);
   }
-  off(LedPin::AWAKE);
+  on(LedPin::AWAKE);
 }
 
 void LED::onButtonPress() {
@@ -124,5 +124,5 @@ void LED::onButtonPress() {
     on(LedPin::AWAKE);
     delay(LE_PRESS_BLINK_ON_DELAY);
   }
-  off(LedPin::AWAKE);
+  on(LedPin::AWAKE);
 }
