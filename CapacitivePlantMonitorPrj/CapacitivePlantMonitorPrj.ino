@@ -29,7 +29,7 @@
 #include "PowerSaver.h"
 #include "ProbeDriver.h"
 
-Storage* st = new Storage();
+//Storage* st = new Storage();
 LED* led = new LED();
 BrightnessManager* brManager = new BrightnessManager();
 Buttons* buttons = new Buttons();

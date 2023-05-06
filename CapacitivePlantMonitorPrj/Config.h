@@ -17,7 +17,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "LowPower.h"
 #include <Arduino.h>
 #include <avr/power.h>
 
@@ -45,7 +44,7 @@ const static uint8_t D12 = 12;
 // ######## ArdLog(AL) ########
 /**
    The clock is set to 2MHz (CP_CLOCL_DIV = clock_div_8) using a divider of 8.
-   The serial is set to 38400, but due to the divider, it gives an actual speed of 4800 because 38400/8=2400.
+   The serial is set to 38400, but due to the divider, it gives an actual speed of 4800 because 38400/8=4800.
    However, in order to see initial logs set serial to 38400, because prescaller is set after system initialization.
 */
 // ### Serial works at 4800 due to clock prescaler! ###
@@ -128,7 +127,7 @@ const static uint8_t MI_BRIGHTNES_ON_DELAY = 100;
 
 // ######## MOISTURE DRIVER(MD) ########
 
-const static uint8_t MI_LEVEL_MAP_SIZE = 19;
+const static uint8_t MI_LEVEL_MAP_SIZE = 23;
 
 /**
     Voltage level read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge.
@@ -138,7 +137,11 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 19;
 */
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
   //{VCC, DRY, WET} (mV)
-  { 5000, 4220, 3000 },
+  { 5000, 3500, 1900 },
+  { 4400, 3500, 1900 },
+  { 4300, 3500, 1900 },
+  { 4200, 3500, 1900 },
+  { 4100, 3500, 1900 },
   { 4000, 2970, 1790 },
   { 3900, 2870, 1720 },
   { 3800, 2790, 1660 },
@@ -171,7 +174,7 @@ const static uint16_t MI_MIN_VCC_CHANGE_MV = 20;
 // ######## VCCMonitor(VC) ########
 
 /** Low voltage level in mv */
-static const uint16_t VC_PWR_LOW = 3400;
+static const uint16_t VC_PWR_LOW = 3500;
 static const uint16_t VC_PWR_CRITICAL = 3200;
 static const uint16_t VC_PWR_MAX = 3700;
 static const uint16_t VC_VCC_READ_DELAY = 10;
@@ -182,8 +185,15 @@ const static uint8_t RE_PROBES = 3;
 const static uint8_t RE_PROBE_AT = 1;
 
 // ####### PowerSaver(PS) ######
-const static uint32_t PS_STANDBY_INIT_MS = 5000;
-const static uint16_t PS_STANDBY_DELAY_MS = 5000;
-const static period_t PS_SLEEP = SLEEP_8S;
+enum class SleepPeriod {
+  S1,
+  S2,
+  S4,
+  S8,
+};
+
+const static uint32_t PS_STANDBY_INIT_MS = 20 * 1000;
+const static uint32_t PS_STANDBY_DELAY_MS = 2000;
+const static SleepPeriod PS_SLEEP = SleepPeriod::S2;
 
 #endif  // CONFIG_H

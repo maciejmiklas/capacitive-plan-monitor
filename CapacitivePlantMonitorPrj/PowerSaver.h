@@ -23,9 +23,9 @@
 #include "Util.h"
 #include "EventBus.h"
 #include "Device.h"
-#include "LowPower.h"
 #include <avr/power.h>
 #include <avr/sleep.h>
+#include <avr/wdt.h>
 
 class PowerSaver : public BusListener, public Device {
 
@@ -45,8 +45,9 @@ private:
 
   void powerDown();
 
+  void sleep(SleepPeriod period);
   void nextStandby();
-  void onProbe();
+  void onCycle();
   void onPowerLow();
   void onButtonPress();
   void onPowerCritical();

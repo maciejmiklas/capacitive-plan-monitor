@@ -25,8 +25,8 @@ PowerSaver::PowerSaver()
 
 void PowerSaver::onEvent(BusEvent event, va_list ap) {
 
-  if (event == BusEvent::PROBE) {
-    onProbe();
+  if (event == BusEvent::CYCLE) {
+    onCycle();
 
   } else if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
     onButtonPress();
@@ -39,19 +39,15 @@ void PowerSaver::onEvent(BusEvent event, va_list ap) {
   }
 }
 
-void PowerSaver::onProbe() {
+void PowerSaver::onCycle() {
   if (util_ms() >= nextStandbyMs) {
 #if LOG && LOG_PS
     log(F("%s STANDBY ON"), NAME);
 #endif
     eb_fire(BusEvent::STANDBY_ON);
-
-    set_sleep_mode(SLEEP_MODE_IDLE);
-    sleep_enable();
-    sleep_cpu();
-    
-    delay(1000);
-
+    delay(10);
+    sleep(PS_SLEEP);
+    delay(10);
 #if LOG && LOG_PS
     log(F("%s STANDBY OFF"), NAME);
 #endif
@@ -59,6 +55,46 @@ void PowerSaver::onProbe() {
     eb_fire(BusEvent::STANDBY_OFF);
     nextStandby();
   }
+}
+
+// watchdog interrupt
+ISR(WDT_vect) {
+  wdt_disable();
+}
+
+void PowerSaver::sleep(SleepPeriod period) {
+  MCUSR = 0;                      // clear various "reset" flags
+  WDTCSR = bit(WDCE) | bit(WDE);  // allow changes, disable reset
+
+  // set interrupt mode and an interval
+  switch (period) {
+    case SleepPeriod::S1:
+      WDTCSR = bit(WDIE) | bit(WDP2) | bit(WDP1);
+      break;
+
+    case SleepPeriod::S2:
+      WDTCSR = bit(WDIE) | bit(WDP2) | bit(WDP1) | bit(WDP0);
+      break;
+
+    case SleepPeriod::S4:
+      WDTCSR = bit(WDIE) | bit(WDP3);
+      break;
+
+    default:
+    case SleepPeriod::S8:
+      WDTCSR = bit(WDIE) | bit(WDP3) | bit(WDP0);
+      break;
+  }
+
+  wdt_reset();
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  noInterrupts();  // timed sequence follows
+  sleep_enable();
+  MCUCR = bit(BODS) | bit(BODSE);  // turn off brown-out enable in software
+  MCUCR = bit(BODS);
+  interrupts();  // guarantees next instruction executed
+  sleep_cpu();
+  sleep_disable();
 }
 
 void PowerSaver::powerDown() {
@@ -78,7 +114,6 @@ void PowerSaver::onPowerLow() {
 
 void PowerSaver::onPowerCritical() {
   eb_fire(BusEvent::BRIGHTNESS_CHANGE, MI_LEVEL_OFF);
-  LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
 
 const char* PowerSaver::listenerName() {
@@ -90,6 +125,6 @@ void PowerSaver::setup() {
   power_usart0_disable();
 #endif
 
-  power_spi_disable();
-  power_twi_disable();
+   power_spi_disable();
+   power_twi_disable();
 }
