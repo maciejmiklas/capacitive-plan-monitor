@@ -25,7 +25,6 @@
 #include "Buttons.h"
 #include "BrightnessManager.h"
 #include "VCCMonitor.h"
-#include "Storage.h"
 #include "PowerSaver.h"
 #include "ProbeDriver.h"
 

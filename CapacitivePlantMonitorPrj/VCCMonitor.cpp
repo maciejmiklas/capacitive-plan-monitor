@@ -55,7 +55,7 @@ void VCCMonitor::probe(boolean force) {
         eb_fire(BusEvent::VCC_LOW);
 
       } else {
-        eb_fire(BusEvent::VCC_NORMAL);
+        eb_fire(BusEvent::VCC_NOMINAL);
       }
     }
   }

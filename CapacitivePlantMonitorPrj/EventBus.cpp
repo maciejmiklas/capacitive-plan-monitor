@@ -18,7 +18,7 @@
 
 static constexpr const char* NAME = "EB";
 
-const static uint8_t LISTNERS_MAX = 10;
+const static uint8_t LISTNERS_MAX = 15;
 static BusListener* listeners[LISTNERS_MAX];
 static uint8_t listenersAmount = 0;
 

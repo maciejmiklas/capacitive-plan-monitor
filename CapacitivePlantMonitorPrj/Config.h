@@ -84,6 +84,9 @@ const static uint8_t LED_BR_MAX_BLINK_REPEAT = 6;
 const static uint8_t LED_BR_MAX_BLINK_ON_DELAY = 3;
 const static uint8_t LED_BR_MAX_BLINK_OFF_DELAY = 6;
 
+const static uint8_t LE_PWR_LOW_ON_DELAY = 10;
+const static uint8_t LE_PWR_LOW_OFF_DELAY = 5;
+
 // ######## BrightnessManager(BM) ########
 const static uint8_t BM_BRIGHTNESS_MIN = 1;
 const static uint8_t BM_BRIGHTNESS_MAX = 255;
@@ -192,8 +195,8 @@ enum class SleepPeriod {
   S8,
 };
 
-const static uint32_t PS_STANDBY_INIT_MS = 20 * 1000;
-const static uint32_t PS_STANDBY_DELAY_MS = 2000;
-const static SleepPeriod PS_SLEEP = SleepPeriod::S2;
+const static uint32_t PS_STANDBY_INIT_MS = 5L * 60L * 1000L;
+const static uint32_t PS_STANDBY_DELAY_MS = 4000;
+const static SleepPeriod PS_SLEEP = SleepPeriod::S4;
 
 #endif  // CONFIG_H

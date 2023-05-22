@@ -22,12 +22,14 @@
 #include "Demo.h"
 #include "EventBus.h"
 #include "Device.h"
+#include "LEDBlink.h"
 
 // Enum values are out PINs
 enum LedPin { AWAKE = LE_PIN_AWAKE,
               PWR_LOW = LE_PIN_PWR_LOW };
 
 class LED : public Demo, public BusListener, public Device {
+
 public:
   LED();
 
@@ -50,6 +52,7 @@ private:
   const static uint8_t LAST_PIN = LedPin::PWR_LOW;
   static constexpr const char* NAME = "LE";
   uint16_t brightness;
+  LEDBlink* powerLow;
 
   void onBrightnessChange(uint8_t level);
   void onButtonPress();
@@ -58,6 +61,7 @@ private:
   void onPowerNominal();
   void onStandByOn();
   void onStandByOff();
+  void onCycle();
 };
 
 #endif  // LED_H

@@ -65,6 +65,9 @@
 /** Enable logger for: ProbeDriver */
 #define LOG_PD false
 
+/** Enable logger for: LEDBlink */
+#define LOG_LB false
+
 void log_setup();
 void log_cycle();
 void log(const __FlashStringHelper *ifsh, ...);

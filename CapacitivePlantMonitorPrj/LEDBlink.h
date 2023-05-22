@@ -14,21 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "Storage.h"
 
-Storage::Storage() {
-}
+#include "Arduino.h"
+#include "ArdLog.h"
+#include "Config.h"
+#include "EventBus.h"
+#include "Util.h"
 
-void Storage::store(StorageIdx idx, uint8_t val) {
-#if LOG && LOG_ST
-  log(F("%s WR %d=%d"), NAME, idx, val);
-#endif
-  EEPROM.write(idx, val);
-}
+#ifndef LED_BLINK
+#define LED_BLINK
 
-uint8_t Storage::read(StorageIdx idx) {
-  uint8_t val = EEPROM.read(idx);
-#if LOG && LOG_ST
-  log(F("%s RD %d=%d"), NAME, idx, val);
-#endif  
-}
+class LEDBlink : public BusListener {
+
+public:
+  LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightness);
+  void on();
+  void off();
+
+  // from EventBus.h
+  void onEvent(BusEvent event, va_list ap);
+  const char* listenerName();
+
+private:
+  static constexpr const char* NAME = "LB";
+
+  uint16_t onDelay;
+  uint16_t offDelay;
+  uint8_t pin;
+  uint8_t brightness;
+  boolean ledOn;
+  boolean enabled;
+  uint32_t lastUpdateMs;
+
+  void onCycle();
+};
+
+#endif  // edd LED_BLINK

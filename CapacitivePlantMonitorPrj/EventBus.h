@@ -28,7 +28,7 @@ enum class BusEvent {
 
   VCC_LOW = 31,
   VCC_CRITICAL = 32,
-  VCC_NORMAL = 33,
+  VCC_NOMINAL = 33,
 
   STANDBY_ON = 41,
   STANDBY_OFF = 42,

@@ -18,6 +18,7 @@
 
 LED::LED()
   : brightness(BM_BRIGHTNESS_INITIAL) {
+  powerLow = new LEDBlink(LedPin::PWR_LOW, LE_PWR_LOW_ON_DELAY, LE_PWR_LOW_OFF_DELAY, BM_BRIGHTNESS_MAX);
 }
 
 void LED::setup() {
@@ -76,16 +77,18 @@ void LED::onEvent(BusEvent event, va_list ap) {
   } else if (event == BusEvent::VCC_LOW || event == BusEvent::VCC_CRITICAL) {
     onPowerLow();
 
-  } else if (event == BusEvent::VCC_NORMAL) {
+  } else if (event == BusEvent::VCC_NOMINAL) {
     onPowerNominal();
 
   } else if (event == BusEvent::STANDBY_ON) {
     onStandByOn();
-  
+
   } else if (event == BusEvent::STANDBY_OFF) {
     onStandByOff();
-  } 
+  }
 }
+//const static uint8_t LE_PWR_LOW_ON_DELAY = 10;
+//const static uint8_t LE_PWR_LOW_OFF_DELAY = 5;
 
 void LED::onStandByOn() {
   off(LedPin::AWAKE);
@@ -100,11 +103,11 @@ void LED::onBrightnessChange(uint8_t newbr) {
 }
 
 void LED::onPowerLow() {
-  on(LedPin::PWR_LOW, BM_BRIGHTNESS_MAX);
+  powerLow->on();
 }
 
 void LED::onPowerNominal() {
-  off(LedPin::PWR_LOW);
+  powerLow->off();
 }
 
 void LED::onMaxBrightness() {
