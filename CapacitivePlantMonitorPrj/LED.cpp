@@ -74,8 +74,8 @@ void LED::onEvent(BusEvent event, va_list ap) {
   } else if (event == BusEvent::BRIGHTNESS_CHANGE) {
     onBrightnessChange(va_arg(ap, uint16_t));
 
-  } else if (event == BusEvent::VCC_LOW || event == BusEvent::VCC_CRITICAL) {
-    onPowerLow();
+  } else if (event == BusEvent::VCC_LOW) {
+  //  onPowerLow();
 
   } else if (event == BusEvent::VCC_NOMINAL) {
     onPowerNominal();
@@ -87,8 +87,6 @@ void LED::onEvent(BusEvent event, va_list ap) {
     onStandByOff();
   }
 }
-//const static uint8_t LE_PWR_LOW_ON_DELAY = 10;
-//const static uint8_t LE_PWR_LOW_OFF_DELAY = 5;
 
 void LED::onStandByOn() {
   off(LedPin::AWAKE);

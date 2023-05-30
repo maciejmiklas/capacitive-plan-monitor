@@ -130,7 +130,7 @@ const static uint8_t MI_BRIGHTNES_ON_DELAY = 100;
 
 // ######## MOISTURE DRIVER(MD) ########
 
-const static uint8_t MI_LEVEL_MAP_SIZE = 23;
+const static uint8_t MI_LEVEL_MAP_SIZE = 19;
 
 /**
     Voltage level read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge.
@@ -138,31 +138,29 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 23;
     that appropriately adjusts readings based on changes in the VCC level because it is not linear. For this reason,
     we are using mapping table for different VCC levels.
 */
+
+// For calibration set MI_MIN_VCC_CHANGE_MV = 1 and ArdLog -> LOG_MD, LOG to true
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
-  //{VCC, DRY, WET} (mV)
-  { 5000, 3500, 1900 },
-  { 4400, 3500, 1900 },
-  { 4300, 3500, 1900 },
-  { 4200, 3500, 1900 },
-  { 4100, 3500, 1900 },
-  { 4000, 2970, 1790 },
-  { 3900, 2870, 1720 },
-  { 3800, 2790, 1660 },
-  { 3750, 2750, 1630 },
-  { 3700, 2700, 1600 },
-  { 3650, 2660, 1580 },
-  { 3600, 2620, 1550 },
-  { 3550, 2570, 1520 },
-  { 3500, 2537, 1500 },
-  { 3450, 2490, 1460 },
-  { 3400, 2460, 1430 },
-  { 3350, 2410, 1400 },
-  { 3300, 2370, 1380 },
-  { 3250, 2320, 1350 },
-  { 3200, 2280, 1330 },
-  { 3100, 2200, 1270 },
-  { 3000, 2110, 1210 },
-  { 2000, 2000, 1500 }
+  // {VCC, DRY, WET} (mV)
+  { 5000, 3970, 2212 },
+  { 4600, 3610, 2000 },
+  { 4500, 3530, 1943 },
+  { 4400, 3460, 1900 },
+  { 4300, 3370, 1840 },
+  { 4200, 3300, 1790 },
+  { 4100, 3180, 1730 },
+  { 4000, 3100, 1680 },
+  { 3900, 3010, 1630 },
+  { 3800, 2930, 1580 },
+  { 3700, 2840, 1530 },
+  { 3600, 2770, 1470 },
+  { 3500, 2670, 1424 },
+  { 3400, 2590, 1370 },
+  { 3300, 2490, 1320 },
+  { 3200, 2420, 1260 },
+  { 3100, 2330, 1200 },
+  { 3000, 2330, 1160 },
+  { 2000, 2330, 1160 }
 };
 
 const static float MI_ADJUST_STEP = 0.05;
@@ -172,7 +170,7 @@ const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
 const static uint8_t MI_ADJUST_LEV_MIN = MI_LEVEL_OFF;
 const static uint16_t MI_ADJUST_SHOW_MS = 5000;
-const static uint16_t MI_MIN_VCC_CHANGE_MV = 20;
+const static uint8_t MI_MIN_VCC_CHANGE_MV = 20;
 
 // ######## VCCMonitor(VC) ########
 

@@ -35,6 +35,7 @@ void LEDBlink::onCycle() {
   if (!enabled) {
     return;
   }
+
   uint32_t lastUpdate = util_ms() - lastUpdateMs;
 
   if (ledOn && lastUpdate > onDelay) {

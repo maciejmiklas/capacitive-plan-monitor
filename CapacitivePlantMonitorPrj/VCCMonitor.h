@@ -25,7 +25,7 @@
 #include "EventBus.h"
 #include "Device.h"
 
-class VCCMonitor : public VCCProvider, public BusListener, public Device {
+class VCCMonitor : public VCCProvider, public BusListener{
 public:
   VCCMonitor();
 
@@ -35,9 +35,6 @@ public:
   // from EventBus.h
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
-
-  // from Device.h
-  void setup();
 
 private:
   Reader* reader;

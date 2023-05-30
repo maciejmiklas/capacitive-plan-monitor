@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 /*
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -17,7 +18,7 @@
 #include "VCCMonitor.h"
 
 VCCMonitor::VCCMonitor()
-  : lastVcc(VC_PWR_MAX) {
+  : lastVcc(0) {
   reader = new Reader(new VCCMonitorReader());
 }
 
@@ -38,25 +39,21 @@ void VCCMonitor::onProbe() {
   probe(false);
 }
 
-void VCCMonitor::setup() {
-  lastVcc = reader->read();
-}
-
 void VCCMonitor::probe(boolean force) {
-
   uint16_t vcc = reader->read();
   if (force || sub_u16(vcc, lastVcc) >= MI_MIN_VCC_CHANGE_MV) {
     lastVcc = vcc;
-
     if (vcc <= VC_PWR_CRITICAL) {
-      eb_fire(BusEvent::VCC_CRITICAL);
+      Serial.println("VC_PWR_CRITICAL");
+       //eb_fire(BusEvent::VCC_CRITICAL);
 
-      if (vcc <= VC_PWR_LOW) {
-        eb_fire(BusEvent::VCC_LOW);
+    } else if (vcc <= VC_PWR_LOW) {
+       Serial.println("VC_PWR_LOW");
+    //  eb_fire(BusEvent::VCC_LOW);
 
-      } else {
-        eb_fire(BusEvent::VCC_NOMINAL);
-      }
+    } else {
+      Serial.println("VCC_NOMINAL");
+     // eb_fire(BusEvent::VCC_NOMINAL);
     }
   }
 }
@@ -66,7 +63,7 @@ const char* VCCMonitor::listenerName() {
 }
 
 uint16_t VCCMonitor::mv() {
-  return lastVcc;
+  return lastVcc == 0 ? reader->read() : lastVcc;
 }
 
 // ############## VCCMonitorReader ################

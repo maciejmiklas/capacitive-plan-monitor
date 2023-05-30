@@ -60,6 +60,7 @@ uint8_t MoistureDriver::getLevel() {
 
   uint16_t dry = MI_LEVEL_MAP[0][1];
   uint16_t wet = MI_LEVEL_MAP[0][2];
+
   uint16_t powerMv = vcc->mv();  // current baterry charge in mv
   for (uint8_t idx = 0; idx < MI_LEVEL_MAP_SIZE - 1; idx++) {
     const uint16_t* el = MI_LEVEL_MAP[idx];
@@ -69,17 +70,8 @@ uint8_t MoistureDriver::getLevel() {
       wet = en[2];
     }
   }
-  uint8_t level = MI_LEVEL_OFF;
 
-  if (smv >= dry) {
-    level = MI_LEVEL_MIN;
-
-  } else if (smv <= wet) {
-    level = MI_LEVEL_MAX;
-
-  } else {
-    level = map(smv, dry, wet, MI_LEVEL_MIN, MI_LEVEL_MAX);
-  }
+  uint8_t level = map(smv, dry, wet, MI_LEVEL_MIN, MI_LEVEL_MAX);
 
 #if LOG && LOG_MD
   log(F("%s PWR:%d [%d,%d,%d]=>%d"), NAME, powerMv, dry, smv, wet, level);
