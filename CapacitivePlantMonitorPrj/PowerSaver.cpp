@@ -30,13 +30,7 @@ void PowerSaver::onEvent(BusEvent event, va_list ap) {
 
   } else if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
     onButtonPress();
-
-  } else if (event == BusEvent::VCC_LOW) {
-    onPowerLow();
-
-  } else if (event == BusEvent::VCC_CRITICAL) {
-    onPowerCritical();
-  }
+  } 
 }
 
 void PowerSaver::onCycle() {
@@ -97,23 +91,16 @@ void PowerSaver::sleep(SleepPeriod period) {
   sleep_disable();
 }
 
-void PowerSaver::powerDown() {
+void PowerSaver::onButtonPress() {
+  nextStandby(PS_STANDBY_INIT_MS);
 }
 
-void PowerSaver::onButtonPress() {
-  nextStandby();
+void PowerSaver::nextStandby(uint32_t delayMs) {
+  nextStandbyMs = util_ms() + delayMs;
 }
 
 void PowerSaver::nextStandby() {
-  nextStandbyMs = util_ms() + PS_STANDBY_DELAY_MS;
-}
-
-void PowerSaver::onPowerLow() {
-  eb_fire(BusEvent::BRIGHTNESS_CHANGE, MI_LEVEL_MIN);
-}
-
-void PowerSaver::onPowerCritical() {
-  eb_fire(BusEvent::BRIGHTNESS_CHANGE, MI_LEVEL_OFF);
+  nextStandby(PS_STANDBY_DELAY_MS);
 }
 
 const char* PowerSaver::listenerName() {
@@ -125,6 +112,6 @@ void PowerSaver::setup() {
   power_usart0_disable();
 #endif
 
-   power_spi_disable();
-   power_twi_disable();
+  power_spi_disable();
+  power_twi_disable();
 }

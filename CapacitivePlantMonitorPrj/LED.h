@@ -39,6 +39,7 @@ public:
 
   // from Demo.h
   void demo();
+  void demosDone();
 
   // from EventBus.h
   void onEvent(BusEvent event, va_list ap);

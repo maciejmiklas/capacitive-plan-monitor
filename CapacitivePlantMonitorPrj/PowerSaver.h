@@ -43,14 +43,11 @@ private:
   static constexpr const char* NAME = "PS";
   uint32_t nextStandbyMs;
 
-  void powerDown();
-
   void sleep(SleepPeriod period);
   void nextStandby();
+  void nextStandby(uint32_t delayMs);
   void onCycle();
-  void onPowerLow();
   void onButtonPress();
-  void onPowerCritical();
 };
 
 #endif  // STANDBY_MANGER_H

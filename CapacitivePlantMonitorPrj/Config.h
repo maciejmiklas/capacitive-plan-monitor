@@ -84,16 +84,20 @@ const static uint8_t LED_BR_MAX_BLINK_REPEAT = 6;
 const static uint8_t LED_BR_MAX_BLINK_ON_DELAY = 3;
 const static uint8_t LED_BR_MAX_BLINK_OFF_DELAY = 6;
 
-const static uint8_t LE_PWR_LOW_ON_DELAY = 10;
-const static uint8_t LE_PWR_LOW_OFF_DELAY = 5;
+const static uint8_t LE_PWR_LOW_ON_DELAY = 100;
+const static uint8_t LE_PWR_LOW_ON_BRIGHTNESS = 100;
+const static uint8_t LE_PWR_LOW_OFF_DELAY = 50;
+const static uint8_t LE_PWR_LOW_OFF_BRIGHTNESS = 5;
 
 // ######## BrightnessManager(BM) ########
+const static uint8_t BM_BRIGHTNESS_OFF = 0;
 const static uint8_t BM_BRIGHTNESS_MIN = 1;
 const static uint8_t BM_BRIGHTNESS_MAX = 255;
 const static uint8_t BM_BRIGHTNESS_CHANGE = 10;
 const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
 
 // ######## ProbeDriver(PD)  ########
+// stop probing for given time after user interaction, like button press
 const static uint32_t PD_PROBE_SUSPEND_MS = 5000;
 const static uint32_t PD_FREQ_MS = 200;
 
@@ -136,9 +140,8 @@ const static uint8_t MI_LEVEL_MAP_SIZE = 19;
     Voltage level read from the moisture sensor over input A0 depend on the VCC level, which changes with a battery charge.
     Different battery level reflects the amplitude of generated square wave for a sensor. It is hard to write a function
     that appropriately adjusts readings based on changes in the VCC level because it is not linear. For this reason,
-    we are using mapping table for different VCC levels.
+    we are using mapping table for different VCC(batery) levels.
 */
-
 // For calibration set MI_MIN_VCC_CHANGE_MV = 1 and ArdLog -> LOG_MD, LOG to true
 const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
   // {VCC, DRY, WET} (mV)
@@ -178,7 +181,7 @@ const static uint8_t MI_MIN_VCC_CHANGE_MV = 20;
 static const uint16_t VC_PWR_LOW = 3500;
 static const uint16_t VC_PWR_CRITICAL = 3200;
 static const uint16_t VC_PWR_MAX = 3700;
-static const uint16_t VC_VCC_READ_DELAY = 10;
+static const uint16_t VC_VCC_READ_DELAY = 5;
 static const uint16_t VC_VCC_REF = 1081;  // default for ATmega328P: 1110
 
 // ####### Reader(RE) ######
@@ -194,7 +197,7 @@ enum class SleepPeriod {
 };
 
 const static uint32_t PS_STANDBY_INIT_MS = 5L * 60L * 1000L;
-const static uint32_t PS_STANDBY_DELAY_MS = 4000;
+const static uint32_t PS_STANDBY_DELAY_MS = 8000;
 const static SleepPeriod PS_SLEEP = SleepPeriod::S4;
 
 #endif  // CONFIG_H

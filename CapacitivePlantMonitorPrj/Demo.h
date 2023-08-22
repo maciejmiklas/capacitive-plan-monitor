@@ -25,5 +25,7 @@ public:
   /** Plays demo. */
   virtual void demo() = 0;
 
+  virtual void demosDone() = 0;
+
 };
 #endif /* DEMO_H_ */

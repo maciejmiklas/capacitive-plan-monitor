@@ -44,16 +44,13 @@ void VCCMonitor::probe(boolean force) {
   if (force || sub_u16(vcc, lastVcc) >= MI_MIN_VCC_CHANGE_MV) {
     lastVcc = vcc;
     if (vcc <= VC_PWR_CRITICAL) {
-      Serial.println("VC_PWR_CRITICAL");
-       //eb_fire(BusEvent::VCC_CRITICAL);
+      eb_fire(BusEvent::VCC_CRITICAL);
 
     } else if (vcc <= VC_PWR_LOW) {
-       Serial.println("VC_PWR_LOW");
-    //  eb_fire(BusEvent::VCC_LOW);
+      eb_fire(BusEvent::VCC_LOW);
 
     } else {
-      Serial.println("VCC_NOMINAL");
-     // eb_fire(BusEvent::VCC_NOMINAL);
+      eb_fire(BusEvent::VCC_NOMINAL);
     }
   }
 }

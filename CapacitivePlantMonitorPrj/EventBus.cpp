@@ -31,21 +31,15 @@ BusListener::BusListener() {
 
 void eb_register(BusListener* listener) {
   if (listenersAmount == LISTNERS_MAX) {
-#if LOG && LOG_EB
-    log(F("%s LN ERR (%d) !"), NAME, listenersAmount);
-#endif
     return;
   }
 
-#if LOG && LOG_EB
-  log(F("%s REG %d"), NAME, listenersAmount);
-#endif
   listeners[listenersAmount++] = listener;
 }
 
 void eb_fire(BusEvent event, ...) {
 #if LOG && LOG_EB
-  log(F("%s LE %d"), NAME, event);
+  log(F("%s EVENT %d"), NAME, event);
 #endif
 
   for (uint8_t idx = 0; idx < listenersAmount; idx++) {

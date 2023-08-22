@@ -27,7 +27,7 @@
 class LEDBlink : public BusListener {
 
 public:
-  LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightness);
+  LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightnessOn, uint8_t brightnessOff);
   void on();
   void off();
 
@@ -41,7 +41,8 @@ private:
   uint16_t onDelay;
   uint16_t offDelay;
   uint8_t pin;
-  uint8_t brightness;
+  uint8_t brightnessOn;
+  uint8_t brightnessOff;
   boolean ledOn;
   boolean enabled;
   uint32_t lastUpdateMs;

@@ -59,6 +59,7 @@ void setup() {
 
   execSetup();
   execDemo();
+  execDemosDone();
 
   clock_prescale_set(CP_CLOCK_DIV);
 }
@@ -81,6 +82,13 @@ void loop() {
 void execDemo() {
   for (uint8_t i = 0; i < DEMOS; i++) {
     demos[i]->demo();
+  }
+}
+
+
+void execDemosDone() {
+  for (uint8_t i = 0; i < DEMOS; i++) {
+    demos[i]->demosDone();
   }
 }
 

@@ -56,7 +56,7 @@ protected:
   BusListener();
 };
 
-void eb_register(BusListener* listener);  // TODO method required only inside EventBus.cpp!
+void eb_register(BusListener* listener);
 void eb_fire(BusEvent event, ...);
 
 #endif /* EVENTBUS_H_ */

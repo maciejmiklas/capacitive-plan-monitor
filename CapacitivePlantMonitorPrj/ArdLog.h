@@ -21,7 +21,7 @@
 #include <stdarg.h>
 
 /** Enables logger so that it can log over serial port. */
-#define LOG true
+#define LOG false
 
 /** Enable logger for: CapacitivePlantMonitor */
 #define LOG_CPM false
@@ -46,9 +46,6 @@
 
 /** Enable logger for: VCCMonitor */
 #define LOG_VC false
-
-/** Enable logger for: Storage */
-#define LOG_ST false
 
 /** Enable logger for: Reader */
 #define LOG_RE false

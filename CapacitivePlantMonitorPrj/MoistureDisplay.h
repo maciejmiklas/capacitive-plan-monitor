@@ -41,6 +41,7 @@ public:
 
   // from Demo.h
   void demo();
+  void demosDone();
 
   // from Device.h
   void setup();
@@ -55,6 +56,9 @@ private:
   void onChangeBrightness(uint8_t level);
   void onMoistureAdjust(uint8_t level);
   void onMoistureLevelChange(uint8_t level);
+
+  void onPowerLow();
+  void onPowerCritical();
 };
 
 #endif  // MOISTURE_DISPLAY_H

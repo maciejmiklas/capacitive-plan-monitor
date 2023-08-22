@@ -30,6 +30,12 @@ void MoistureDisplay::onEvent(BusEvent event, va_list ap) {
 
   } else if (event == BusEvent::MOISTURE_LEVEL_CHANGE) {
     onMoistureLevelChange(va_arg(ap, uint16_t));
+
+  } else if (event == BusEvent::VCC_LOW) {
+    onPowerLow();
+
+  } else if (event == BusEvent::VCC_CRITICAL) {
+    onPowerCritical();
   }
 }
 
@@ -40,6 +46,14 @@ void MoistureDisplay::onMoistureLevelChange(uint8_t level) {
 
 void MoistureDisplay::onMoistureAdjust(uint8_t level) {
   blink(level);
+}
+
+void MoistureDisplay::onPowerLow() {
+  changeBrightness(BM_BRIGHTNESS_MIN);
+}
+
+void MoistureDisplay::onPowerCritical() {
+  changeBrightness(BM_BRIGHTNESS_OFF);
 }
 
 void MoistureDisplay::onChangeBrightness(uint8_t level) {
@@ -59,6 +73,9 @@ void MoistureDisplay::demo() {
     show(lev);
     delay(MI_DEMO_DELAY);
   }
+}
+
+void MoistureDisplay::demosDone() {
   showCurrentMoistureLevel();
 }
 

@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,10 +17,9 @@
  */
 #include "LEDBlink.h"
 
-LEDBlink::LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightness)
-  : pin(pin), onDelay(onDelay), offDelay(offDelay), enabled(false), lastUpdateMs(0), brightness(brightness), ledOn(false) {
+LEDBlink::LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightnessOn, uint8_t brightnessOff)
+  : pin(pin), onDelay(onDelay), offDelay(offDelay), enabled(false), lastUpdateMs(0), brightnessOn(brightnessOn), brightnessOff(brightnessOff), ledOn(false) {
 }
-
 
 void LEDBlink::onEvent(BusEvent event, va_list ap) {
   if (event == BusEvent::CYCLE) {
@@ -41,12 +41,12 @@ void LEDBlink::onCycle() {
   if (ledOn && lastUpdate > onDelay) {
     ledOn = false;
     lastUpdateMs = util_ms();
-    analogWrite(pin, LOW);
+    analogWrite(pin, brightnessOff);
 
   } else if (!ledOn && lastUpdate > offDelay) {
     ledOn = true;
     lastUpdateMs = util_ms();
-    analogWrite(pin, brightness);
+    analogWrite(pin, brightnessOn);
   }
 }
 
