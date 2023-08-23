@@ -96,7 +96,7 @@ void PowerSaver::sleep(SleepPeriod period) {
 }
 
 void PowerSaver::onButtonPress() {
-  nextStandby(PS_STANDBY_INIT_MS);
+  nextStandby(PS_STANDBY_BUTTON_MS);
 }
 
 void PowerSaver::nextStandby(uint32_t delayMs) {
