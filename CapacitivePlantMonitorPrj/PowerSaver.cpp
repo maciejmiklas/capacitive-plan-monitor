@@ -24,13 +24,12 @@ PowerSaver::PowerSaver()
 }
 
 void PowerSaver::onEvent(BusEvent event, va_list ap) {
-
   if (event == BusEvent::CYCLE) {
     onCycle();
 
   } else if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
     onButtonPress();
-  } 
+  }
 }
 
 void PowerSaver::onCycle() {
@@ -57,8 +56,12 @@ ISR(WDT_vect) {
 }
 
 void PowerSaver::sleep(SleepPeriod period) {
-  MCUSR = 0;                      // clear various "reset" flags
-  WDTCSR = bit(WDCE) | bit(WDE);  // allow changes, disable reset
+  MCUSR = 0; // clear "reset" flags
+
+  // allow changes, disable reset, clear existing interrupt
+  WDTCSR = bit (WDCE) | bit (WDE) | bit (WDIF);
+
+  noInterrupts(); 
 
   // set interrupt mode and an interval
   switch (period) {
@@ -82,13 +85,14 @@ void PowerSaver::sleep(SleepPeriod period) {
 
   wdt_reset();
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-  noInterrupts();  // timed sequence follows
+  power_all_disable();
   sleep_enable();
-  MCUCR = bit(BODS) | bit(BODSE);  // turn off brown-out enable in software
-  MCUCR = bit(BODS);
+
   interrupts();  // guarantees next instruction executed
-  sleep_cpu();
+  sleep_cpu();   // power down
+
   sleep_disable();
+  power_all_enable();
 }
 
 void PowerSaver::onButtonPress() {

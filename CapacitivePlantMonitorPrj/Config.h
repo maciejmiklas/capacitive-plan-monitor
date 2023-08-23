@@ -197,7 +197,7 @@ enum class SleepPeriod {
 };
 
 const static uint32_t PS_STANDBY_INIT_MS = 5L * 60L * 1000L;
-const static uint32_t PS_STANDBY_DELAY_MS = 8000;
-const static SleepPeriod PS_SLEEP = SleepPeriod::S4;
+const static uint32_t PS_STANDBY_DELAY_MS = 3000;
+const static SleepPeriod PS_SLEEP = SleepPeriod::S8;
 
 #endif  // CONFIG_H

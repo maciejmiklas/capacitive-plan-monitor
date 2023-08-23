@@ -21,13 +21,12 @@ MoistureSensor::MoistureSensor() {
 }
 
 void MoistureSensor::onEvent(BusEvent event, va_list ap) {
-  /*
   if (event == BusEvent::STANDBY_ON) {
     onStandby();
 
   } else if (event == BusEvent::STANDBY_OFF) {
     onWakeup();
-  }*/
+  }
 }
 
 uint16_t MoistureSensor::read() {

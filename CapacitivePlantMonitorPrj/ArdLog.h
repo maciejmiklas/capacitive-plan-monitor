@@ -21,7 +21,7 @@
 #include <stdarg.h>
 
 /** Enables logger so that it can log over serial port. */
-#define LOG false
+#define LOG true
 
 /** Enable logger for: CapacitivePlantMonitor */
 #define LOG_CPM false
@@ -54,7 +54,7 @@
 #define LOG_BT false
 
 /** Enable logger for: PowerSaver */
-#define LOG_PS false
+#define LOG_PS true
 
 /** Enable logger for: EventBus */
 #define LOG_EB false
