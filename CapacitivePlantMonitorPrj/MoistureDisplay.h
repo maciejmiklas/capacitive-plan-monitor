@@ -52,12 +52,15 @@ private:
 
   void changeBrightness(uint8_t level);
   void showCurrentMoistureLevel();
+  void ledsOff();
 
   void onChangeBrightness(uint8_t level);
   void onMoistureAdjust(uint8_t level);
   void onMoistureLevelChange(uint8_t level);
 
   void onPowerLow();
+  void onStandByOn();
+  void onStandByOff();
   void onPowerCritical();
 };
 

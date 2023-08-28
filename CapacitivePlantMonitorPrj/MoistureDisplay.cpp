@@ -36,6 +36,12 @@ void MoistureDisplay::onEvent(BusEvent event, va_list ap) {
 
   } else if (event == BusEvent::VCC_CRITICAL) {
     onPowerCritical();
+
+  } else if (event == BusEvent::STANDBY_ON) {
+    onStandByOn();
+
+  } else if (event == BusEvent::STANDBY_OFF) {
+    onStandByOff();
   }
 }
 
@@ -54,6 +60,14 @@ void MoistureDisplay::onPowerLow() {
 
 void MoistureDisplay::onPowerCritical() {
   changeBrightness(BM_BRIGHTNESS_OFF);
+}
+
+void MoistureDisplay::onStandByOn() {
+  ledsOff();
+}
+
+void MoistureDisplay::onStandByOff() {
+  ledsOff();
 }
 
 void MoistureDisplay::onChangeBrightness(uint8_t level) {
@@ -90,17 +104,21 @@ void MoistureDisplay::setup() {
   pinMode(MI_PIN_ENABLE, OUTPUT);
 
   changeBrightness(BM_BRIGHTNESS_INITIAL);
-  show(MI_LEVEL_OFF);
+  ledsOff();
 }
 
 void MoistureDisplay::blink(uint8_t level) {
   for (uint8_t i = 0; i < MI_BLINK_REPEAT; i++) {
     show(level);
     delay(MI_BLINK_ON_DELAY);
-    show(MI_LEVEL_OFF);
+    ledsOff();
     delay(MI_BLINK_OFF_DELAY);
   }
   showCurrentMoistureLevel();
+}
+
+void MoistureDisplay::ledsOff() {
+  show(MI_LEVEL_OFF);
 }
 
 void MoistureDisplay::show(uint8_t level) {
