@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -45,7 +47,7 @@ private:
   uint8_t currentLevel;
 
   uint8_t getLevel();
-  void probe(boolean force);
+  boolean levelCorrect(uint8_t level);
 
   void onProbe();
   void onStandbyOff();

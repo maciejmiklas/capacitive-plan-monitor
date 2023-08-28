@@ -67,7 +67,7 @@ void MoistureDisplay::onStandByOn() {
 }
 
 void MoistureDisplay::onStandByOff() {
-  ledsOff();
+  showCurrentMoistureLevel();
 }
 
 void MoistureDisplay::onChangeBrightness(uint8_t level) {

@@ -34,17 +34,8 @@ void MoistureDriver::onEvent(BusEvent event, va_list ap) {
 }
 
 void MoistureDriver::onProbe() {
-  probe(false);
-}
-
-void MoistureDriver::onStandbyOff() {
-  adjustUp = true;
-  probe(true);
-}
-
-void MoistureDriver::probe(boolean force) {
   uint8_t level = getLevel();
-  if (force || sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
+  if (levelCorrect(level) && sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
 #if LOG && LOG_MD
     log(F("%s LEVEL %d->%d"), NAME, currentLevel, level);
 #endif
@@ -53,15 +44,23 @@ void MoistureDriver::probe(boolean force) {
   }
 }
 
+void MoistureDriver::onStandbyOff() {
+  adjustUp = true;
+}
+
+boolean MoistureDriver::levelCorrect(uint8_t level) {
+  return level >= MI_LEVEL_MIN && level <= MI_LEVEL_MAX;
+}
+
 uint8_t MoistureDriver::getLevel() {
-  uint16_t sr = sensor->read();                       // 0-1023
-  uint16_t smv = (long)sr * (long)vcc->mv() / 1023L;  // sensor read in mv
+  uint16_t sr = sensor->read();                     // 0-1023
+  uint16_t powerMv = vcc->mv();                     // current baterry charge in mv
+  uint16_t smv = (long)sr * (long)powerMv / 1023L;  // sensor read in mv
   smv *= adjust;
 
   uint16_t dry = MI_LEVEL_MAP[0][1];
   uint16_t wet = MI_LEVEL_MAP[0][2];
 
-  uint16_t powerMv = vcc->mv();  // current baterry charge in mv
   for (uint8_t idx = 0; idx < MI_LEVEL_MAP_SIZE - 1; idx++) {
     const uint16_t* el = MI_LEVEL_MAP[idx];
     const uint16_t* en = MI_LEVEL_MAP[idx + 1];
@@ -76,6 +75,7 @@ uint8_t MoistureDriver::getLevel() {
 #if LOG && LOG_MD
   log(F("%s PWR:%d [%d,%d,%d]=>%d"), NAME, powerMv, dry, smv, wet, level);
 #endif
+
   return level;
 }
 

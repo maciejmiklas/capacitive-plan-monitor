@@ -38,14 +38,15 @@ void PowerSaver::onCycle() {
     log(F("%s STANDBY ON"), NAME);
 #endif
     eb_fire(BusEvent::STANDBY_ON);
-    delay(10);
+    delay(PS_SLEEP_DELAY_MICRO);
     sleep(PS_SLEEP);
-    delay(10);
+    delay(PS_SLEEP_DELAY_MICRO);
 #if LOG && LOG_PS
     log(F("%s STANDBY OFF"), NAME);
 #endif
     util_cycle();
     eb_fire(BusEvent::STANDBY_OFF);
+    delay(PS_SLEEP_DELAY_MICRO);
     nextStandby();
   }
 }
@@ -56,12 +57,12 @@ ISR(WDT_vect) {
 }
 
 void PowerSaver::sleep(SleepPeriod period) {
-  MCUSR = 0; // clear "reset" flags
+  MCUSR = 0;  // clear "reset" flags
 
   // allow changes, disable reset, clear existing interrupt
-  WDTCSR = bit (WDCE) | bit (WDE) | bit (WDIF);
+  WDTCSR = bit(WDCE) | bit(WDE) | bit(WDIF);
 
-  noInterrupts(); 
+  noInterrupts();
 
   // set interrupt mode and an interval
   switch (period) {

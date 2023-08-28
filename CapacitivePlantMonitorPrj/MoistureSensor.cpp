@@ -30,7 +30,13 @@ void MoistureSensor::onEvent(BusEvent event, va_list ap) {
 }
 
 uint16_t MoistureSensor::read() {
-  return reader->read();
+  uint16_t val = reader->read();
+  
+#if LOG && LOG_MS
+  log(F("%s RV:%d"), NAME, val);
+#endif
+
+  return val;
 }
 
 const char* MoistureSensor::listenerName() {

@@ -29,10 +29,10 @@ public:
 
   MoistureDisplay();
 
-  /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
+  /** #level goes from #MI_LEVEL_MIN to #MI_LEVEL_MAX inclusive -> from dry to wet. */
   void show(uint8_t level);
 
-  /** #level goes from #MOISTURE_MIN to #MOISTURE_MAX inclusive -> from dry to wet. */
+  /** #level goes from #MI_LEVEL_MIN to #MI_LEVEL_MAX inclusive -> from dry to wet. */
   void blink(uint8_t level);
 
   // from EventBus.h
