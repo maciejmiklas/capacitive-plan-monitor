@@ -197,9 +197,17 @@ enum class SleepPeriod {
 };
 
 const static uint8_t PS_SLEEP_DELAY_MICRO =  10;
-const static uint32_t PS_STANDBY_INIT_MS =  1000L;
+
+// dealy in ms for first standby after power on
+const static uint32_t PS_STANDBY_INIT_MS =  20L * 1000L;
+
+// dealy in ms for standby after a button has been pressed
 const static uint32_t PS_STANDBY_BUTTON_MS = 20L * 1000L;
+
+// standby frequency during normal operation
 const static uint32_t PS_STANDBY_DELAY_MS = 4000L;
+
+// sleep time in seconds during standby
 const static SleepPeriod PS_SLEEP = SleepPeriod::S8;
 
 #endif  // CONFIG_H
