@@ -4,7 +4,7 @@ It is a Capacitive Moisture Monitor based on Atmega 328.
 <img src="/img/cover.jpg" width="600px"/>
 <img src="/img/schematic.png" width="600px"/>
 
-It runs on a single Lii 3100mAh battery for about two months, depending on the brightness of the LEDs and moisture level. Wetter soli lights up more LEDs, resulting in higher power consumption. 
+It runs on a single Lii 3100mAh battery for about two months, depending on the brightness of the LEDs and moisture level. Wet soli lights up more LEDs, resulting in higher power consumption. 
 
 The Atmega runs at 2Mhz to extend battery life; all unnecessary functions are also disabled. It drops power consumption from 30mA to less than 10mA with just a few LEDs enabled on low brightness. Running at 10mA would give us a battery life of about two weeks. To prolong it, Atmega goes to a deep sleep every 2 seconds for 4 seconds. With that trade-off, we should run on a single charge for about two months.
 
