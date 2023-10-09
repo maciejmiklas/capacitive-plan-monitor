@@ -98,7 +98,7 @@ const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
 
 // ######## ProbeDriver(PD)  ########
 // stop probing for given time after user interaction, like button press
-const static uint32_t PD_PROBE_SUSPEND_MS = 5000;
+const static uint32_t PD_PROBE_SUSPEND_MS = 2000;
 const static uint32_t PD_FREQ_MS = 200;
 
 // ######## MoistureDisplay(MI) ########
@@ -166,14 +166,14 @@ const static uint16_t MI_LEVEL_MAP[MI_LEVEL_MAP_SIZE][3] = {
   { 2000, 2330, 1160 }
 };
 
-const static float MI_ADJUST_STEP = 0.05;
+const static float MI_ADJUST_STEP = 0.08;
 const static float MI_ADJUST_INIT = 1.0;
 const static uint8_t MI_MIN_CHANGE_LEVEL = 1;
 const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
 const static uint8_t MI_ADJUST_LEV_MIN = MI_LEVEL_OFF;
 const static uint16_t MI_ADJUST_SHOW_MS = 5000;
-const static uint8_t MI_MIN_VCC_CHANGE_MV = 20;
+const static uint8_t MI_MIN_VCC_CHANGE_MV = 100;
 
 // ######## VCCMonitor(VC) ########
 
@@ -182,7 +182,7 @@ static const uint16_t VC_PWR_LOW = 3500;
 static const uint16_t VC_PWR_CRITICAL = 3200;
 static const uint16_t VC_PWR_MAX = 3700;
 static const uint16_t VC_VCC_READ_DELAY = 5;
-static const uint16_t VC_VCC_REF = 1081;  // default for ATmega328P: 1110
+static const uint16_t VC_VCC_REF = 1110;  // default for ATmega328P: 1110
 
 // ####### Reader(RE) ######
 const static uint8_t RE_PROBES = 3;
@@ -199,7 +199,7 @@ enum class SleepPeriod {
 const static uint8_t PS_SLEEP_DELAY_MICRO =  10;
 
 // dealy in ms for first standby after power on
-const static uint32_t PS_STANDBY_INIT_MS =  20L * 1000L;
+const static uint32_t PS_STANDBY_INIT_MS =  10L * 1000L;
 
 // dealy in ms for standby after a button has been pressed
 const static uint32_t PS_STANDBY_BUTTON_MS = 20L * 1000L;

@@ -47,7 +47,6 @@ private:
   uint8_t currentLevel;
 
   uint8_t getLevel();
-  boolean levelCorrect(uint8_t level);
 
   void onProbe();
   void onStandbyOff();
