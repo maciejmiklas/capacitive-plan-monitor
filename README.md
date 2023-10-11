@@ -1,6 +1,9 @@
 It is a Capacitive Moisture Monitor based on Atmega 328. 
 
 
+[![Youtube EN)](/img/youtube_en.jpg)](https://youtu.be/DBx7lEarteA)
+[![Youtube PL)](/img/youtube_pl.jpg)](https://youtu.be/4kX7fkXBnfU)
+
 <img src="/img/cover.jpg" width="600px"/>
 <img src="/img/schematic.png" width="600px"/>
 
