@@ -1,4 +1,4 @@
-It is a Capacitive Moisture Monitor based on Atmega 328. 
+# Capacitive Moisture Monitor based on Atmega 328
 
 <img src="/img/cover.jpg" width="600px"/>
 <img src="/img/schematic.png" width="600px"/>
