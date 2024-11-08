@@ -27,14 +27,13 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 
-class PowerSaver : public BusListener, public Device {
+class PowerSaver : public Device {
 
 public:
   PowerSaver();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
+  void onCycle();
+  void onButtonPress();
 
   // from Device.h
   void setup();
@@ -46,8 +45,6 @@ private:
   void sleep(SleepPeriod period);
   void nextStandby();
   void nextStandby(uint32_t delayMs);
-  void onCycle();
-  void onButtonPress();
 };
 
 #endif  // STANDBY_MANGER_H

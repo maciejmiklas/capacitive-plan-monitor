@@ -25,15 +25,23 @@
 #include "MoistureDisplay.h"
 #include "VCCProvider.h"
 #include "EventBus.h"
+#include "Device.h"
 
-class MoistureDriver : public BusListener {
+class MoistureDriver : public Device {
 public:
 
   MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc);
 
+  void onProbe();
+  void onStandbyOff();
+  void onAdjustyNextLevel();
+
   // from EventBus.h
   void onEvent(BusEvent event, va_list ap);
   const char* listenerName();
+
+  // from Device.h
+  void setup();
 
 private:
   static constexpr const char* NAME = "MD";
@@ -47,10 +55,6 @@ private:
   uint8_t currentLevel;
 
   uint8_t getLevel();
-
-  void onProbe();
-  void onStandbyOff();
-  void onAdjustyNextLevel();
 };
 
 #endif  // MOISTURE_DRIVER_H

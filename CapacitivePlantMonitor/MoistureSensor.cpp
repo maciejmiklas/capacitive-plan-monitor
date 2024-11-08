@@ -16,17 +16,18 @@
  */
 #include "MoistureSensor.h"
 
-MoistureSensor::MoistureSensor() {
-  reader = new Reader(new MoistureReader());
+MoistureSensor* refMsen;
+
+void msen_onStandby(va_list ap) {
+  refMsen->onStandby();
 }
 
-void MoistureSensor::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::STANDBY_ON) {
-    onStandby();
+void msen_onWakeup(va_list ap) {
+  refMsen->onWakeup();
+}
 
-  } else if (event == BusEvent::STANDBY_OFF) {
-    onWakeup();
-  }
+MoistureSensor::MoistureSensor() {
+  reader = new Reader(new MoistureReader());
 }
 
 uint16_t MoistureSensor::read() {
@@ -37,10 +38,6 @@ uint16_t MoistureSensor::read() {
 #endif
 
   return val;
-}
-
-const char* MoistureSensor::listenerName() {
-  return NAME;
 }
 
 void MoistureSensor::setup() {
@@ -54,6 +51,10 @@ void MoistureSensor::setup() {
   OCR2A = MS_PWM_PERIOD;
   OCR2B = MS_PWM_PERIOD / MS_PWM_DUTY;
   onWakeup();
+
+  refMsen = this;
+  eb_reg(BusEvent::STANDBY_ON, &msen_onStandby);
+  eb_reg(BusEvent::STANDBY_OFF, &msen_onWakeup);
 }
 
 void MoistureSensor::onWakeup() {

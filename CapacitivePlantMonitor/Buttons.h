@@ -24,13 +24,11 @@
 #include "EventBus.h"
 #include "Device.h"
 
-class Buttons : public BusListener, public Device {
+class Buttons : public Device {
 public:
   Buttons();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
+  void onCycle();
 
   // from Device.h
   void setup();
@@ -41,8 +39,6 @@ private:
 
   void setupButton(uint8_t pin);
   void readButtons();
-
-  void onCycle();
 };
 
 #endif  // BUTTONS_H

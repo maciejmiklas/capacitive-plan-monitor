@@ -18,14 +18,20 @@
 #include "BrightnessManager.h"
 #include "EventBus.h"
 
+BrightnessManager* refBrem;
+
+void brem_onNextLevel(va_list ap) {   
+  refBrem->onNextLevel();
+}
+
 BrightnessManager::BrightnessManager()
   : brightness(BM_BRIGHTNESS_INITIAL) {
 }
 
-void BrightnessManager::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::BTN_BRIGHTNESS) {
-    onNextLevel();
-  }
+void BrightnessManager::setup() {
+  refBrem = this;
+
+  eb_reg(BusEvent::BTN_BRIGHTNESS, &brem_onNextLevel);
 }
 
 void BrightnessManager::onNextLevel() {
@@ -43,8 +49,4 @@ void BrightnessManager::onNextLevel() {
 #endif
 
   eb_fire(BusEvent::BRIGHTNESS_CHANGE, brightness);
-}
-
-const char* BrightnessManager::listenerName() {
-  return NAME;
 }

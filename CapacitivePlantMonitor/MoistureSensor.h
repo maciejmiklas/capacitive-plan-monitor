@@ -33,7 +33,7 @@ private:
   static constexpr const char* NAME = "MS";
 };
 
-class MoistureSensor : public BusListener, public Device {
+class MoistureSensor : public Device {
 public:
 
   MoistureSensor();
@@ -41,20 +41,16 @@ public:
   /* returns last value read from moisture sensor from 0 to 1023. */
   uint16_t read();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
-
   // from Device.h
   void setup();  
+
+  void onWakeup();
+  void onStandby();
 
 private:
 
   static constexpr const char* NAME = "MS";
   Reader* reader;
-  
-  void onWakeup();
-  void onStandby();
 };
 
 #endif  // MOISTURE_SENSOR_H

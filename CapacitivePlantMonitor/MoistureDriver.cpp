@@ -17,37 +17,47 @@
 */
 #include "MoistureDriver.h"
 
+MoistureDriver* refMidr;
+
+void midr_onProbe(va_list ap) {
+  refMidr->onProbe();
+}
+
+void midr_onAdjustyNextLevel(va_list ap) {
+  refMidr->onAdjustyNextLevel();
+}
+
+void midr_onStandbyOff(va_list ap) {
+  refMidr->onStandbyOff();
+}
+
 MoistureDriver::MoistureDriver(MoistureSensor* sensor, VCCProvider* vcc)
   : sensor(sensor), vcc(vcc), adjust(MI_ADJUST_INIT), adjustLevel(MI_ADJUST_LEV_INIT), adjustUp(true), adjustPressMs(0), currentLevel(0) {
 }
 
-void MoistureDriver::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::PROBE) {
-    onProbe();
+void MoistureDriver::setup() {
+  refMidr = this;
 
-  } else if (event == BusEvent::BTN_ADJ_SENSOR) {
-    onAdjustyNextLevel();
-
-  } else if (event == BusEvent::STANDBY_OFF) {
-    onStandbyOff();
-  }
+  eb_reg(BusEvent::PROBE, &midr_onProbe);
+  eb_reg(BusEvent::BTN_ADJ_SENSOR, &midr_onAdjustyNextLevel);
+  eb_reg(BusEvent::STANDBY_OFF, &midr_onStandbyOff);
 }
 
 void MoistureDriver::onProbe() {
   uint8_t level = getLevel();
-  if (sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
+  // FIXME - enable it!
+ // if (sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
 #if LOG && LOG_MD
     log(F("%s LEVEL %d->%d"), NAME, currentLevel, level);
 #endif
     eb_fire(BusEvent::MOISTURE_LEVEL_CHANGE, level);
     currentLevel = level;
-  }
+  //}
 }
 
 void MoistureDriver::onStandbyOff() {
   adjustUp = true;
 }
-
 
 uint8_t MoistureDriver::getLevel() {
   uint16_t sr = sensor->read();                     // 0-1023

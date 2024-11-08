@@ -25,16 +25,18 @@
 #include "EventBus.h"
 #include "Device.h"
 
-class VCCMonitor : public VCCProvider, public BusListener{
+class VCCMonitor : public VCCProvider, public Device{
 public:
   VCCMonitor();
+
+  void onProbe();
+  void onStandbyOff();
 
   // from PowerProvider.h
   uint16_t mv();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
+  // from Device.h
+  void setup();
 
 private:
   Reader* reader;
@@ -42,9 +44,6 @@ private:
   uint16_t lastVcc;
 
   void probe(boolean force);
-
-  void onProbe();
-  void onStandbyOff();
 };
 
 class VCCMonitorReader : public ReaderSupplier {

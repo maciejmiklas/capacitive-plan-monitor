@@ -17,18 +17,25 @@
 */
 #include "VCCMonitor.h"
 
+VCCMonitor* vccmRef;
+
+void vccm_onProbe(va_list ap) {
+  vccmRef->onProbe();
+}
+
+void vccm_onStandbyOff(va_list ap) {
+  vccmRef->onStandbyOff();
+}
+
 VCCMonitor::VCCMonitor()
   : lastVcc(0) {
   reader = new Reader(new VCCMonitorReader());
 }
 
-void VCCMonitor::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::PROBE) {
-    onProbe();
-
-  } else if (event == BusEvent::STANDBY_OFF) {
-    onStandbyOff();
-  }
+void VCCMonitor::setup() {
+  vccmRef = this;
+  eb_reg(BusEvent::PROBE, &vccm_onProbe);
+  eb_reg(BusEvent::STANDBY_OFF, &vccm_onStandbyOff);
 }
 
 void VCCMonitor::onStandbyOff() {
@@ -53,10 +60,6 @@ void VCCMonitor::probe(boolean force) {
       eb_fire(BusEvent::VCC_NOMINAL);
     }
   }
-}
-
-const char* VCCMonitor::listenerName() {
-  return NAME;
 }
 
 uint16_t VCCMonitor::mv() {

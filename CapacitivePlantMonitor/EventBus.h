@@ -20,7 +20,11 @@
 #include "Arduino.h"
 #include "ArdLog.h"
 
+static const uint8_t EVENTS_SIZE = 13;
+
+// To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS
 enum class BusEvent {
+
   PROBE = 11,
 
   BTN_BRIGHTNESS = 21,
@@ -46,17 +50,7 @@ enum class BusEvent {
   CYCLE = 255,
 };
 
-class BusListener {
-public:
-  virtual void onEvent(BusEvent event, va_list ap) = 0;
-  virtual const char* listenerName() = 0;
-
-protected:
-  virtual ~BusListener();
-  BusListener();
-};
-
-void eb_register(BusListener* listener);
 void eb_fire(BusEvent event, ...);
+void eb_reg(BusEvent event, void (*func)(va_list));
 
 #endif /* EVENTBUS_H_ */

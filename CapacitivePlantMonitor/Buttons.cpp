@@ -17,19 +17,22 @@
 
 #include "Buttons.h"
 
-Buttons::Buttons()
-  : processMs(0) {
+Buttons* refButtons;
+
+void buttons_onCycle(va_list ap) {
+  refButtons->onCycle();
 }
 
-void Buttons::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::CYCLE) {
-    onCycle();
-  }
+Buttons::Buttons()
+  : processMs(0) {
 }
 
 void Buttons::setup() {
   setupButton(BT_PIN_BRIGHTNESS);
   setupButton(BT_PIN_MI_ADJUST);
+
+  refButtons = this;
+  eb_reg(BusEvent::CYCLE, &buttons_onCycle);
 }
 
 void Buttons::onCycle() {
@@ -58,8 +61,4 @@ void Buttons::readButtons() {
 void Buttons::setupButton(uint8_t pin) {
   pinMode(pin, INPUT);
   digitalWrite(pin, HIGH);  // enable pull-up resistor
-}
-
-const char* Buttons::listenerName() {
-  return NAME;
 }

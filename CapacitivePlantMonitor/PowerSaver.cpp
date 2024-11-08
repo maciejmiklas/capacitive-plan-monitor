@@ -17,19 +17,35 @@
 */
 
 #include "PowerSaver.h"
+
+PowerSaver* refPsav;
+
+void psav_onCycle(va_list ap) {
+  refPsav->onCycle();
+}
+
+void psav_onButtonPress(va_list ap) {
+  refPsav->onButtonPress();
+}
+
 uint32_t vv = 0;
 uint32_t va = 0;
 PowerSaver::PowerSaver()
   : nextStandbyMs(PS_STANDBY_INIT_MS) {
 }
 
-void PowerSaver::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::CYCLE) {
-    onCycle();
+void PowerSaver::setup() {
+#if !LOG
+  power_usart0_disable();
+#endif
 
-  } else if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
-    onButtonPress();
-  }
+  refPsav = this;
+  eb_reg(BusEvent::CYCLE, &psav_onCycle);
+  eb_reg(BusEvent::BTN_ADJ_SENSOR, &psav_onButtonPress);
+  eb_reg(BusEvent::BTN_BRIGHTNESS, &psav_onButtonPress);
+
+  power_spi_disable();
+  power_twi_disable();
 }
 
 void PowerSaver::onCycle() {
@@ -38,15 +54,14 @@ void PowerSaver::onCycle() {
     log(F("%s STANDBY ON"), NAME);
 #endif
     eb_fire(BusEvent::STANDBY_ON);
-    delay(PS_SLEEP_DELAY_MICRO);
+    delay(PS_SLEEP_DELAY_MI);
     sleep(PS_SLEEP);
-    delay(PS_SLEEP_DELAY_MICRO);
+    delay(PS_WAKEUP_DELAY_MI);
 #if LOG && LOG_PS
     log(F("%s STANDBY OFF"), NAME);
 #endif
     util_cycle();
     eb_fire(BusEvent::STANDBY_OFF);
-    delay(PS_SLEEP_DELAY_MICRO);
     nextStandby();
   }
 }
@@ -106,17 +121,4 @@ void PowerSaver::nextStandby(uint32_t delayMs) {
 
 void PowerSaver::nextStandby() {
   nextStandby(PS_STANDBY_DELAY_MS);
-}
-
-const char* PowerSaver::listenerName() {
-  return NAME;
-}
-
-void PowerSaver::setup() {
-#if !LOG
-  power_usart0_disable();
-#endif
-
-  power_spi_disable();
-  power_twi_disable();
 }

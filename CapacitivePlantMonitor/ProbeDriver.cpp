@@ -17,21 +17,40 @@
 
 #include "ProbeDriver.h"
 
-ProbeDriver::ProbeDriver()
-  : suspendMs(1), lastProbeMs(0) {
+ProbeDriver* refPdriv;
+
+void pdriv_onButtonPress(va_list ap) {
+  refPdriv->onButtonPress();
 }
 
-void ProbeDriver::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::BTN_BRIGHTNESS || event == BusEvent::BTN_ADJ_SENSOR) {
-    onButtonPress();
+void pdriv_onCycle(va_list ap) {
+  refPdriv->onCycle();
+}
 
-  } else if (event == BusEvent::CYCLE) {
-    onCycle();
-  }
+void pdriv_onStandByOff(va_list ap) {
+  refPdriv->onStandByOff();
+}
+
+ProbeDriver::ProbeDriver()
+  : probeMs(PD_FREQ_MS), lastProbeMs(0) {
+}
+
+void ProbeDriver::setup() {
+  refPdriv = this;   
+  eb_reg(BusEvent::BTN_BRIGHTNESS, &pdriv_onButtonPress);
+  eb_reg(BusEvent::BTN_ADJ_SENSOR, &pdriv_onButtonPress);
+  eb_reg(BusEvent::CYCLE, &pdriv_onCycle);
+  eb_reg(BusEvent::STANDBY_OFF, &pdriv_onStandByOff);
+}
+
+void ProbeDriver::onStandByOff() {
+  lastProbeMs = util_ms();
+  probeMs = PD_PROBE_SUSPEND_STANDBY_MS;
 }
 
 void ProbeDriver::onButtonPress() {
-  suspendMs = util_ms();
+  lastProbeMs = util_ms();
+  probeMs = PD_PROBE_SUSPEND_BUTTON_MS;
 #if LOG && LOG_PD
   log(F("%s SUSPEND"), NAME);
 #endif
@@ -39,20 +58,9 @@ void ProbeDriver::onButtonPress() {
 
 void ProbeDriver::onCycle() {
   uint32_t ms  = util_ms();
-  if (ms - lastProbeMs > PD_FREQ_MS) {
+  if (ms - lastProbeMs > probeMs) {
+    probeMs = PD_FREQ_MS; // reset to default probe frequency
     lastProbeMs = ms;
-    if (ms - suspendMs > PD_PROBE_SUSPEND_MS) {
-      if (suspendMs > 0) {
-        suspendMs = 0;
-#if LOG && LOG_PD
-        log(F("%s RESUME"), NAME);
-#endif
-      }
       eb_fire(BusEvent::PROBE);
-    }
   }
-}
-
-const char* ProbeDriver::listenerName() {
-  return NAME;
 }

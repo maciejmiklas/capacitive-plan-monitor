@@ -38,8 +38,8 @@ VCCMonitor* pm = new VCCMonitor();
 MoistureSensor* ms = new MoistureSensor();
 MoistureDriver* md = new MoistureDriver(ms, pm);
 
-const static uint8_t DEVICES = 5;
-Device* dev[DEVICES] = { ms, led, mi, buttons, ps };
+const static uint8_t DEVICES = 9;
+Device* dev[DEVICES] = { led, brManager, buttons, ps, mi, pd, pm, ms, md };
 
 const static uint8_t DEMOS = 2;
 Demo* demos[DEMOS] = { led, mi };

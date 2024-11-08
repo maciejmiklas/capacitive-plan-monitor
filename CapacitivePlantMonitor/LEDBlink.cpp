@@ -17,18 +17,19 @@
  */
 #include "LEDBlink.h"
 
+LEDBlink* refLblink;
+
+void lblink_onChangeBrightness(va_list ap) {
+  refLblink->onCycle();
+}
+
 LEDBlink::LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightnessOn, uint8_t brightnessOff)
   : pin(pin), onDelay(onDelay), offDelay(offDelay), enabled(false), lastUpdateMs(0), brightnessOn(brightnessOn), brightnessOff(brightnessOff), ledOn(false) {
 }
 
-void LEDBlink::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::CYCLE) {
-    onCycle();
-  }
-}
-
-const char* LEDBlink::listenerName() {
-  return NAME;
+void LEDBlink::setup() {
+  refLblink = this;
+  eb_reg(BusEvent::CYCLE, &lblink_onChangeBrightness);
 }
 
 void LEDBlink::onCycle() {

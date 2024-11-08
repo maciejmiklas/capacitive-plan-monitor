@@ -16,16 +16,59 @@
  */
 #include "LED.h"
 
+LED* refLED;
+
+void led_onButtonPress(va_list ap){
+  refLED->onButtonPress();
+}
+
+void led_onMaxBrightness(va_list ap){
+  refLED->onMaxBrightness();
+}
+
+void led_onBrightnessChange(va_list ap){
+  refLED->onBrightnessChange(va_arg(ap, uint16_t));;
+}
+
+void led_onPowerLow(va_list ap){
+  refLED->onPowerLow();
+}
+
+void led_onPowerNominal(va_list ap){
+  refLED->onPowerNominal();
+}
+
+void led_onStandByOn(va_list ap){
+  refLED->onStandByOn();
+}
+
+void led_onStandByOff(va_list ap){
+  refLED->onStandByOff();
+}
+
 LED::LED()
   : brightness(BM_BRIGHTNESS_INITIAL) {
   powerLow = new LEDBlink(LedPin::PWR_LOW, LE_PWR_LOW_ON_DELAY, LE_PWR_LOW_OFF_DELAY, LE_PWR_LOW_ON_BRIGHTNESS, LE_PWR_LOW_OFF_BRIGHTNESS);
 }
 
 void LED::setup() {
+  powerLow->setup();
+  
   for (uint8_t pin = FIRST_PIN; pin <= LAST_PIN; pin++) {
     pinMode(pin, OUTPUT);
     analogWrite(pin, LOW);
   }
+
+  refLED = this;
+
+  eb_reg(BusEvent::BTN_ADJ_SENSOR, &led_onButtonPress);
+  eb_reg(BusEvent::BTN_BRIGHTNESS, &led_onButtonPress);
+  eb_reg(BusEvent::BRIGHTNESS_MAX, &led_onMaxBrightness);
+  eb_reg(BusEvent::BRIGHTNESS_CHANGE, &led_onBrightnessChange);
+  eb_reg(BusEvent::VCC_LOW, &led_onPowerLow);
+  eb_reg(BusEvent::VCC_NOMINAL, &led_onPowerNominal);
+  eb_reg(BusEvent::STANDBY_ON, &led_onStandByOn);
+  eb_reg(BusEvent::STANDBY_OFF, &led_onStandByOff);
 }
 
 void LED::demo() {
@@ -62,34 +105,6 @@ void LED::on(LedPin led, uint8_t brightness) {
   log(F("%s ON %d %d"), NAME, pin, brightness);
 #endif
   analogWrite(pin, brightness);
-}
-
-const char* LED::listenerName() {
-  return NAME;
-}
-
-void LED::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::BTN_ADJ_SENSOR || event == BusEvent::BTN_BRIGHTNESS) {
-    onButtonPress();
-  }
-  if (event == BusEvent::BRIGHTNESS_MAX) {
-    onMaxBrightness();
-
-  } else if (event == BusEvent::BRIGHTNESS_CHANGE) {
-    onBrightnessChange(va_arg(ap, uint16_t));
-
-  } else if (event == BusEvent::VCC_LOW) {
-    onPowerLow();
-
-  } else if (event == BusEvent::VCC_NOMINAL) {
-    onPowerNominal();
-
-  } else if (event == BusEvent::STANDBY_ON) {
-    onStandByOn();
-
-  } else if (event == BusEvent::STANDBY_OFF) {
-    onStandByOff();
-  }
 }
 
 void LED::onStandByOn() {

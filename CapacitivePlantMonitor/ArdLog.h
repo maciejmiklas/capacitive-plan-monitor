@@ -70,29 +70,29 @@ void log_cycle();
 void log(const __FlashStringHelper *ifsh, ...);
 
 class Logger {
-  public:
-    Logger();
-    void setup();
-    void logv(const __FlashStringHelper *ifsh, va_list args);
-    void log(const __FlashStringHelper *ifsh, ...);
-    void logRAM(char const *msg);
-    void logChangeRAM();
+public:
+  Logger();
+  void setup();
+  void logv(const __FlashStringHelper *ifsh, va_list args);
+  void log(const __FlashStringHelper *ifsh, ...);
+  void logRAM(char const *msg);
+  void logChangeRAM();
 
-  private:
+private:
 
-    /** Buffer for created message */
-    char sbuf[AL_SBUF_SIZE] = { 0 };
+  /** Buffer for created message */
+  char sbuf[AL_SBUF_SIZE] = { 0 };
 
-    /** Buffer for sprintf-template passed as first argument to log method. */
-    char pgbuf[AL_PGBUF_SIZE] = { 0 };
+  /** Buffer for sprintf-template passed as first argument to log method. */
+  char pgbuf[AL_PGBUF_SIZE] = { 0 };
 
-    uint16_t lastFreeRam = 0;
+  uint16_t lastFreeRam = 0;
 
-    inline void resetBuf(char *buf, uint8_t size);
-    inline void resetSbuf();
-    inline void resetPgbuf();
-    inline void copyPGM(const __FlashStringHelper *ifsh);
+  inline void resetBuf(char *buf, uint8_t size);
+  inline void resetSbuf();
+  inline void resetPgbuf();
+  inline void copyPGM(const __FlashStringHelper *ifsh);
 
-    inline uint16_t getFreeRAM();
+  inline uint16_t getFreeRAM();
 };
 #endif /* ARD_LOG_H */

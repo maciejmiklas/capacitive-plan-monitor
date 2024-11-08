@@ -22,23 +22,24 @@
 #include "Demo.h"
 #include "EventBus.h"
 #include "Util.h"
+#include "Device.h"
 
-class ProbeDriver : public BusListener {
-  public:
+class ProbeDriver : public Device {
+public:
 
-    ProbeDriver();
+  ProbeDriver();
 
-    // from EventBus.h
-    void onEvent(BusEvent event, va_list ap);
-    const char* listenerName();
+  void onButtonPress();
+  void onCycle();
+  void onStandByOff();
 
-  private:
-    uint32_t suspendMs;
-    uint32_t lastProbeMs;
-    static constexpr const char* NAME = "PD";
+  // from Device.h
+  void setup();
 
-    void onButtonPress();
-    void onCycle();
+private:
+  uint32_t probeMs;
+  uint32_t lastProbeMs;
+  static constexpr const char* NAME = "PD";
 };
 
 #endif  // PROPBE_DRIVER_H

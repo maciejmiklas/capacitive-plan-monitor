@@ -20,20 +20,19 @@
 #include "ArdLog.h"
 #include "LED.h"
 
-class BrightnessManager : public BusListener {
+class BrightnessManager : public Device {
 public:
   BrightnessManager();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
+  void onNextLevel();
+
+  // from Device.h
+  void setup();
 
 private:
   const static uint8_t MAX_LISTENERS = 2;
   static constexpr const char* NAME = "BM";
   uint16_t brightness;
-
-   void onNextLevel();
 };
 
 #endif  // BRIGHTNESS_MANAGER_H

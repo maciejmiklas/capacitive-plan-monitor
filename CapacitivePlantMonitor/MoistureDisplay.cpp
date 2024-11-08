@@ -17,32 +17,38 @@
  */
 #include "MoistureDisplay.h"
 
-MoistureDisplay::MoistureDisplay()
-  : moistureLevel(MI_LEVEL_OFF) {
+MoistureDisplay* refMdisp;
+
+void mdisp_onChangeBrightness(va_list ap) {
+  refMdisp->onChangeBrightness(va_arg(ap, uint16_t));
 }
 
-void MoistureDisplay::onEvent(BusEvent event, va_list ap) {
-  if (event == BusEvent::BRIGHTNESS_CHANGE) {
-    onChangeBrightness(va_arg(ap, uint16_t));
+void mdisp_onMoistureAdjust(va_list ap) {
+  refMdisp->onMoistureAdjust(va_arg(ap, uint16_t));
+}
 
-  } else if (event == BusEvent::MOISTURE_ADJ_NEXT) {
-    onMoistureAdjust(va_arg(ap, uint16_t));
+void mdisp_onMoistureLevelChange(va_list ap) {
+  refMdisp->onMoistureLevelChange(va_arg(ap, uint16_t));
+}
 
-  } else if (event == BusEvent::MOISTURE_LEVEL_CHANGE) {
-    onMoistureLevelChange(va_arg(ap, uint16_t));
+void mdisp_onPowerLow(va_list ap) {
+  refMdisp->onPowerLow();
+}
 
-  } else if (event == BusEvent::VCC_LOW) {
-    onPowerLow();
+void mdisp_onPowerCritical(va_list ap) {
+  refMdisp->onPowerCritical();
+}
 
-  } else if (event == BusEvent::VCC_CRITICAL) {
-    onPowerCritical();
+void mdisp_onStandByOn(va_list ap) {
+  refMdisp->onStandByOn();
+}
 
-  } else if (event == BusEvent::STANDBY_ON) {
-    onStandByOn();
+void mdisp_onStandByOff(va_list ap) {
+  refMdisp->onStandByOff();
+}
 
-  } else if (event == BusEvent::STANDBY_OFF) {
-    onStandByOff();
-  }
+MoistureDisplay::MoistureDisplay()
+  : moistureLevel(MI_LEVEL_OFF) {
 }
 
 void MoistureDisplay::onMoistureLevelChange(uint8_t level) {
@@ -105,6 +111,16 @@ void MoistureDisplay::setup() {
 
   changeBrightness(BM_BRIGHTNESS_INITIAL);
   ledsOff();
+
+  refMdisp = this;
+
+  eb_reg(BusEvent::BRIGHTNESS_CHANGE, &mdisp_onChangeBrightness);
+  eb_reg(BusEvent::MOISTURE_ADJ_NEXT, &mdisp_onMoistureAdjust);
+  eb_reg(BusEvent::MOISTURE_LEVEL_CHANGE, &mdisp_onMoistureLevelChange);
+  eb_reg(BusEvent::VCC_LOW, &mdisp_onPowerLow);
+  eb_reg(BusEvent::VCC_CRITICAL, &mdisp_onPowerCritical);
+  eb_reg(BusEvent::STANDBY_ON, &mdisp_onStandByOn);
+  eb_reg(BusEvent::STANDBY_OFF, &mdisp_onStandByOff);
 }
 
 void MoistureDisplay::blink(uint8_t level) {
@@ -138,8 +154,4 @@ void MoistureDisplay::show(uint8_t level) {
 
 void MoistureDisplay::changeBrightness(uint8_t level) {
   analogWrite(MI_PIN_ENABLE, BM_BRIGHTNESS_MAX - level);
-}
-
-const char* MoistureDisplay::listenerName() {
-  return NAME;
 }

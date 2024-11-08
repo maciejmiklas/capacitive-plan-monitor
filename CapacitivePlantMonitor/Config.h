@@ -98,7 +98,8 @@ const static uint8_t BM_BRIGHTNESS_INITIAL = 1;
 
 // ######## ProbeDriver(PD)  ########
 // stop probing for given time after user interaction, like button press
-const static uint32_t PD_PROBE_SUSPEND_MS = 2000;
+const static uint32_t PD_PROBE_SUSPEND_BUTTON_MS = 2000;
+const static uint32_t PD_PROBE_SUSPEND_STANDBY_MS = 10;
 const static uint32_t PD_FREQ_MS = 200;
 
 // ######## MoistureDisplay(MI) ########
@@ -173,7 +174,7 @@ const static uint8_t MI_ADJUST_LEV_INIT = 4;
 const static uint8_t MI_ADJUST_LEV_MAX = MI_LEVEL_MAX;
 const static uint8_t MI_ADJUST_LEV_MIN = MI_LEVEL_OFF;
 const static uint16_t MI_ADJUST_SHOW_MS = 5000;
-const static uint8_t MI_MIN_VCC_CHANGE_MV = 100;
+const static uint8_t MI_MIN_VCC_CHANGE_MV = 100; // Default 100
 
 // ######## VCCMonitor(VC) ########
 
@@ -196,15 +197,16 @@ enum class SleepPeriod {
   S8,
 };
 
-const static uint8_t PS_SLEEP_DELAY_MICRO =  10;
+const static uint8_t PS_SLEEP_DELAY_MI =  10;
+const static uint8_t PS_WAKEUP_DELAY_MI =  10;
 
 // dealy in ms for first standby after power on
-const static uint32_t PS_STANDBY_INIT_MS =  10L * 1000L;
+const static uint32_t PS_STANDBY_INIT_MS =  60L * 1000L;
 
 // dealy in ms for standby after a button has been pressed
 const static uint32_t PS_STANDBY_BUTTON_MS = 20L * 1000L;
 
-// standby frequency during normal operation
+// time for active operation, after this time passes, Arduino will go to sleep and wake up after #PS_SLEEP
 const static uint32_t PS_STANDBY_DELAY_MS = 4000L;
 
 // sleep time in seconds during standby

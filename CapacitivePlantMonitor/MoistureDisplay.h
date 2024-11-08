@@ -24,7 +24,7 @@
 #include "Device.h"
 
 /** Moisture level LED display base on 74HC595 */
-class MoistureDisplay : public Demo, public BusListener, public Device {
+class MoistureDisplay : public Demo, public Device {
 public:
 
   MoistureDisplay();
@@ -35,24 +35,12 @@ public:
   /** #level goes from #MI_LEVEL_MIN to #MI_LEVEL_MAX inclusive -> from dry to wet. */
   void blink(uint8_t level);
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
-
   // from Demo.h
   void demo();
   void demosDone();
 
   // from Device.h
   void setup();
-
-private:
-  uint8_t moistureLevel;
-  static constexpr const char* NAME = "MI";
-
-  void changeBrightness(uint8_t level);
-  void showCurrentMoistureLevel();
-  void ledsOff();
 
   void onChangeBrightness(uint8_t level);
   void onMoistureAdjust(uint8_t level);
@@ -62,6 +50,16 @@ private:
   void onStandByOn();
   void onStandByOff();
   void onPowerCritical();
+
+private:
+  uint8_t moistureLevel;
+  static constexpr const char* NAME = "MI";
+
+  void changeBrightness(uint8_t level);
+  void showCurrentMoistureLevel();
+  void ledsOff();
+
+
 };
 
 #endif  // MOISTURE_DISPLAY_H

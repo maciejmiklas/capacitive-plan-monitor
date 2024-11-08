@@ -20,20 +20,22 @@
 #include "Config.h"
 #include "EventBus.h"
 #include "Util.h"
+#include "Device.h"
 
 #ifndef LED_BLINK
 #define LED_BLINK
 
-class LEDBlink : public BusListener {
+class LEDBlink : public Device {
 
 public:
   LEDBlink(uint8_t pin, uint16_t onDelay, uint16_t offDelay, uint8_t brightnessOn, uint8_t brightnessOff);
   void on();
   void off();
 
-  // from EventBus.h
-  void onEvent(BusEvent event, va_list ap);
-  const char* listenerName();
+ void onCycle();
+
+   // from Device.h
+  void setup();
 
 private:
   static constexpr const char* NAME = "LB";
@@ -46,8 +48,6 @@ private:
   boolean ledOn;
   boolean enabled;
   uint32_t lastUpdateMs;
-
-  void onCycle();
 };
 
 #endif  // edd LED_BLINK
