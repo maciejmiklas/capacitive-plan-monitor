@@ -38,14 +38,6 @@ void led_onPowerNominal(va_list ap){
   refLED->onPowerNominal();
 }
 
-void led_onStandByOn(va_list ap){
-  refLED->onStandByOn();
-}
-
-void led_onStandByOff(va_list ap){
-  refLED->onStandByOff();
-}
-
 LED::LED()
   : brightness(BM_BRIGHTNESS_INITIAL) {
   powerLow = new LEDBlink(LedPin::PWR_LOW, LE_PWR_LOW_ON_DELAY, LE_PWR_LOW_OFF_DELAY, LE_PWR_LOW_ON_BRIGHTNESS, LE_PWR_LOW_OFF_BRIGHTNESS);
@@ -67,8 +59,6 @@ void LED::setup() {
   eb_reg(BusEvent::BRIGHTNESS_CHANGE, &led_onBrightnessChange);
   eb_reg(BusEvent::VCC_LOW, &led_onPowerLow);
   eb_reg(BusEvent::VCC_NOMINAL, &led_onPowerNominal);
-  eb_reg(BusEvent::STANDBY_ON, &led_onStandByOn);
-  eb_reg(BusEvent::STANDBY_OFF, &led_onStandByOff);
 }
 
 void LED::demo() {
@@ -84,7 +74,6 @@ void LED::demo() {
 }
 
 void LED::demosDone() {
-   on(LedPin::AWAKE);
 }
 
 void LED::off(LedPin led) {
@@ -107,14 +96,6 @@ void LED::on(LedPin led, uint8_t brightness) {
   analogWrite(pin, brightness);
 }
 
-void LED::onStandByOn() {
-  off(LedPin::AWAKE);
-}
-
-void LED::onStandByOff() {
-  on(LedPin::AWAKE);
-}
-
 void LED::onBrightnessChange(uint8_t newbr) {
   brightness = newbr;
 }
@@ -129,20 +110,20 @@ void LED::onPowerNominal() {
 
 void LED::onMaxBrightness() {
   for (uint8_t i = 0; i < LED_BR_MAX_BLINK_REPEAT; i++) {
-    off(LedPin::AWAKE);
+    off(LedPin::INFO);
     delay(LED_BR_MAX_BLINK_OFF_DELAY);
-    on(LedPin::AWAKE);
+    on(LedPin::INFO);
     delay(LED_BR_MAX_BLINK_ON_DELAY);
   }
-  on(LedPin::AWAKE);
+  off(LedPin::INFO);
 }
 
 void LED::onButtonPress() {
   for (uint8_t i = 0; i < LE_PRESS_BLINK_REPEAT; i++) {
-    off(LedPin::AWAKE);
+    off(LedPin::INFO);
     delay(LE_PRESS_BLINK_OFF_DELAY);
-    on(LedPin::AWAKE);
+    on(LedPin::INFO);
     delay(LE_PRESS_BLINK_ON_DELAY);
   }
-  on(LedPin::AWAKE);
+  off(LedPin::INFO);
 }

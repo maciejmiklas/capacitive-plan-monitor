@@ -25,7 +25,7 @@
 #include "LEDBlink.h"
 
 // Enum values are out PINs
-enum LedPin { AWAKE = LE_PIN_AWAKE,
+enum LedPin { INFO = LE_PIN_AWAKE,
               PWR_LOW = LE_PIN_PWR_LOW };
 
 class LED : public Demo, public Device {
@@ -42,8 +42,6 @@ public:
   void onMaxBrightness();
   void onPowerLow();
   void onPowerNominal();
-  void onStandByOn();
-  void onStandByOff();
   void onCycle();
 
   // from Demo.h
@@ -54,7 +52,7 @@ public:
   void setup();
 
 private:
-  const static uint8_t FIRST_PIN = LedPin::AWAKE;
+  const static uint8_t FIRST_PIN = LedPin::INFO;
   const static uint8_t LAST_PIN = LedPin::PWR_LOW;
   static constexpr const char* NAME = "LE";
   uint16_t brightness;

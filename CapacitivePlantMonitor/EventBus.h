@@ -20,34 +20,33 @@
 #include "Arduino.h"
 #include "ArdLog.h"
 
-static const uint8_t EVENTS_SIZE = 13;
+enum class BusEvent: uint8_t {
 
-// To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS
-enum class BusEvent {
+  CYCLE = 0,
+  PROBE,
 
-  PROBE = 11,
+  BTN_BRIGHTNESS,
+  BTN_ADJ_SENSOR,
 
-  BTN_BRIGHTNESS = 21,
-  BTN_ADJ_SENSOR = 22,
+  VCC_LOW,
+  VCC_CRITICAL,
+  VCC_NOMINAL,
 
-  VCC_LOW = 31,
-  VCC_CRITICAL = 32,
-  VCC_NOMINAL = 33,
-
-  STANDBY_ON = 41,
-  STANDBY_OFF = 42,
+  STANDBY_ON,
+  STANDBY_OFF ,
 
   /** Param: brightness as uint_16, value: BM_BRIGHTNESS_MIN <-> BM_BRIGHTNESS_MAX */
-  BRIGHTNESS_CHANGE = 50,
-  BRIGHTNESS_MAX = 51,
+  BRIGHTNESS_CHANGE,
+  BRIGHTNESS_MAX,
 
   /** Param: sensor read in mv in dependency of actual VCC level, see MI_LEVEL_MAP for details */
-  MOISTURE_LEVEL_CHANGE = 60,
+  MOISTURE_LEVEL_CHANGE,
 
   /** Param: current aductment as value beetwen MI_ADJUST_LEV_MIN and MI_ADJUST_LEV_MAX */
-  MOISTURE_ADJ_NEXT = 61,
+  MOISTURE_ADJ_NEXT,
 
-  CYCLE = 255,
+  /* Number of elements in this enum. */
+  COUNT
 };
 
 void eb_fire(BusEvent event, ...);

@@ -207,7 +207,7 @@ const static uint32_t PS_STANDBY_INIT_MS =  60L * 1000L;
 const static uint32_t PS_STANDBY_BUTTON_MS = 20L * 1000L;
 
 // time for active operation, after this time passes, Arduino will go to sleep and wake up after #PS_SLEEP
-const static uint32_t PS_STANDBY_DELAY_MS = 4000L;
+const static uint32_t PS_STANDBY_DELAY_MS = 10*1000L;
 
 // sleep time in seconds during standby
 const static SleepPeriod PS_SLEEP = SleepPeriod::S8;

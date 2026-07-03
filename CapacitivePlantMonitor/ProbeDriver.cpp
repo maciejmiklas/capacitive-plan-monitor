@@ -59,8 +59,10 @@ void ProbeDriver::onButtonPress() {
 void ProbeDriver::onCycle() {
   uint32_t ms  = util_ms();
   if (ms - lastProbeMs > probeMs) {
+    log(F("A"));
     probeMs = PD_FREQ_MS; // reset to default probe frequency
     lastProbeMs = ms;
-      eb_fire(BusEvent::PROBE);
+    eb_fire(BusEvent::PROBE);
+    log(F("B"));
   }
 }

@@ -45,14 +45,14 @@ void MoistureDriver::setup() {
 
 void MoistureDriver::onProbe() {
   uint8_t level = getLevel();
-  // FIXME - enable it!
- // if (sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
+  
+  if (sub_u16(level, currentLevel) >= MI_MIN_CHANGE_LEVEL) {
 #if LOG && LOG_MD
     log(F("%s LEVEL %d->%d"), NAME, currentLevel, level);
 #endif
     eb_fire(BusEvent::MOISTURE_LEVEL_CHANGE, level);
     currentLevel = level;
-  //}
+  }
 }
 
 void MoistureDriver::onStandbyOff() {
